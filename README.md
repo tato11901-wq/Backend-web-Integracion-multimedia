@@ -5,21 +5,25 @@ API en FastAPI para el control y progresión de plantas virtuales.
 ## Cómo ejecutar
 
 1. Instalar dependencias
+
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Ejecutar el servidor uvicorn:
+2. Ejecutar el servidor uvicorn: (Importante, ejecutar con permisos de administrador)
+
 ```bash
+cd "Backend web Integracion multimedia"
 uvicorn app.main:app --reload
 ```
 
 3. Abrir la documentación de Swagger:
-[http://localhost:8000/docs](http://localhost:8000/docs)
+   [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ## Ejemplos de Requests y Responses (Usando CURL)
 
 ### 1. Crear Planta
+
 ```bash
 curl -X 'POST' \
   'http://localhost:8000/plant/' \
@@ -28,6 +32,7 @@ curl -X 'POST' \
 ```
 
 **Response:**
+
 ```json
 {
   "id": "e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd",
@@ -36,6 +41,7 @@ curl -X 'POST' \
 ```
 
 ### 2. Consultar Planta
+
 ```bash
 curl -X 'GET' \
   'http://localhost:8000/plant/e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd' \
@@ -43,6 +49,7 @@ curl -X 'GET' \
 ```
 
 **Response:**
+
 ```json
 {
   "id": "e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd",
@@ -58,6 +65,7 @@ curl -X 'GET' \
 ```
 
 ### 3. Regar Planta (Acción `water`)
+
 ```bash
 curl -X 'POST' \
   'http://localhost:8000/plant/e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd/water' \
@@ -66,6 +74,7 @@ curl -X 'POST' \
 ```
 
 **Response:**
+
 ```json
 {
   "id": "e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd",
@@ -79,4 +88,5 @@ curl -X 'POST' \
   "is_dead": false
 }
 ```
-*(Nota: Nota como el `water` subió a 20.0, y luego de varios regados alcanzará el umbral para crecer hacia la próxima fase (bush))*
+
+_(Nota: Nota como el `water` subió a 20.0, y luego de varios regados alcanzará el umbral para crecer hacia la próxima fase (bush))_
