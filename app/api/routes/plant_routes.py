@@ -6,11 +6,11 @@ from app.services.plant_service import PlantService
 router = APIRouter(prefix="/plant", tags=["plants"])
 
 @router.post("/", response_model=PlantCreateResponse)
-def create_plant():
+def create_plant(owner_id: str):
     """
     Crea una nueva planta partiendo de la fase de semilla (seed).
     """
-    plant = PlantService.create_plant()
+    plant = PlantService.create_plant(owner_id=owner_id)
     return PlantCreateResponse(id=plant.id, message="Plant created successfully")
 
 @router.get("/{plant_id}", response_model=PlantResponse)

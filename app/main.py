@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.routes import plant_routes
+from app.api.routes import plant_routes, auth_routes, user_routes
 
 app = FastAPI(
     title="Virtual Plant API",
@@ -9,6 +9,8 @@ app = FastAPI(
 
 # Incluyendo los endpoints bajo sus correspondientes prefijos
 app.include_router(plant_routes.router)
+app.include_router(auth_routes.router)
+app.include_router(user_routes.router)
 
 @app.get("/")
 def read_root():

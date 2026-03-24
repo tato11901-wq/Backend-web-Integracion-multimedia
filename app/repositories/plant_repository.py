@@ -12,6 +12,9 @@ class PlantRepository:
     def get_by_id(self, plant_id: str) -> Optional[Plant]:
         return self._storage.get(plant_id)
 
+    def get_by_owner_id(self, owner_id: str) -> list[Plant]:
+        return [plant for plant in self._storage.values() if plant.owner_id == owner_id]
+
     def save(self, plant: Plant) -> Plant:
         self._storage[plant.id] = plant
         return plant

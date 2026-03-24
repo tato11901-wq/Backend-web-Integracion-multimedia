@@ -1,0 +1,1387 @@
+IMAGINATIO 2026
+Plantilla definitiva de documento conceptual del proyecto
+Curso: Integración Multimedia – Mul B
+Documento editable para desarrollo por equipos
+Versión del documento: 1.0
+Fecha base de emisión: 18 de marzo de 2026
+Propósito del documento. Esta plantilla reúne el concepto general del proyecto, la organización por equipos y una estructura de trabajo de nivel intermedio–casi industria para que cada grupo documente de forma consistente la propuesta, la jugabilidad, la interacción, las interfaces 2D y 3D, las animaciones, la arquitectura técnica, la integración entre módulos y los criterios de validación del desarrollo.
+1. Información general del proyecto
+Nombre del proyecto
+IMAGINATIO 2026 (nombre tentativo; podrá ajustarse posteriormente).
+Equipo / curso
+Integración Multimedia Mul B
+Evento objetivo
+Presentación del videojuego en IMAGINATIO XVIII – 2026.
+Versión del documento
+1.0
+Fecha
+18 de marzo de 2026
+Docente / Scrum Master general
+Miguel Olivares
+Concepto marco del proyecto. IMAGINATIO 2026 integra los contenidos del curso Integración Multimedia con las actividades del semillero Progredis para desarrollar un videojuego educativo orientado al reconocimiento, cuidado y apropiación del patrimonio natural del campus. La finalidad del juego es enseñar y fomentar la educación respecto a las especies nativas y protegidas presentes en el entorno universitario, mediante estrategias de gamificación, exploración, trabajo colaborativo y desarrollo tecnológico interdisciplinar.
+Resultados formativos esperados. Además del producto final, el proyecto busca fortalecer habilidades en modelado y optimización 3D, diseño de personajes, UI/UX, diseño de interacción, programación en red, despliegue multiplataforma (Android y Web), producción de contenidos visuales y trabajo en equipo con roles definidos.
+2. Integrantes, roles y responsabilidades específicas
+Nota de uso. Las responsabilidades de esta tabla ya quedan definidas como marco de trabajo del semestre. Los estudiantes deben desarrollar el documento y el producto respetando estas funciones, aunque podrán apoyar actividades de otros equipos cuando el cronograma de integración lo requiera.
+Macroequipo
+Nombre
+Rol
+Responsabilidades específicas
+Contacto
+Equipo 1: Widget Android + Smartwatch — Desarrollo del widget móvil y adaptación potencial a reloj inteligente.
+E1
+Maria Guio
+Líder Técnico Móvil
+Define la arquitectura del widget Android/Wear OS, organiza tareas técnicas del equipo, valida integración con backend y revisa estabilidad general del módulo móvil.
+est.maria.guio@unimilitar.edu.co3209042262
+E1
+Jenifer Leiva
+Desarrollador UI Android
+Implementa pantallas, componentes visuales, navegación, estilos, accesibilidad y adaptación de interfaz para teléfonos Android y posible smartwatch.
+et.jenfer.leiva@unimilitar.edu.co3202227728
+E1
+Ricardo Mancera
+Integrador Backend / Sincronización
+Conecta el widget móvil con servicios, autenticación y persistencia; válida envío y recepción de datos y documenta incidencias de integración.
+est.julian.mancera@unimilitar.edu.co3213241817
+Equipo 2: Widget Web — Desarrollo de la versión web equivalente del widget.
+E2
+William Cubillos
+Frontend Lead
+Define estructura del proyecto web, estándares de código, componentes reutilizables y lineamientos de integración con APIs y diseño visual.
+est.william.cubil1@unimilitar.edu.co3132320600
+E2
+Andres Moya
+Desarrollador UI Web
+Implementa wireframes en interfaz funcional, comportamiento responsivo, estados visuales y consistencia con el sistema de diseño del proyecto.
+est.andresr.moya@unimilitar.edu.co3202347917
+E2
+Alejandro Sandoval
+Integrador API / Estado
+Conecta la versión web con backend, administra estados, sesiones, consumo de servicios y pruebas básicas de flujo completo.
+est.alejandro.sandc@unimilitar.edu.co3125605645
+Equipo 3: Aplicación Multiusuario (5) — Desarrollo del núcleo del videojuego multiusuario en red.
+E3
+Sara Santos
+Tech Lead Unity
+Define arquitectura de la aplicación multiusuario, convenciones del proyecto Unity, jerarquía de escenas, prefabs y lineamientos de rendimiento.
+est.sara.santos@unimilitar.edu.co3218005378
+E3
+Alejandra Riaño
+Programador Networking
+Implementa o adapta la lógica de conexión, sincronización de jugadores, objetos compartidos, eventos de red y validación de estados distribuidos.
+est.paulaa.rianoj@unimilitar.edu.co3102763956
+E3
+Julian Lancheros
+Programador Gameplay
+Desarrolla mecánicas principales, interacción con especies, reglas de juego, recompensas, progresión y retroalimentación al usuario.
+est.julian.lancheros@unimilitar.edu.co3124141058
+E3
+Daniel Sanchez Hernandez
+Integrador de Plataforma (Android/WebGL)
+Prepara builds, ajusta compatibilidad por plataforma, configura entradas, revisa rendimiento y apoya publicación de versiones de prueba.
+est.daniel.sanchezh@unimilitar.edu.co
+E3
+Ana Maria Sierra
+QA Técnico y Control de Builds
+Diseña casos de prueba, valida estabilidad, documenta bugs, controla versiones funcionales y apoya entregas internas por sprint.
+est.ana.sierra@unimilitar.edu.co3138395312
+Equipo 4: Backend / Networking / Integración — Servicios, sincronización y persistencia para el ecosistema completo.
+E4
+Braian Garcia
+Arquitecto Backend
+Diseña servicios, endpoints, contratos de datos, autenticación y estructura general de comunicación entre aplicaciones cliente y base de datos.
+est.braian.garcia@unimilitar.edu.co3214383398
+E4
+Jonatan Bonilla
+Desarrollador Base de Datos
+Modela entidades, colecciones o tablas, garantiza integridad básica de la información y apoya consultas requeridas por los clientes.
+est.jonathana.boni1@unimilitar.edu.co3163254534
+E4
+Oscar Olmos
+Especialista Sincronización / API (REST, WebSocket u otro)
+Implementa y prueba la capa de comunicación, sincronización de eventos y consistencia de datos entre clientes y servidor.
+est.oscar.olmos@unimilitar.edu.co3115974814
+Equipo 5: UI/UX + Identidad Visual + Redes — Sistema visual, experiencia de usuario, contenidos de apoyo y comunicación del proyecto.
+E5
+Andrés Alcázar
+Director de Arte
+Define identidad visual, moodboard, lineamientos de color, ilustración, estilo 2D/3D y coherencia estética entre todas las plataformas.
+est.andres.alcazar@unimilitar.edu.co3162546377
+E5
+Santiago Castillo
+Diseñador UX / Prototipador
+Diseña flujos, wireframes, prototipos y pruebas de usabilidad; traduce necesidades del usuario en decisiones de interacción y pantalla.
+est.santiago.castip@unimilitar.edu.co3167970360
+E5
+Santiago Barbosa
+Gestor de Redes / Contenido / Métricas
+Produce piezas de comunicación del proyecto, documenta avances para redes sociales y propone indicadores básicos de alcance e interacción.
+est.santiago.barbosa@unimilitar.edu.co3172567897
+E5
+Danny Gonzalez
+Product Owner General
+Prioriza requerimientos, valida coherencia del producto, articula decisiones entre equipos y asegura alineación con objetivos académicos y del evento.
+Danny.gonzalez@unimilitar.edu.co3108015462
+E5
+Miguel Olivares
+Scrum Master General
+Coordina seguimiento metodológico, reuniones, dependencias entre equipos, riesgos y control general del cronograma.
+Miguel.Olivares@unimilitar.edu.co3118076448
+3. Alcance pedagógico y técnico del proyecto
+Construir un producto jugable con valor educativo, articulado al reconocimiento de especies nativas y protegidas presentes en el campus.
+Desarrollar componentes interoperables: widget Android con posibilidad de smartwatch, versión web del widget, aplicación multiusuario desplegable en Android y Web, backend de integración y sistema visual transversal.
+Promover habilidades de modelado 2D/3D, diseño de personajes, UI/UX, gamificación, programación de interacción, desarrollo en red, control de calidad y comunicación del proyecto.
+Simular una organización de desarrollo cercana a industria mediante roles, dependencias, documentación técnica y entregas por iteraciones.
+4. Instrucciones de uso de esta plantilla
+Cada equipo debe completar esta plantilla tomando como base el concepto general del proyecto y profundizando su módulo particular.
+Las secciones 1 a 4 funcionan como marco común del curso; desde la sección 5 en adelante los estudiantes deben desarrollar el contenido específico de su equipo.
+Se espera detalle suficiente para que un tercero pueda comprender qué se va a construir, cómo interactuará el usuario, qué elementos visuales serán necesarios y cómo se integrará el módulo con el resto del ecosistema.
+En los apartados de jugabilidad, acciones, animaciones e interfaces no basta con descripciones generales: deben documentarse estados, disparadores, feedback, transiciones, casos de uso y decisiones visuales.
+5. Resumen ejecutivo del módulo del equipo
+Qué debe escribir el equipo: Explique en un párrafo qué parte del proyecto desarrolla el grupo, cuál es su aporte al videojuego completo y qué valor agrega a la experiencia del usuario.
+Guía: Indique si el equipo aporta interfaz, backend, mecánicas, sincronización, piezas visuales, pruebas, contenidos o comunicación. Señale entradas y salidas de información del módulo.
+Ejemplo orientador: Este módulo implementa la visualización y consulta rápida de especies en Android, permitiendo al usuario revisar información resumida, estado de cuidado y acceso a elementos del ecosistema principal del juego.
+Equipo 1:
+Este módulo funciona como una interfaz de interacción para el cuidado de las especies vegetales inspiradas de las pertenecientes al campus, por lo que implementa mecánicas de gamificación, permitiendo al usuario gestionar recursos, monitorear estados y ejecutar acciones de cuidado en tiempo real. El widget actúa como punto de entrada cotidiano y accesible a la experiencia, facilitando el vínculo del usuario con el sistema mediante interacciones rápidas y constantes, generando datos de progreso que se sincronizan con el aplicativo web y posteriormente en su estado final, con la aplicación multiusuario. Por tanto, se aporta la capa de interfaz móvil, lógica de interacción local y comunicación con los otros servicios enviando las principales acciones del usuario. 
+Equipo 2:
+Este módulo web permite que cualquier usuario interactúe con el sistema de cuidado de plantas desde su navegador, eliminando la necesidad de instalar el aplicativo o enfrentar problemas de compatibilidad en dispositivos. Su diseño se centra en ofrecer una entrada rápida a las mecánicas de gestión de recursos y monitoreo de estados, manteniendo la misma lógica de interacción y sincronización de datos que la versión de Android. Así, se garantiza que el seguimiento de las especies del campus sea accesible de forma sencilla desde cualquier terminal con conexión a internet sin alterar el concepto original del proyecto.
+Equipo 3:
+Este módulo de aplicación multiusuario corresponde al núcleo del videojuego destinado a entorno 3D,el cual se desarrollará en Unity, donde los jugadores podrán explorar el mapa(Inspirado en el área del campus de la UMNG), interactuar con NPCs y combatir con jugadores. Este mismo integra las mecánicas principales del juego, lo que incluye la exploración, recolección de semillas, gestión del inventario y el sistema de combate.
+El sistema permite la interacción entre la red de múltiples usuarios, sincronizando estados de juego como combates, progreso del jugador y la obtención de recompensas. Además, se conecta con los otros módulos del sistema(Widget y backend), recibiendo los datos de progreso, se consolida como el eje central de la experiencia. 
+Equipo 4:
+Equipo 5:
+6. Objetivo educativo y propósito del módulo
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E1: Maria Guio, Jenifer Leiva, Ricardo Mancera; E2: William Cubillos, Andres Moya, Alejandro Sandoval; E3: Sara Santos, Alejandra Riaño, Julian Lancheros, Daniel Sanchez Hernandez, Ana Maria Sierra; E5: Andrés Alcázar, Santiago Castillo, .
+Orientación de aporte por equipo: E1 y E2 describen cómo el módulo 2D aporta al aprendizaje desde Android y Web. E3 explica cómo el juego 3D convierte ese aprendizaje en experiencia jugable en red. E5 alinea el propósito pedagógico, el perfil de experiencia y la coherencia conceptual. El ejemplo técnico debe mostrar una situación concreta de aprendizaje activada por interfaz 2D o por interacción 3D.
+Qué debe escribir el equipo: Defina qué aprendizaje apoya el módulo y cómo contribuye al objetivo general de conservación, apropiación y conocimiento de especies nativas.
+Guía: Relacione el módulo con conocimiento de especies, características, hábitos, conservación, ubicaciones o acciones de cuidado.
+Ejemplo orientador: La interfaz de consulta rápida busca que el jugador reconozca rasgos distintivos de especies protegidas antes de encontrarlas en la experiencia principal.
+Aplicativo Android y web
+Desde la interfaz principal de cuidado de la planta, el usuario podrá consultar una descripción con información real sobre la especie que está cultivando, lo que fomenta el conocimiento de las plantas nativas del campus. Asimismo, los recursos del agua y del sol que pueden proporcionarse a la planta son coherentes con sus necesidades reales, y la obtención de abono a partir de composta incentiva el manejo adecuado de estos residuos para generar un recurso que favorezca su crecimiento.
+Adicionalmente, la sección de inventario promueve la exploración por parte del usuario mediante categorías reales de plantas, como solar, xerófito, templado, montaña e hidro, cada una con cuidados específicos característicos de su tipo.
+Mediante el consumo de los endpoints del backend y FasAPI se garantiza que el progreso del usuario con cada especie vegetal sea persistente y verificable manteniéndose sincronizado entre sesiones Esto implica que las decisiones de cuidado que toma el usuario tienen consecuencias reales y duraderas, reforzando el vínculo entre la acción del jugador y el ciclo de vida de una especie nativa. El sistema de tipos de planta (Plant Type) expuesto desde el backend garantiza además que cada especie tenga parámetros de cuidado coherentes con su naturaleza real  
+ Aplicación Multiusuario:
+El módulo 3D busca transformar el conocimiento sobre especies nativas de plantas dentro de la universidad, creando una experiencia interactiva y educativa, ya que el jugador aprende mediante la exploración y la toma de decisiones durante el juego. Por medio del sistema de combate, la recolección de semillas y el cuidado de estas, el usuario conocerá las características, rareza y valor de cada especie de plantas.
+Adicionalmente, la división del mapa por medio de biomas, permite dar un poco más de contexto de las especies de plantas, lo que fomenta el aprendizaje mediante la interacción directa, la progresión y la recompensa, promoviendo el conocimiento ambiental.
+7. Perfil de usuario y contexto de uso
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E1: Maria Guio, Jenifer Leiva; E2: William Cubillos, Andres Moya; E3: Julian Lancheros, Daniel Sanchez Hernandez, Ana Maria Sierra; E5: Santiago Castillo, Andrés Alcázar, Santiago Barbosa, .
+Orientación de aporte por equipo: E1 y E2 describen perfiles de uso para móvil, navegador y posible smartwatch. E3 documenta contexto de uso del juego 3D multiusuario, tiempos de sesión y condiciones de acceso. E5 define expectativas de usuario, claridad de navegación y criterios de experiencia. El ejemplo técnico debe contrastar al menos un caso de usuario del widget 2D y uno del juego 3D.
+7.1. Módulo y Perfiles de uso
+Usuario universitario entre 17 y 25 años, con experiencia básica en videojuegos móviles y aplicativos web, que acceden desde celular android y computador durante la demostración académica esperando una experiencia clara, interactiva y de fácil navegación.
+Estudiantes de bachillerato entre 12 y 16 años, con experiencia básica en videojuegos móviles, que actúan como estudiantes de prueba y acceden desde celular android y computador durante la demostración académica.Sus expectativas se centran en una interacción intuitiva, dinámica y atractiva que facilite la comprensión del sistema.
+Profesores del campus, entre los cuales se encuentran los docentes del área de multimedia que tienen una experiencia alta con sistemas interactivos y videojuegos, que acceden desde celular android y computador durante la demostración académica.Su enfoque está en evaluar la claridad de la navegación, la coherencia de la experiencia de usuario y la calidad de la implementación técnica.
+7.2. Fichas Persona
+Imagen 01: Ficha Persona 01, Estudiante
+Imagen 02: Ficha Persona 02, Docente
+Imagen 03: Ficha Persona 03, Est. Ing. en Multimedia
+Imagen 04: Ficha Persona 04, Estudiante Colegio
+8. Jugabilidad y sistema de interacción (detalle obligatorio)
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E1: Maria Guio, Jenifer Leiva, Ricardo Mancera; E2: William Cubillos, Andres Moya, Alejandro Sandoval; E3: Sara Santos, Alejandra Riaño, Julian Lancheros, Daniel Sanchez Hernandez; E4: Braian Garcia, Oscar Olmos; E5: Santiago Castillo, .
+Orientación de aporte por equipo: E1 y E2 deben describir la jugabilidad 2D compartida del widget, procurando equivalencia funcional entre Android y WebGL/Web. E3 debe desarrollar la jugabilidad 3D del videojuego en red, incluyendo exploración, interacción con especies, estados del jugador y efectos de acciones multiusuario. E4 explica cómo los eventos o datos compartidos condicionan esa jugabilidad 3D. E5 revisa la coherencia de interacción. El ejemplo técnico debe incluir un flujo 2D y un flujo 3D vinculados por datos o progreso.
+Qué debe escribir el equipo: Explique las mecánicas del módulo y cómo se relacionan con el sistema global del juego.
+Guía: Describa objetivo del jugador, reglas, condiciones de éxito/fracaso, progresión, recompensas, restricciones, estados del sistema y relación con otros módulos.
+Ejemplo orientador: El jugador explora, identifica una especie, responde un reto breve y recibe puntos de cuidado o conocimiento según la calidad de sus decisiones.
+Mecánica
+Objetivo
+Regla principal
+Feedback al usuario
+Dependencias
+8.1. Mecánicas módulo web y android
+Mecánica
+Objetivo
+Regla principal
+Feedback al usuario
+Dependencias
+Recolección de agua
+Obtener el recurso de agua 
+Minijuego en el que se tendrá que presionar el botón de recolección repetidas veces antes de que se acabe el tiempo, en total se cuenta con 5 segundos para realizar un máximo de 50 clicks.
+Se le mostrará al usuario el número de clicks que realice por medio de un contador y cuando gane dependiendo de su resultado  al finalizar hay una animación de partículas de gotas que viajan desde el botón de regadera a  el botón de interacción de agua y se actualizará el número del recurso.
+Cantidad de unidades obtenidas en el minijuego:
+- 25 click = 0u
+  25 click = 2u
++25 click = 4u 
+  50 click = 6u
+Cooldown de 10 minutos.
+Recolección de soles
+Obtener el recurso de sol
+Cada cierto tiempo el sol aparece en el fondo donde se encuentra la planta; el cual generará soles de forma aleatoria entre 2 a 4 unidades, que se podrán recoger.
+Al oprimir los soles en pantalla el número de este recurso en el botón de interacción correspondiente se actualizará.
+Cantidad de unidades obtenidas.
+Cooldown de 10 minutos.
+Recolección de composta
+Obtener el suficiente recurso de composta que generará el recurso abono
+Minijuego en el que se deberá hacer clic sobre toda la composta antes de que se acabe el tiempo (2 segundos) y que están dispuestos en una matriz de 8 elementos, donde 4 de ellos son composta y otros 4 son basuras.
+Cuando complete el minijuego dependiendo de su resultado  al finalizar hay una animación de partículas que viajan desde el botón de pala al panel de composta y se actualizará el número del recurso.
+Cantidad de composta correctamente obtenidos (mínimo 0 y máximo 4).
+Cooldown de 10 minutos.
+Suministrar recursos agua y sol a la planta
+Mantener estado de los recursos de agua y sol en un estado óptimo 
+Hacer clic en el botón de interacción correspondiente  (para suministrar el recurso relacionado)
+Al oprimir el botón de interacción a la planta se le dará el recurso correspondiente y se le agregara en una unidad al panel donde se muestra el estado del recurso y en la planta aparecen partículas haciendo referencia a que está recibiendo un recurso.
+Cantidad de unidades
+obtenidas en las mecánicas: recolección de agua y recolección de soles.
+Suministro de recurso abono a la planta
+Aumentar al máximo el estado del abono para evolucionar la planta a su siguiente fase.
+Al recolectar la cantidad determinada de composta se procede a hacer clic en el botón de interacción de abono para suministrar el recurso
+Al oprimir el botón de interacción a la planta se le dará el recurso correspondiente y se le agregara en una unidad al panel donde se muestra el estado del recurso y en la planta aparecen partículas haciendo referencia a que está recibiendo un recurso.
+Cantidad de unidades obtenidas en la mecánica  recolección de composta.
+Evolución de planta
+Hacer que la planta pase de una fase a otra
+La planta sólo podrá evolucionar una vez alcance la cantidad máxima de abonos por fase
+Cuando la planta evolucione se mostrará una animación que cubrirá a la planta estilo pokemon y cambia el sprite al de la siguiente fase.
+Nivel máximo de cada una de las barras de recursos que se necesitan por categoría y por estado. ver la figura 1.
+Estado de recursos
+Mostrar la cantidad restante de recursos que tiene la planta
+Cada 10 minutos para los recursos de agua y sol desaparecerá una unidad de ese recurso.
+Si se oprime los botones de interacción se agregara una unidad del recurso correspondiente.
+En el panel donde se muestran las barras de recursos, se visualizará la aparición o desaparición de una unidad de cada recurso según corresponda.
+Dependiendo del estado se ejecuta la animación del idle correspondiente.
+Nivel de la barra de recursos:
+Saludable: barras  de recursos(sol/agua) por encima de la mitad del nivel total.
+débil: una de las dos barras de recursos (sol/agua) por debajo de la mitad del nivel total.
+Crítico: solo una unidad en cada barra de recursos(sol/agua).
+Muerte: ninguna unidad en las barras de recursos(sol/agua).
+Figura 1:  Cantidad de recursos necesarios para la evolución de la planta.
+ 8.2 Aplicación Multiusuario
+Mecánica
+Objetivo
+Regla principal
+Feedback al usuario
+Dependencias
+Exploración del mapa
+Permitir al jugador desplazarse y descubrir las zonas del juego
+El jugador puede moverse libremente entre los 5 biomas y la zona central
+“animación” de movimiento, cambio de entorno visual según bioma
+Varga de escenas, assets 3D, sistema de navegación
+Interacción con NPC Guardas
+Iniciar combates y obtener recompensas
+Al acercarse a un guarda, el jugador puede aceptar un combate
+Aparición de indicador interactivo y transición a escena de combate
+Sistema de triggers, UI del mundo, sistema de combate
+Interacción con NPC caballo
+Asignar misiones al jugador para guiar su proceso y obtener recompensas
+En la zona central, el jugador puede interactuar con el caballo para recibir misiones
+Aparición de nubes de diálogo y de misión.
+Sistema de misiones, UI del mundo, integración backend.
+Sistema de combate
+DErrotar el oponente usando estrategia
+Cada turno dura 5 segundos, y el jugador selecciona una acción
+Indicadores de turnos, barra de vida, efectos visuales
+Sistema de combate, sincronización en red
+Ataque base
+Infligir daño constante al enemigo
+Puede usarse en cualquier turno sin restricción
+Efectos de ataque y reducción de vida del oponente
+Sistema de combate
+Defensa
+Reducir el daño recibido
+Cada jugador tiene 2 defensas por combate
+Activación de escudo visual
+Sistema de combate
+Ataque especial
+Ejecutar una habilidad de alto impacto
+Se activa por tiempo
+Efectos visuales y/o curación
+Sistema de habilidades temporalizadas
+Recolección de semillas
+Obtener nuevas plantas para progresar
+Al ganar combates y misiones el jugador recibe semillas según el resultado
+Notificación visual y afecto de recompensa
+Sistema de recompensas, backend
+Acceso al inventario
+Permitir al usuario gestionar sus plantas en el sistema externo (Widget)
+El jugador puede abrir el inventario, lo que lo redirige al Widget
+Transición de salida 
+Integración y conexión con widget
+Retorno al mundo 3D
+Continuar la experiencia después de revisar sus plantas
+Desde el widget el usuario puede volver a regresar al juego manteniendo su progreso
+Carga de escena y restauración del estado del jugador
+Sincronización con backend
+Combate multijugador
+Permitir enfrentamientos entre jugadores reales
+Dos jugadores se enfrentan sin intervención de terceros
+Sincronización de acciones en tiempo real
+Networking
+Cada planta tiene sus ataques y defensas propias, que serán mejor o peor dependiendo de su rareza Con esto subdividimos a las plantas, en Legendario, épico y común, siendo legendario el mejor y común el bueno
+Se definieron 3 formas de ataque dentro del combate
+Ataque base: Ataque que tiene un daño pequeño y se puede utilizar en todo momento
+Defensa: Esta defensa se dará como tipo de escudo, evitando un % del daño que hace el enemigo, pero habrá ciertas plantas que tendrán un mayor porcentaje, de estos escudos se le darán 2 a cada jugador, para que él decida cuándo usarlos
+Ataque especial: Este ataque especial, tiene un poder y/o habilidad diferente al resto, las de curación, harán un poco menos de daño, pero curaran al personaje, en cambio, las que son de ataque, solo atacaran de manera más fuerte pero no se curaran, este se utilizara por tiempo variando en la cantidad de segundos que se demora en activarse esta habilidad, siendo este diferente dependiendo de su rareza.
+Se realizará un combate por turnos, siendo cada uno de 5 segundos, contando con un ataque base que se usará durante todo el combate, una habilidad especial que se activará cada cierto tiempo y que tendrá un mayor impacto que el ataque base.
+De igual forma, dependiendo de la rareza de la planta, tendrá un daño de ataque diferente 
+Por otro lado, se tendrá la defensa, que se utilizara durante el turno del contrincante, funcionara como un escudo de cierto porcentaje de daño que te hará el enemigo, a cada jugador se le darán 2, para que use dentro de la batalla, es decir, puedes escoger si evitar cierto porcentaje del daño que el enemigo te hará, o si deseas guárdalo para algún otro momento de la batalla.
+La batalla acabará cuando la planta de uno de los dos jugadores se quede sin vida y esta pasará al invernadero donde podrá recuperarse de la batalla, pero si llega a ganar podrá obtener una semilla de tipo común o épico, que deberá cuidar para poderlo utilizar
+Ya en el sistema de habilidades, se dividirán en 3, como ya se mencionó, será el ataque básico, defensa o buff y ataque especial.
+Las batallas se harán en un ambiente 3d, donde las figuras o plantas están estáticas durante el combate, solamente lanzando los ataques, recibiendolos y defendiéndose de los mismos.
+Link del excel de toda la información clasificación, GAMEPLAY 3D y Widget:
+https://docs.google.com/spreadsheets/d/1sVqp_Yx9mkpGrWS9SG3U4id2e5YXsQAhebtHeASYzYk/edit?usp=sharing 
+9. Acciones del usuario
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E1: Jenifer Leiva, Ricardo Mancera; E2: Andres Moya, Alejandro Sandoval; E3: Julian Lancheros, Alejandra Riaño, Daniel Sanchez Hernandez; E5: Santiago Castillo.
+Orientación de aporte por equipo: E1 y E2 documentan acciones de interfaz 2D: tocar, deslizar, seleccionar, navegar, confirmar y consultar información. E3 documenta acciones del entorno 3D: desplazarse, aproximarse, activar objetos, resolver retos e interactuar con estados de red. E5 valida que las acciones se describen desde la perspectiva del usuario. El ejemplo técnico debe seguir el formato acción -> respuesta del sistema -> feedback.
+Qué debe escribir el equipo: Liste cada acción posible del usuario y su consecuencia directa en el sistema.
+Guía: No use verbos generales únicamente. Detalle acciones como tocar, arrastrar, seleccionar, rotar, navegar, confirmar, cancelar, acercarse, activar, inspeccionar o colaborar con otro jugador.
+Ejemplo orientador: Tocar tarjeta de especie -> abrir vista detallada -> reproducir micro animación -> mostrar sonido de confirmación.
+Acción del usuario
+Input
+Respuesta del sistema
+Feedback visual
+Feedback sonoro/háptico
+Observaciones
+9.1. Acciones del usuario android y web
+Acción del usuario
+Input 
+Respuesta del sistema
+Feedback visual
+Feedback sonoro/háptico
+Observaciones
+Pantalla Log in
+Usuario ingresa su nombre
+web: Click del mouse en el campo de texto y teclea
+El sistema valida que el nombre sea único, muestra error si ya existe y finalmente lo guarda, al usuario se le asigna su nombre de usuario y identificador único
+Las letras que el usuario vaya digitando se mostrarán en el panel del nombre.
+No se reproduce sonido
+verificacion desde Back Token de sesión  o 409 si hay conflicto
+android: toque en pantalla en el campo de texto y teclea
+Usuario presiona botón aceptar
+web: Click del mouse
+El sistema redirige a la pantalla inicial
+ Al presionar el botón se vuelve ligeramente más opaco
+Se reproduce un sonido de tap digital
+android: toque en pantalla
+Pantalla inicial
+Usuario presiona Botón regadera
+web: Click del mouse
+El sistema abre una ventana pop up que contiene el minijuego del agua
+Al hacer hover el botón se pondrá más opaco y al presionar el botón aumenta su tamaño ligeramente  
+Se reproduce un sonido de regadera
+android: toque en pantalla
+Usuario presiona Botón pala
+web: Click del mouse
+El sistema abre una ventana pop up que contiene el minijuego de la composta
+Al hacer hover el botón se pondrá más opaco y al presionar el botón aumenta su tamaño ligeramente
+Se reproduce un sonido metálico de pala.
+android: toque en pantalla
+Usuario presiona un sol
+web: Click del mouse
+El sistema recolecta el recurso y lo añade a la cantidad total del recurso sol
+El sol desaparece.
+Se reproduce un sonido similar al de PVZ cuando se recolecta un sol
+android: toque en pantalla
+Usuario presiona Botón recurso sol
+web: Click del mouse
+El sistema elimina una unidad de recurso sol y lo agrega al panel del recurso sol de la planta
+Al hacer hover el botón se pondrá más opaco y al presionar el botón disminuye su tamaño ligeramente
+Se reproduce un sonido de plop suave
+android: toque en pantalla
+Usuario presiona Botón recurso agua
+web: Click del mouse
+El sistema elimina una unidad de recurso agua y lo agrega al panel del recurso agua de la planta
+Al hacer hover el botón se pondrá más opaco y al presionar el botón disminuye su tamaño ligeramente
+Se reproduce un sonido de plop suave
+android: toque en pantalla
+Usuario presiona Botón recurso abono
+web: Click del mouse
+El sistema elimina una unidad de recurso abono y lo agrega al panel del recurso abono de la planta
+Al hacer hover el botón se pondrá más opaco y al presionar el botón disminuye su tamaño ligeramente
+Se reproduce un sonido de plop suave.
+android: toque en pantalla
+Usuario presiona Botón de inventario
+web: Click del mouse
+El sistema redirige a la pantalla de inventario, carga desde la información del usuario las plantas almacenadas
+Al hacer hover el botón se pondrá más opaco y al presionar el botón disminuye su tamaño ligeramente
+Se reproduce un sonido de tap digital
+android: toque en pantalla
+Usuario presiona Botón de ayuda
+web: Click del mouse
+El sistema abre un pop up con la pantalla de ayuda
+Al hacer hover el botón se pondrá más opaco y al presionar el botón disminuye su tamaño ligeramente
+Se reproduce un sonido de tap digital
+android: toque en pantalla
+El sistema redirige a la pantalla ayuda
+Pantallas minijuegos
+Usuario presiona Botón de recolección de agua
+web: Click de forma repetida de mouse
+El sistema activa un cronómetro que inicia una cuenta regresiva y un contador que registra la cantidad de veces que se presiona el botón.
+Cada vez que se presione el botón este se pondrá más opaco.
+Se reproduce un sonido de click.
+respuesta de Backend para minijuego si es exitoso 200 ok con unidades otorgadas y cooldown activado
+android: toque de forma repetida en pantalla
+Usuario presiona los íconos de composta
+web: Click de de mouse
+El sistema activa un cronómetro que indica una cuenta regresiva, muestra íconos de basura y de composta, el sistema registra la cantidad de íconos de composta presionados.
+Cada vez que se presione un icono de composta este se pondrá más opaco.
+Cuando presiona iconos de composta se reproduce un sonido de reward suave y cuando oprime uno de basura suena un sonido de error.
+android: toque en pantalla
+Pantalla inventario
+Usuario presiona botón cerrar
+web: Click del mouse
+El sistema retorna a la pantalla inicial
+Al hacer hover el botón se pondrá más opaco y al presionar el botón disminuye su tamaño ligeramente
+Se reproduce un sonido de tap digital
+android: toque en pantalla
+Usuario presiona filtro por categoría
+web: Click del mouse
+El sistema muestra los resultados (módulo de planta) correspondientes a la categoría filtrada.
+Se muestra un menu desplegable con las opciones a seleccionar, cuando el usuario hace hover sobre una opción, ésta cambia de color
+No hay sonido.
+android: toque en pantalla
+Usuario presiona filtro por etapa
+web: Click del mouse
+El sistema muestra los resultados (módulo de planta) correspondientes a la etapa filtrada.
+La opción seleccionada cambia de color momentaneamente.
+No hay sonido.
+android: toque en pantalla
+Usuario presiona filtro por urgencia
+web: Click del mouse
+El sistema muestra los resultados (módulo de planta) correspondientes a la urgencia filtrada.
+La opción seleccionada cambia de color momentaneamente.
+No hay sonido.
+android: toque en pantalla
+Usuario selecciona planta
+web: Click del mouse
+El sistema abre una ventana emergente pop up “selección de planta”que contiene el módulo de la planta seleccionada abarcando gran parte de la pantalla y atenúa el fondo 
+La opción seleccionada cambia de color momentaneamente.
+No hay sonido.
+android: toque en pantalla
+Pop up selección de planta
+Usuario presiona volver
+web: Click del mouse
+El sistema cierra la ventana emergente pop up selección de planta.
+El boton aumenta ligeramente su tamaño, y cambia de color al hacer hover, al hacer click, cambia momentaneamente de color.
+Se reproduce un sonido de tap digital
+android: toque en pantalla
+Usuario presiona seleccionar
+web: Click del mouse
+El sistema redirige a la pantalla inicial y actualiza la planta anterior por la planta seleccionada, cambiando así el nivel máximo de las barras de recursos(según categoría y etapa). pero no varía la cantidad de recursos en los botones de interacción.
+El boton aumenta ligeramente su tamaño, y cambia de color al hacer hover, al hacer click, cambia momentaneamente de color.
+Se reproduce un sonido de tap digital
+android: toque en pantalla
+Exclusivo para Android
+Pantalla inventario
+Usuario desliza la pestaña inferior con el icono de filtro
+Deslizar el dedo sobre la pantalla
+Desplegar el bottom sheet
+No hay feedback
+No hay sonido.
+Widget (Android)
+Usuario presiona el widget
+toque sobre cualquier región del widget
+El sistema abre el aplicativo móvil en la pantalla inicial
+No hay feedback
+No hay sonido.
+9.2 Acciones usuario aplicación multiusuario
+10. Diseño de interfaces 2D
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E1: Maria Guio, Jenifer Leiva; E2: William Cubillos, Andres Moya; E5: Andrés Alcázar, Santiago Castillo, Santiago Barbosa.
+Orientación de aporte por equipo: E1 y E2 describen pantallas, layouts, navegación y adaptación entre Android y Web. E5 define sistema visual común, lineamientos de color, tipografía, iconografía y criterio de usabilidad. El ejemplo técnico debe referirse a una pantalla real del widget o a una transición de estado en interfaz 2D.
+Qué debe escribir el equipo: Describa pantallas, jerarquía visual, navegación, HUD, menús, alertas, formularios, estados vacíos y feedback 2D.
+Guía: Incluya estructura de pantalla, layout, tipografía, paleta, iconografía, estados activos/inactivos y criterios de legibilidad en Android y Web.
+Ejemplo orientador: Pantalla principal con acceso a especies, progreso, reto diario y botón de regreso; barra inferior con navegación persistente.
+Espacio para evidencia: Insertar aquí wireframes, mockups, referencias visuales o capturas de prototipos 2D.
+7.1.  Pantallas, layouts, navegación y adaptación entre Android y Web
+Android
+Widget
+El widget consiste de un panel (canvas) que ocupa aproximadamente la mitad del espacio de la pantalla en un dispositivo móvil, equivalente a una cuadrícula de 4 × 4 iconos en la pantalla de inicio. En el centro del widget se muestra la planta que el usuario está cuidando, funcionando como el elemento visual principal. Además, incluye notificaciones visuales sobre las necesidades de la planta, como requerimientos de agua o sol. También incorpora botones de acceso rápido al inventario y a los recursos. Al presionar cualquiera de estos botones, el usuario es redirigido automáticamente a la aplicación de Android, donde puede gestionar la planta o sus recursos.
+Inicio
+Interfaz Log in
+La primera interfaz visible para el usuario corresponde a una pantalla de inicio de sesión (log in), en la cual se solicita un único dato: el nombre de usuario, que debe ser único. Una vez el usuario lo ingresa y presiona el botón “Aceptar”, es redirigido a la página principal.
+Interfaz inicio
+La segunda interfaz presenta la página principal, donde se muestra la información general de la planta. Esta se organiza de la siguiente manera:
+En el encabezado (header), se visualiza un mensaje de bienvenida junto con el nombre de la planta. A la izquierda se encuentra el botón de ayuda, y a la derecha, el botón de inventario.
+En la sección central de contenido, se dispone un canvas, en él se encuentra la planta como elemento central, acompañada en la parte superior central por un recuadro que muestra mensajes dinámicos según el estado de la planta. En la parte superior izquierda se ubican las barras que indican el estado actual de los recursos disponibles y hacia la derecha de estas se muestran los soles destinados a la recolección. En la parte inferior, a ambos lados, se localizan botones tipo sticker para la recolección de agua y abono.
+En la zona inferior del canvas se encuentran los botones que permiten al usuario administrar los recursos de la planta.
+En la parte inferior de la interfaz se incluye un espacio informativo donde el usuario puede consultar datos reales sobre la planta que está cultivando, así como un recuadro que indica la cantidad de composta recolectada.
+Minijuegos
+Interfaz minijuego agua
+Esta interfaz es una ventana emergente (pop-up) del tamaño vertical de la pantalla que consiste en un botón que el usuario deberá presionar repetidamente, ya que el minijuego funciona como un clicker. El usuario contará con un tiempo limitado para presionar el botón una determinada cantidad de veces y, de esta manera, obtener el recurso.
+Interfaz minijuego abono
+Esta interfaz consiste en una ventana emergente (pop-up) del tamaño vertical de la pantalla que contiene una matriz de objetos que cambian aleatoriamente cada vez que el usuario ingresa a ella. En este minijuego, el usuario dispone de un tiempo limitado para presionar únicamente la composta. 
+Ayuda
+Esta interfaz explica al jugador: Qué es cada recurso del juego, cómo se obtiene cada recurso, como funcionan los botones de interacción y el proceso de selección de las plantas en el inventario según los filtros.
+Inventario
+Interfaz inventario
+Página que permite al usuario visualizar y gestionar las plantas que ha obtenido en el juego, en la parte superior se accede a un botón para salir del inventario. La sección central presenta una pantalla tipo galería donde se muestran todas las plantas disponibles, entre ellas encontramos a las plantas que el usuario ha desbloqueado y aparecen activas, se puede visualizar su nombre, estado actual, categoría, rareza y necesidades de recursos (agua y sol). Por otro lado las plantas que aún no han sido obtenidas muestran únicamente sus siluetas, con su nombre representado mediante signos de interrogación.  
+Pestaña Filtros
+La pestaña incluye filtros de búsqueda para facilitar la navegación y clasificar las plantas por categoría (solar, xerófila, templada, montañosa e hidrófila), etapa de crecimiento (semilla, arbusto pequeño, arbusto grande y etapa final ENT), además de urgencia de cuidado según la necesidad de recurso. El usuario puede combinar todos los tipos de filtros para visualizar únicamente las plantas que cumplan con los criterios seleccionados.
+Web
+inicio
+Esta interfaz muestra la información principal de la planta. En ella se presenta el nombre de la planta, un recuadro donde aparece un mensaje que cambia según el estado en el que se encuentre, el acceso a la interfaz del inventario y el botón de ayuda.
+En el centro se encuentra la sección donde podemos ver la planta que estamos cuidando, cerca de la planta se visualiza el estado actual de cada uno de los recursos disponibles, junto con los botones que permiten al usuario suministrar dichos recursos a la planta, así como un recuadro que indica la cantidad de composta disponibles para la producción de abono..
+Por otro lado, a la derecha también se incluye un espacio donde el usuario puede consultar información real sobre la planta que está cultivando.
+Minijuegos
+Dentro de la pantalla donde se encuentra la planta también se incluyen dos botones que permiten acceder a los minijuegos para recolectar agua y desechos orgánicos estos por el momento se encuentran integrados en el escenario pero en la siguiente iteración se decidió cambiar esto. Además, se muestra el sol, el cual suministra este recurso de forma periódica.
+Esta interfaz es una ventana emergente (pop-up) que consiste en un botón que el usuario deberá presionar repetidamente, ya que el minijuego funciona como un clicker. El usuario contará con un tiempo limitado para presionar el botón una determinada cantidad de veces y, de esta manera, obtener el recurso.
+Esta interfaz consiste en una ventana emergente (pop-up) que contiene una matriz de objetos que cambian aleatoriamente cada vez que el usuario ingresa a ella. En este minijuego, el usuario dispone de un tiempo limitado para presionar únicamente los desechos orgánicos.
+Ayuda
+Ventana emergente (pop-up) de ayuda que se activa desde la interfaz principal. En la parte superior presenta el título “Ayuda”, en la sección central contiene el texto explicativo y en la parte inferior incluye los botones “Anterior” y “Siguiente” para navegar entre las diferentes páginas de información. Esta interfaz explica al jugador: Qué es cada recurso del juego, cómo se obtiene cada recurso, el significado de los iconos presentes en la interfaz, la función de los elementos del inventario y otros componentes de la interfaz.
+Inventario
+Página que permite al usuario visualizar y gestionar las plantas que ha obtenido en el juego, en la parte superior se muestra el nombre de la planta seleccionada y un botón para salir del inventario. La sección central presenta una pantalla tipo galería donde se muestran todas las plantas disponibles, entre ellas encontramos a las plantas que el usuario ha desbloqueado y aparecen activas, se puede visualizar su nombre y por otro lado las plantas que aún no han sido obtenidas donde se muestran únicamente sus siluetas, con su nombre representado mediante signos de interrogación.
+La interfaz incluye filtros de búsqueda para facilitar la navegación entre las plantas, en la versión web los filtros se encuentran en la parte superior de la pantalla. Los filtros permiten clasificar las plantas por categoría (solar, xerófila, templada, montañosa e hidrófila), etapa de crecimiento (semilla, arbusto pequeño, arbusto grande y etapa final ENT) y nivel de urgencia la cual está representado con el nivel de un semáforo que indica cuál de los recursos (agua o sol) esté necesitando la planta. El usuario puede combinar los filtros para visualizar únicamente las plantas que cumplan con los criterios seleccionados.
+Al hacer clic sobre una planta, se muestran dos opciones: seleccionar para establecerla como la nueva planta que se cuidará en la interfaz principal o volver para regresar a la galería sin realizar cambios.
+Contenido de Ayuda
+7.2.  Identidad visual del videojuego
+El sistema visual común del proyecto se construye desde la combinación de elementos nostálgicos del pixel art (8 bits) con una representación contemporánea en low poly, permitiendo una transición visual clara entre el cuidado individual de la planta y la exploración colaborativa del entorno. A través de reglas unificadas de color, tipografía, formas y jerarquías visuales, se asegura consistencia en la experiencia del usuario, independientemente del dispositivo o contexto de uso.
+Las decisiones de identidad visual fueron validadas mediante un proceso de evaluación con usuarios, cuyos resultados pueden consultarse en el siguiente enlace: https://short.do/kksLzR
+Moodboard, exploración de color y formas
+La construcción del moodboard se basó en la selección de referentes clave del género de mascotas virtuales, simulación y exploración, priorizando aquellos que aportan al vínculo emocional, claridad de interfaz y progresión constante, como Tamagotchi, Neko Atsume, Animal Crossing y Minecraft. Estos referentes permitieron identificar patrones visuales relacionados con el uso de colores amigables, interfaces simples, sistemas de retroalimentación constante y estéticas accesibles. A partir de este análisis se definieron lineamientos conceptuales que orientan la identidad del proyecto hacia una experiencia cálida, educativa y progresiva, alineada con el propósito de generar conciencia ambiental mediante la interacción digital.
+Imagen 05: Moodboard de temática y técnicas
+Imagen 06: Moodboard de Interacción social y competencia multijugador
+Concept Art  y pruebas de color
+Los lineamientos de color se definieron a partir de un proceso iterativo de exploración y validación, en el cual se desarrollaron dos propuestas cromáticas aplicadas en tres escenarios: dos interfaces de widget (web) y un entorno 3D isométrico. Estas propuestas fueron evaluadas mediante un instrumento aplicado a 30 usuarios representativos de los arquetipos definidos, permitiendo seleccionar la opción que mejor comunicaba claridad, coherencia ambiental y legibilidad.
+Imagen 07: Escenario ambiente, experiencia Web en 8 bits
+Imagen 08: Escenario tamagotchi, experiencia Web en 8 bits
+Imagen 09: Escenario en vista isométrica , experiencia 3D en Low Poly
+Paleta de Color
+Se estableció una paleta compuesta por tres colores principales (#D7D87E, #5F8326, #AB2C08) y cuatro secundarios (#55CCD9, #D9C199, #82841F, #98542E), se adiciona el tono azul como recurso complementario tras considerar su necesidad durante todo el progreso de la experiencia jugable.
+Imagen 10: Paleta de color
+Esta paleta no se plantea como restrictiva, sino como base del sistema, permitiendo la integración de acentos cromáticos derivados de los activos 2D y 3D desarrollados por el semillero vinculado al proyecto, así como adaptaciones específicas según los biomas del entorno 3D, manteniendo coherencia sin limitar la diversidad visual.
+Tipografía
+El sistema tipográfico se estructura en tres niveles funcionales que responden a los distintos contextos del proyecto.
+Imagen 11: Tipografía
+Para títulos principales y el entorno 3D se utiliza Bungee, una tipografía robusta que aporta carácter, legibilidad y presencia en interfaces de mayor escala. 
+Para el widget y elementos nostálgicos se emplea Press Start 2P, que refuerza la estética retro y la conexión con el concepto de mascota virtual en formato 8 bits. 
+Finalmente, para textos de lectura, descripciones y elementos de UI se utiliza Nunito, seleccionada por su alta legibilidad, neutralidad y adaptabilidad en pantallas digitales. Esta combinación permite equilibrar identidad, funcionalidad y coherencia visual en todo el sistema.
+Iconografía
+Botones de navegación
+Los botones del sistema se diseñan bajo un criterio de simplicidad y claridad, utilizando formas rectangulares sin contorno, apoyadas principalmente en el uso del color y la jerarquía visual para indicar estados e interactividad. Esta decisión responde a la necesidad de reducir ruido visual, facilitar la lectura de la interfaz y mantener coherencia con la estética tanto del pixel art como del low poly. Los estados (hover, activo, deshabilitado) se comunican mediante variaciones de color, brillo o contraste, evitando elementos innecesarios que puedan afectar la experiencia del usuario.
+     
+Imagen 12: Exploración de botones de navegación
+Criterio de usabilidad
+El criterio de usabilidad del proyecto se fundamenta en principios de claridad, accesibilidad y reducción de carga cognitiva, asegurando que las interacciones sean intuitivas para usuarios con diferentes niveles de experiencia. Las decisiones de diseño prioriza la identificación rápida de acciones, la comprensión del estado del sistema (especialmente en el cuidado de la planta) y la consistencia entre pantallas. Asimismo, se busca que la interfaz guíe al usuario de manera natural, reforzando el aprendizaje progresivo y la relación causa–efecto, elementos clave dentro del enfoque educativo y ambiental del proyecto.
+11. Diseño de interfaces 3D
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E3: Sara Santos, Julian Lancheros, Daniel Sanchez Hernandez; E5: Andrés Alcázar, Santiago Castillo; E4: Oscar Olmos cuando la UI dependa de estados sincronizados.
+Orientación de aporte por equipo: E3 describe escenario, objetos interactivos, indicadores en mundo, paneles contextuales y condiciones de interacción espacial. E5 define legibilidad, señalización y coherencia estética de la UI 3D. E4 aporta cuando un elemento 3D dependa de información de servidor o de otros jugadores. El ejemplo técnico debe mostrar una interacción espacial concreta con feedback en mundo.
+Qué debe escribir el equipo: Documente los espacios, objetos interactivos, señalización, interacción espacial y elementos visuales inmersivos del módulo cuando aplique.
+Guía: Detalle objetos 3D, colliders, triggers, puntos de atención, UI en mundo, paneles flotantes, distancia de interacción y feedback espacial.
+Ejemplo orientador: Al aproximarse a una especie, aparece una etiqueta contextual en mundo; al seleccionar, se activa un panel con información y animación de resalte.
+Espacio para evidencia: Insertar aquí capturas de escena, esquemas de interacción, vistas del entorno, placement de objetos o diagramas de colliders/triggers.
+11.1. Aplicación Multijugador
+El entorno está compuesto por un mapa dividido en 6 zonas: 5 biomas(Hidro, Solar, Xerófito, Montaña y Templado) y una zona central neutra. Cada bioma presenta características visuales y ambientales específicas, lo que permite que el usuario reconozca fácilmente el ecosistema en el que se encuentra.
+Estructura del entorno:
+El mapa está diseñado como un espacio continuo en el que el jugador pueda explorar libremente, utilizando un sistema de navegación basado en colisiones y físicas básicas. Cada zona tendrá:
+Terreno base con texturas específicas por bioma
+Objetos interactivos(NPCs, puntos de misión, zonas de combate)
+ELementos decorativos que refuerzan la ambientación
+La zona central funciona como hub principal, donde se encontraría al caballo encargado de asignar misiones al jugador.
+Objetos interactivos y triggers
+Los objetos interactivos dentro del entorno utilizan colliders con triggers que detectan la proximidad del jugador. AL entrar la area de interacción:
+Se activa un indicador visual en el mundo (UI 3D) sobre el objeto
+Se habilita la acción ya sea de interactuar, combatir, aceptar misiones.
+Elementos interactivos que incluye:
+NPCs (guarda) que retan a combates
+NPCs(Caballo) del punto central, el cual asigna misiones
+Monumentos representativos del campus donde aparecerán los Boss
+Accesos al inventario de plantas
+Cuando el jugador se aproxima a un objeto interactivo, se activa un indicador visual en el entorno, permitiendo iniciar cualquier interacción. Durante el combate se cambia de escena a una específica para esta parte del juego, la interfaz debe mostrar información relevante como:
+vida
+habilidades disponibles
+turno
+Los elementos deben estar diseñados con una buena legibilidad, distancia de interacción y jerarquía visual, permitiendo una experiencia intuitiva para el jugador
+World Space UI
+La interfaz en el entorno 3D se implementa mediante canvas en modo WorkSpace, permitiendo que los elementos UI estén integrados dentro del mundo
+Elementos principales:
+Indicadores de interacción(Iconos flotantes)
+Nombres o tag de NPCs
+barras de vida durante combate
+Señales visuales de misión
+Estos elementos serán para mantener legibilidad a distintas distancias mediante escalado dinámico o ajustes de cámara
+Sistema de combate:
+El combate ocurre en un entorno 3D diferente al mundo donde se encuentran los biomas y demás, espacio controlado donde las plantas permanecen en posiciones fijas. La interacción se basa en la selección de ataques:
+Ataque base
+Defensa
+Ataque especial
+Durante el combate:
+se muestra las barras de vida y estados del jugador
+se activan los VFX según la acción ejecutada
+se utilizan indicadores de turno para guiar la interacción del jugador
+Integración con otros módulos:
+El entorno 3D se conecta con otros sistemas del proyecto:
+Widget (inventario/invernadero): mediante transición fuera del entorno 3D.
+Backend: para sincronización de progreso, misiones y recompensas.
+Sistema multijugador: para interacción con otros jugadores en tiempo real.
+12. Animaciones y feedback audiovisual
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E1: Jenifer Leiva; E2: Andres Moya; E3: Julian Lancheros, Daniel Sanchez Hernandez; E5: Andrés Alcázar, Santiago Castillo.
+Orientación de aporte por equipo: E1 y E2 describen micro animaciones de interfaz y confirmaciones visuales del widget. E3 documenta animaciones funcionales del juego 3D, feedback de interacción y estados de éxito/error. E5 establece consistencia audiovisual y propósito expresivo. El ejemplo técnico debe indicar trigger, duración, elemento afectado y relación con audio o vibración.
+Qué debe escribir el equipo: Describa animaciones funcionales, transiciones, feedback de acierto/error, estados de carga y señales sonoras asociadas. 
+Guía: Incluya disparador, duración, finalidad, elemento afectado, tipo de movimiento y relación con el sonido o vibración.
+Ejemplo orientador: Al completar un reto, el botón confirma con un pulso de escala, brillo breve y sonido corto de recompensa.
+Elemento
+Trigger
+Tipo de animación
+Duración aprox.
+Propósito
+Relación con audio
+9.1. Animaciones y feedback android y web
+Elemento
+Trigger
+Tipo de animación
+Duración aprox.
+Propósito
+Relación con audio
+Planta (Sana)
+Estado por defecto (Salud > 70%)
+Loop Idle constante a 6 FPS.
+Loop
+Transmitir vitalidad
+Ninguna
+Planta (Débil)
+Salud inferior al 50%
+Loop Idle a 4 FPS con partículas de hojas cayendo.
+Loop
+Indicar necesidad de atención o fatiga.
+Ninguna
+Planta (Crítica)
+Salud inferior al 20%
+Loop Idle a 2 FPS con partículas de hojas muertas cayendo
+Loop
+Alertar sobre peligro de muerte inminente.
+Ninguna
+Planta (Muerte)
+Salud llega a 0%
+Cambio de sprite estático (Tumba)
+Feedback visual de fin de ciclo de vida.
+Ninguna
+Riego
+Clic/Tap en icono de agua
+Partículas azules sobre el sprite a 10 FPS.
+0.5 - 1 seg
+Confirmar acción de cuidado recibida con éxito.
+Consumption Feedback Chime
+Tomar el Sol
+Clic/Tap en icono de sol
+Partículas amarillas sobre el sprite a 10 FPS.
+0.5 - 1 seg
+Confirmar acción de cuidado recibida con éxito.
+Consumption Feedback Chime
+Evolución
+Al completar el abono requerido
+Aura luminosa que cubre el sprite y cambia al siguiente.
+3 - 4 seg.
+Mostrar el crecimiento de semilla a arbusto/árbol
+Reward Increment Song
+13. Flujo de usuario y navegación
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E1: Maria Guio, Jenifer Leiva; E2: William Cubillos, Alejandro Sandoval; E3: Julian Lancheros, Ana Maria Sierra; E5: Santiago Castillo, .
+Orientación de aporte por equipo: E1 y E2 describen el flujo del widget desde acceso hasta consulta, acción o cierre. E3 describe el flujo del videojuego 3D, incluyendo ingreso a sesión, interacción en red y continuidad del progreso. E5 revisa coherencia transversal y puntos de paso entre módulos. El ejemplo técnico debe dibujar una secuencia real de navegación, no una lista abstracta.
+Qué debe escribir el equipo: Explique el recorrido completo del usuario dentro del módulo, desde el ingreso hasta la salida o el envío de información a otro sistema.
+Guía: Describa estados iniciales, decisiones, bifurcaciones, errores posibles, retornos, cierres y continuidad con otros equipos.
+Ejemplo orientador: Inicio -> selección de especie -> consulta -> minireto -> resultado -> guardado de progreso -> retorno al mapa principal.
+Espacio para diagrama de flujo: Insertar aquí diagrama de navegación o secuencia principal del usuario.
+13.2 Diagrama de interacción general del widget web
+Para una mejor visualización, la imagen en alta calidad se encuentra en el siguiente link de drive: Diagrama de interaccion Imaginatio widget web.png
+Imagen 13: Diagrama de interacción de usuario
+14. Arquitectura técnica del módulo
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E4: Braian Garcia, Jonatan Bonilla, Oscar Olmos; E1: Ricardo Mancera; E2: Alejandro Sandoval; E3: Sara Santos, Alejandra Riaño, Daniel Sanchez Hernandez. 
+Orientación de aporte por equipo: E4 lidera la explicación de servicios, modelo de datos, comunicación y persistencia. E1 y E2 explican cómo consumen servicios el widget móvil y web. E3 documenta arquitectura del cliente 3D, escenas, builds y conexión a servicios de red. El ejemplo técnico debe representar una ruta de datos completa entre cliente y backend.
+Qué debe escribir el equipo: Defina herramientas, motores, librerías, servicios, bases de datos, endpoints, escenas, prefabs, estructuras o componentes relevantes.
+Guía: Explique entradas, salidas, almacenamiento, autenticación, comunicación en red, compilación y despliegue.
+Ejemplo orientador: Frontend web en HTML/CSS/JS o framework elegido, autenticación conectada al backend y consumo de servicios para recuperación de progreso del usuario.
+Espacio para diagrama técnico: Insertar aquí arquitectura cliente-servidor, módulos, escenas, rutas de datos o mapa de componentes.
+14.1 Arquitectura de widget web
+El widget web será desarrollado en HTML 5 + CSS con back end desarrollado en python, apoyado en fastAPI y swagger.
+El backend se encargará de administrar toda la información de plantas y usuario, por parte del usuario se tiene: Nombre de usuario, plantas obtenidas, soles obtenidos, cooldown de sol, composta obtenida, cooldown de composta, agua obtenida y cooldown de agua, por parte de cada planta se tiene: estado de la planta, cantidad de agua aplicada, cantidad de compostaje aplicado, cantidad de sol aplicado, fase de la planta, categoría de la planta,nombre o apodo de la planta y nombre científico de la planta, dicha información se debe poder serializar en un json de la siguiente manera:
+imagen 14. modelo de datos usuario y planta json respuesta 
+14.2 Arquitectura de widget Android - capas de integración
+El widget Android (Flutter) consume los servicios del backend mediante peticiones HTTP REST a la API FastAPI. La comunicación sigue el siguiente flujo: 
+imagen 15. flujo y comunicación entre FastAPI y Flutter 
+Los endpoints provisionales consumidos por el widget Android son: 
+Método
+Ruta
+Descripción
+POST
+/auth/login
+Autenticación por nombre de usuario
+GET
+/users/{id}/active-plant
+Obtener estado completo de la planta activa
+PATCH
+/plants/{id}/resources
+Aplicar recurso (agua, sol, abono)
+POST
+/plants/{id}/minigame
+Registrar resultado de minijuego
+GET
+/plants/inventory
+Obtener listado de plantas del usuario
+PATCH
+/users/{id}/active-plant
+Cambiar planta activa
+Almacenamiento local (Flutter): El widget utiliza Hive para persistir localmente el token de sesión y el último estado conocido de la planta activa, permitiendo carga inmediata del widget sin esperar respuesta del servidor. Los datos locales se marcan como stale y se refresca en background al conectar.
+Autenticación: El sistema utiliza un identificador de usuario único generado al registrar el nombre de usuario Este identificador se incluye en el header de cada petición (X-User-ID o Bearer token JWT según implementación final con E4).
+14.2 Arquitectura mundo multiusuario 3D
+El módulo 3D del videojuego estará desarrollado en el motor Unity, en donde se utilizará una arquitectura híbrida que combina un modelo que relaciona un Cliente.Servidor para la exploración del mundo 3D, y un modelo peer-to-peer para la segunda instancia que se activa para llevar a cabo los combates.
+El sistema se opera sobre una red configurada en el entorno de Linux, donde se despliega el servidor central encargado de gestionar la conexión de múltiples clientes y la sincronización del estado global del mundo.
+14.2.1 Componentes principales:
+Cliente 3D: 
+Motor: Unity 
+Lenguaje: C#. 
+Funcionalidad: Está basada en el renderizado del entorno 3D, captura de input del usuario, la ejecución de lógica local (movimientos, conexiones, interacciones con elementos del mundo, y demás usuarios conectados en tiempo real).
+Servidor central 
+Entorno: Linux
+Tipo: Servidor dedicado
+Funcionalidad: Gestión de conexiones de clientes, sincronización de estados (posiciones, eventos), validación de interacciones, y distribución de datos del mundo.
+Sistema P2P (Combate):
+Tipo: Peer to peer temporal
+Funcionalidad: Crear las instancias para los combates independientes entre dos usuarios. Reduce la carga del servidor central,  permite la interacción directa y privada entre dos jugadores.
+Estructura de escenas (Unity):
+Escena 1 (Mundo principal):
+Contenido: La sincronización aquí  se ve representada por: Cliente ↔ Servidor central
+Mapa 3D con biomas
+Jugadores conectados
+NPCs (Guardias, animales, etc)
+Puntos de misión
+Elementos de escenario interactuables
+Escena 2: Combate
+ La sincronización aquí  se ve representada por: Cliente ↔ Cliente
+Instancia dinámicamente
+Solo participan dos jugadores
+No depende del servidor central
+Pruebas y componentes  claves
+PlayerController o player Movement: Movimiento y entrada
+NetworkManager: Gestiona la conexión
+CombatManager: Lógica de combate
+InteractionSystem: Activacion de objetos
+NPCController: Guardias
+Imagen 16. Flujo de datos mundo 3D y combate
+15. Networking, sincronización e integración
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E3: Alejandra Riaño, Julian Lancheros; E4: Braian Garcia, Oscar Olmos, Jonatan Bonilla; E1: Ricardo Mancera; E2: Alejandro Sandoval.
+Orientación de aporte por equipo: E3 y E4 son responsables principales de este capítulo. Deben explicar sesiones, sincronización de estados, actualización de eventos y validación de datos. E1 y E2 describen qué información reciben o envían los módulos 2D. El ejemplo técnico debe mostrar un evento concreto: accion del jugador -> servidor -> actualización en otros clientes o widgets.
+Qué debe escribir el equipo: Documente de qué forma el módulo comparte datos con los demás componentes o con múltiples usuarios.
+Guía: Aclare qué datos se sincronizan, quién los genera, con qué frecuencia cambian, cómo se validan y qué pasa si falla la conexión.
+Ejemplo orientador: Cuando un jugador descubre una especie, el evento se reporta al backend y se refleja en el estado compartido del perfil del usuario.
+15.1 Datos Android Fast API
+Estructura provisional de eventos y datos que se envían.
+Evento
+Dato enviado
+Frecuencia
+Endpoint
+Aplicar recurso
+Tipo de recurso, cantidad
+Por cada acción del usuario
+PATCH /plants/{id}/resources
+Completar minijuego
+Tipo, resultado (clicks/elementos correctos)
+Al finalizar el minijuego
+POST /plants/{id}/minigame
+Cambiar planta activa
+ID de la nueva planta activa
+Al seleccionar en inventario
+PATCH /users/{id}/active-plant
+Iniciar sesión
+Nombre de usuario
+Al abrir la app
+POST /auth/login
+Datos que recibe el widget del backend:
+El widget consulta el estado completo de la planta activa al inicio de sesión (GET/users/{id}/active-plant). Esta respuesta incluye: fase actual, niveles de recursos, cooldowns activos y metadatos de la especie (categoría, nombre científico).
+Estrategia ante fallo de conexión:
+Si el backend no responde al iniciar la app, el widget carga el último estado guardado en Hive (caché local) y muestra un indicador de "modo sin conexión". Las acciones del usuario se encolan localmente y se sincronizan automáticamente cuando se restablece la conexión, mediante un reintento con PATCH de los cambios pendientes.
+Política de sincronización:
+No se utiliza tiempo real (WebSocket) para el widget Android; la comunicación es REST síncrona por evento. El backend actúa como fuente de verdad. En caso de conflicto entre el estado local (Hive) y el estado del servidor, el servidor siempre tiene precedencia.
+15.2 Módulo mundo 3D:
+El módulo 3D implementa una estructura de comunicación combinada en el que se permite la interacción entre múltiples usuarios en tiempo real dentro del entorno de exploración del mundo, y las conexiones directas entre clientes durante instancias de combate.
+Este sistema se integra con el backend compartido para garantizar la persistencia de datos y la coherencia del estado del jugador.
+15.2.1 Integración con el widget (E1/E2)
+Este modulo 3D comparte informacion con el sistema backend que alimenta el widget 2d.
+Datos enviados desde el 3D:
+Resultados del combate
+Nuevas plantas obtenidas
+Puntos de experiencia (XP)
+Progreso del jugador
+Datos recibidos:
+Nombre de usuario
+Estado y posición actual del jugador
+Plantas activas
+15.2.2 Manejo de fallos
+En mundo abierto: 
+Reconexión automática al servidor
+En combate:
+Si se pierde la conexión: 
+Se finaliza la sesión
+Se asigna resultado por defecto (timeout)
+En integración con Backend:
+Los eventos se envían al finalizar acciones clave
+El backend actúa como fuente para verificar la fidelidad de los datos
+16. Assets, arte y recursos de producción
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E5: Andrés Alcázar, Santiago Barbosa; E3: Sara Santos, Julian Lancheros; E1: Jenifer Leiva; E2: Andres Moya; E4: Braian Garcia si existe dependencia de archivos de configuración o datos.
+Orientación de aporte por equipo: E5 lidera el inventario visual y comunicacional. E3 documenta modelos, escenas, prefabs y recursos 3D. E1 y E2 registran assets de interfaz 2D. E4 aporta cuando existan archivos, estructuras o recursos técnicos necesarios para integración. El ejemplo técnico debe listar formato, cantidad y responsable real de producción o integración.
+Qué debe escribir el equipo: Liste todos los recursos necesarios: modelos 3D, sprites, ilustraciones, sonidos, música, clips, tipografías, íconos, fondos, videos o textos.
+Guía: Indique cantidad aproximada, estado, origen, formato y responsable de producción o integración.
+Ejemplo orientador: 3 modelos low poly de especies; 12 iconos UI; 4 sonidos de feedback; 1 fondo principal; 2 microanimaciones de transición.
+Tipo de asset
+Descripción
+Cantidad
+Formato
+Estado
+Responsable
+16.1. Assets y recursos de producción android y web
+Tipo de asset
+Descripción
+Cantidad
+Formato
+Estado
+Responsable
+Sprite: Semilla
+Arte base de 4x4 px. Animación idle simple en lienzo de 8x8 px para prever crecimiento.
+1 por Planta
+Sprite Sheet file 
+Pendiente
+Semillero Progredis / Convocatoria
+Sprite: Arbusto
+Arte base de 8x8 px. Animación idle simple en lienzo de 16x16 px para margen de fase.
+1 por Planta
+Sprite Sheet file 
+Pendiente
+Semillero Progredis / Convocatoria
+Sprite: Árbol
+Arte base de 16x16 px. Animación idle simple en lienzo de 32x32 px para margen de fase.
+1 por Planta
+Sprite Sheet file 
+Pendiente
+Semillero Progredis / Convocatoria
+Sprite: ENT
+Arte base de 32x32 px con ojos sencillos. Animación idle simple en lienzo de 40x40 px.
+1 por Planta
+Sprite Sheet file 
+Pendiente
+Semillero Progredis / Convocatoria
+Botón de recurso agua
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Botón de recurso sol
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Botón de recurso abono
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Panel de estado sol
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Panel de estado agua
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Panel de estado abono
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Panel de estado Composta
+1 para web, 1 para android con pequeñas variaciones pequeñas variaciones
+PNG
+Pendiente
+Fondo del escenario de la planta
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Botón de regadera
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Botón de pala
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+gif instructivo minijuego composta
+1 para web, 1 para android con pequeñas variaciones
+GIF
+Pendiente
+Icono sol, agua y abono
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Icono composta
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Icono basura
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Icono inventario
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Icono ayuda
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Iconos Urgencia
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Iconos Categoría
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Iconos rareza
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Iconos estado
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+Icono semáforo
+1 para web, 1 para android con pequeñas variaciones
+PNG
+Pendiente
+16.2 modelos, escenas, prefabs y recursos Aplicación multiusuario
+a. Definición de entornos y lineamientos ambientales
+Los entornos del proyecto fueron definidos a partir del análisis de las condiciones naturales presentes en el campus universitario, tomando como referencia la diversidad de plantas, arbustos y árboles que requieren cuidado y conservación
+Se establecieron cinco tipos de escenarios: hidro, solar, xerófito, montaña y templado, cada uno con características específicas relacionadas con el clima, la vegetación y el relieve, estos entornos fueron construidos incluyendo elementos esenciales como rocas, tipos de suelo, fuentes de agua o luz y vegetación adaptada, con el fin de garantizar coherencia ambiental y facilitar su reconocimiento.
+Hidro
+Entorno caracterizado por la presencia de agua como elemento principal, incluyendo ríos, lagos o zonas húmedas. Predominan plantas acuáticas, suelos húmedos y fauna asociada al agua, generando un ecosistema dinámico y vital.
+Tipo de asset
+Descripción
+Cantidad
+Formato
+Estado
+Responsable
+Modelo 3D
+Agua (río, lago o mar)
+1
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Plantas acuáticas (algas, nenúfares)
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Rocas húmedas
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Peces o fauna acuática
+4
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Arena o fondo lodoso
+1
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Troncos
+2
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Solar
+Entorno con alta exposición a la luz solar, donde predominan suelos secos, vegetación resistente y espacios abiertos. Se caracteriza por una iluminación intensa y elementos adaptados a condiciones de calor.
+Tipo de asset
+Descripción
+Cantidad
+Formato
+Estado
+Responsable
+Modelo 3D
+suelo seco o arena
+1
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Arboles resistentes a sol
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Arbustos pequeños
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Rocas
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Hierba seca
+2
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Objetos clave:
+Suelo seco o arena
+Árboles resistentes al sol (como acacias)
+Arbustos pequeños
+Rocas
+Sol intenso (iluminación fuerte)
+Opcionales:
+Sombras marcadas
+Hierba seca
+Caminos polvorientos
+Xerófito
+Entorno árido o desértico, con escasez de agua y vegetación limitada. Predominan plantas como cactus y suculentas, junto con suelos secos y rocosos, adaptados a condiciones extremas.
+Tipo de asset
+Descripción
+Cantidad
+Formato
+Estado
+Responsable
+Modelo 3D
+Cactus o suculentas 
+4
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Arena o suelo arido 
+1
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Rocas grandes 
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Dunas
+2
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Sol intenso
+1
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Objetos clave:
+Cactus o suculentas
+Arena o suelo árido
+Rocas grandes
+Poca o casi nula vegetación
+Sol fuerte
+Opcionales:
+Dunas
+Huesos o restos (detalle visual)
+Viento (efecto de arena)
+Montaña
+Entorno de gran altitud con relieve irregular y presencia de rocas y pendientes. Se caracteriza por vegetación resistente como pinos y arbustos, así como condiciones climáticas más frías.
+Tipo de asset
+Descripción
+Cantidad
+Formato
+Estado
+Responsable
+Modelo 3D
+Montañas o elevaciones
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Rocas grandes
+4
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Arboles(pinos)
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Arbustos
+2
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Suelo irregular
+1
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Nieve(opcional)
+1
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Objetos clave:
+Montañas o elevaciones
+Rocas grandes
+Árboles (pinos, coníferas)
+Arbustos resistentes
+Suelo irregular
+Opcionales:
+Nieve en la cima
+Cascadas
+Neblina
+Templado
+Entorno equilibrado con condiciones climáticas moderadas. Presenta abundante vegetación como árboles, arbustos y pasto, junto con suelos fértiles que favorecen la biodiversidad.
+Tipo de asset
+Descripción
+Cantidad
+Formato
+Estado
+Responsable
+Modelo 3D
+Árboles abundantes
+6
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Arbustos
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Pasto o hierba
+2
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Rocas pequeñas
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Modelo 3D
+Flores
+3
+FBX
+Pendiente
+Semillero Progredis / Convocatoria
+Objetos clave:
+Árboles abundantes
+Arbustos
+Hierba o pasto
+Suelo fértil
+Rocas pequeñas
+Opcionales:
+Flores
+Animales
+Riachuelos
+17. Casos de prueba y criterios de QA
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E3: Ana Maria Sierra; E1: Maria Guio, Ricardo Mancera; E2: William Cubillos, Alejandro Sandoval; E4: Oscar Olmos; E5: Santiago Castillo.
+Orientación de aporte por equipo: Ana Maria Sierra lidera la definición de QA. E1 y E2 proponen pruebas funcionales para widget móvil y web. E3 define pruebas del entorno 3D y de interacción en red. E4 define validaciones de sincronización, persistencia y respuesta del backend. E5 verifica criterios de experiencia y claridad de uso. El ejemplo técnico debe formular casos verificables con condición inicial, acción y resultado esperado.
+Qué debe escribir el equipo: Defina cómo se validará que el módulo funciona correctamente.
+Guía: Describa casos felices, casos de error, pruebas de integración, comportamiento en distintos dispositivos y criterios mínimos de aceptación.
+Ejemplo orientador: Si el usuario pierde conexión, la aplicación debe informar el estado y reintentar sin cerrar el flujo principal.
+Caso de prueba
+Condición inicial
+Acción
+Resultado esperado
+Estado
+Identificación de la planta
+Aparece una planta en pantalla
+El jugador selecciona su nombre correcto
+Se muestra acierto o error y se suma puntaje si es correcto
+Pendiente
+Cuidado de planta
+El jugador tiene una planta asignada
+Realiza acciones de cuidado (regar, proteger)
+La planta mejora su estado evoluciona y crece
+Pendiente
+Exploración del mapa
+El jugador inicia en zona desconocida
+Se desplaza por el entorno
+Se desbloquea nuevas áreas o información
+Pendiente
+Interacción de usuarios 
+Dos o más jugadores activos
+Realizan una batalla
+Uno gana la batalla y obtiene puntos mientras el otro los reduce y necesita tiempo de recuperación completando otras misiones 
+Pendiente
+Reconocimiento del entorno 
+el jugador inicia en un entorno(ej hidro)
+el jugador selecciona el tipo de entorno
+El sistema valida si la selección es correcta y muestra retroalimentación
+Pendiente
+17.1 Pruebas funcionales para widget móvil y web
+Se definieron casos de prueba que cubren escenarios funcionales, de error, de integración y de persistencia, garantizando que el sistema responda correctamente ante distintas condiciones de uso y mantenga la continuidad de la experiencia:
+Caso de prueba
+Condición inicial
+Acción
+Resultado esperado
+Estado
+CP1: Aplicar acción con recursos disponibles
+Usuario en interfaz principal cuenta con recursos (agua/sol/abono)
+Presionar botón de acción (ej: regar)
+La planta recibe el recurso, se ejecuta animación correspondiente, se actualiza el estado y se reduce el recurso
+Pendiente
+CP2: Intentar acción sin recursos (mensaje de error)
+Usuario no cuenta con recursos
+Presionar acción (ej: regar)
+El sistema bloquea la acción, muestra aviso de falta de recursos, sugiere obtener recursos o esperar hasta que estén habilitados, sin romper el flujo
+Pendiente
+CP3: Regeneración de recursos por tiempo
+Usuario ha consumido recursos diarios (sol/agua)
+Esperar el tiempo definido (ej: 24 horas)
+Los recursos se restauran correctamente según el límite diario establecido
+Pendiente
+CP4: Animación de soles
+Usuario entra al widget o web después de 24 horas o más
+Se muestra la animación de los soles cayendo
+Los soles se muestran en pantalla y pueden ser seleccionados para almacenarlos y usarlos
+Pendiente
+CP5: Minijuego de agua (exitoso)
+Usuario accede al minijuego de agua y está disponible
+Completar correctamente el minijuego
+Se otorga agua al usuario, se muestra feedback positivo y se actualiza cantidad
+Pendiente
+CP6: Minijuego de agua (fallido)
+Usuario accede al minijuego de agua y está disponible
+No completa el minijuego correctamente
+No se otorga agua, se muestra feedback de error y debe esperar hasta que esté nuevamente habilitado
+Pendiente
+CP7: Minijuego de abono (exitoso)
+Usuario accede al minijuego de abono y está disponible
+Completar correctamente el minijuego
+Se otorga abono al usuario, se actualiza cantidad y se muestra feedback positivo
+Pendiente
+CP8: Minijuego de abono (fallido)
+Usuario accede al minijuego de abono y está disponible
+Fallar la selección (escoger residuos incorrectos)
+El usuario no recibe abono y la actividad queda bloqueada hasta la siguiente activación
+Pendiente
+CP9: Intentar acceder a los minijuegos y no están disponibles
+Usuario intenta dar click en los botones de minijuego (recolectar agua/abono)
+No puede acceder al minijuego y muestra aviso de no disponible
+El sistema bloquea la acción, muestra aviso del tiempo de espera para que se habilite nuevamente, sin romper el flujo
+Pendiente
+CP10: Visualización de inventario (plantas desbloqueadas)
+Usuario posee más de una planta y selecciona botón de inventario
+Acceder al inventario
+Se muestran correctamente todas las plantas con su estado visual actualizado
+Pendiente
+CP11: Selección de planta activa
+Usuario se encuentra en el inventario
+Seleccionar una planta
+La planta seleccionada pasa a ser la activa y se refleja en la interfaz principal
+Pendiente
+CP12: Consistencia visual tras cambio de planta
+Usuario cambia de planta principal activa
+Volver a la pantalla principal
+Se muestra la nueva planta seleccionada con su estado, recursos y evolución correctos
+Pendiente
+CP13: Evolución de planta (integración)
+Planta con requisitos completos (agua, sol, abono)
+Ejecutar acción final de crecimiento (mostrar animación de evolución)
+La planta cambia de etapa, se actualiza su apariencia y se guarda el progreso correctamente
+Pendiente
+CP14: Persistencia y sincronización
+Usuario obtiene semilla, evoluciona a ENT, realiza acciones
+Los progresos son visibles y se actualizan correctamente
+El estado de la planta y recursos se mantienen correctamente, aparece semilla obtenida y el ENT correctamente en la aplicación multiusuario (persistencia local y sincronización backend)
+Pendiente
+CP15: Manejo de desconexión (robustez)
+Usuario sin conexión a internet
+Realizar acciones sobre la planta
+El sistema permite interacción local, guarda cambios temporalmente y sincroniza cuando se restablece la conexión
+Pendiente
+:
+18. Estrategia de publicación y comunicación
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: E5: Santiago Barbosa, Andrés Alcázar, ; E1: Jenifer Leiva; E2: Andres Moya; E3: Daniel Sanchez Hernandez, Julian Lancheros.
+Orientación de aporte por equipo: E5 lidera la narrativa de difusión, piezas visuales y criterios de publicación. E1, E2 y E3 suministran capturas, builds, avances y evidencia técnica del widget 2D y del juego 3D. El ejemplo técnico debe referirse a un tipo concreto de pieza, como reel, captura comparativa, devlog o publicación de avance.
+Qué debe escribir el equipo: Explique cómo el módulo o sus avances alimentan las piezas de difusión del proyecto.
+Guía: Puede incluir capturas, videos cortos, devlogs, reels, posts de avance, piezas informativas sobre especies y material para presentación en evento.
+Ejemplo orientador: El equipo de UI/UX generará comparativas antes/después, pantallas del sistema visual y piezas que expliquen la intención educativa del juego.
+19. Riesgos, dependencias y decisiones abiertas
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: Todos los equipos. Participación mínima sugerida: E1 Maria Guio o Ricardo Mancera; E2 William Cubillos o Alejandro Sandoval; E3 Sara Santos, Alejandra Riaño, Ana Maria Sierra; E4 Braian Garcia, Oscar Olmos; E5 , .
+Orientación de aporte por equipo: Cada equipo documenta riesgos propios y dependencias cruzadas. E3 y E4 deben señalar riesgos de red, builds y sincronización. E1 y E2 riesgos de compatibilidad y consistencia funcional del widget. E5 riesgos de coherencia visual y de comunicación. El ejemplo técnico debe describir una dependencia real y su posible impacto en cronograma o integración.
+Qué debe escribir el equipo: Identifique riesgos técnicos, visuales, de tiempo o de integración que puedan afectar el desarrollo.
+Guía: Relacione dependencias con backend, arte, builds, red, contenidos, modelo de datos o disponibilidad de assets.
+Ejemplo orientador: El módulo depende de que el backend exponga un endpoint estable para progreso antes de iniciar pruebas de integración completas.
+19.1 Riesgos y dependencias de widgets web y android
+El widget web y android deben de tener, en su mayoría, la misma información visible, con la capacidad de exportar los end points a las aplicaciones 3D de Unity, desde las aplicaciones 2D, todo conectando desde la base de datos SQL, es un sistema con muchas conexiones que puede fallar en algún punto, si los datos de las plantas o usuarios no coinciden entre plataformas. 
+Adicionalmente, el desarrollo del widget móvil presenta riesgos asociados a la compatibilidad entre dispositivos Android y la posible adaptación a Wear OS, lo cual puede afectar la consistencia de la interfaz y el rendimiento. Existe también una dependencia directa del backend en la estabilidad de los endpoints (FastAPI), especialmente para la sincronización de recursos, evolución de plantas y persistencia del progreso, lo que puede impactar las pruebas de integración si no se cuenta con servicios disponibles a tiempo. A nivel funcional, se identifican riesgos en la correcta implementación de sistemas dependientes del tiempo (regeneración de recursos y eventos diarios), los cuales pueden generar inconsistencias si no se sincronizan adecuadamente entre usuario y servidor.
+19.2 Riesgos y dependencias de mundo 3D
+El desarrollo del módulo 3D depende de múltiples factores técnicos y de integración, incluyendo la estabilidad de la red, la comunicación con el backend, la disponibilidad de assets y la correcta configuración de builds. A continuación, se identifican los principales riesgos, dependencias y decisiones abiertas que pueden impactar el desarrollo.
+20. Entregables del equipo
+Equipo(s) y miembros que deben contribuir a este capítulo y a su ejemplo técnico: Todos los equipos. Referentes sugeridos: E1 Maria Guio; E2 William Cubillos; E3 Sara Santos y Ana Maria Sierra; E4 Braian Garcia; E5  y Santiago Barbosa.
+Orientación de aporte por equipo: Cada equipo define entregables concretos de su módulo: documentos, builds, assets, servicios, pruebas, prototipos, piezas de comunicación o videos. Debe quedar claro quién entrega qué, en qué formato y con qué criterio de finalización. El ejemplo técnico debe usar nombres reales de entregables esperados para el proyecto.
+Qué debe escribir el equipo: Defina qué documentos, prototipos, builds, assets o pruebas entregará el grupo.
+Guía: Incluya nombre del entregable, formato, responsable y criterio de finalización.
+Ejemplo orientador: Build Android funcional del widget, prototipo navegable web, video de flujo principal, documento de pruebas y paquete de assets integrados.
+Equipo 1: 
+Entregable
+Formato
+Responsable
+Criterio de finalización
+Documento de casos de uso y flujo de usuario
+PDF
+Líder Técnico Movil
+Incluye casos CUA, CUI, CUN y diagrama de flujo e interacción del usuario
+Documento de arquitectura 
+PDF
+Líder Técnico Movil
+Define estructura del sistema, componentes y flujo de datos 
+Prototipo de interfaces (UI/UX)
+Figma / PDF
+Desarrollador UI 
+Contiene todas las pantallas del widget con navegación clara y coherente
+Build funcional del widget (Flutter)
+APK / ejecutable
+Desarrollador UI + Apoyo de Líder Técnico Movil
+Permite interacción completa: cuidado de planta, recursos, navegación, inventario, información, ayuda y minijuegos
+Módulo de integración con backend (FastAPI)
+Código + documentación
+Integrador Backend / Sincronización
+Permite envío/recepción de datos, persistencia y manejo de errores de conexión
+Documento de pruebas (QA)
+PDF
+Líder Técnico Móvil
+Incluye casos de prueba, resultados y validación del sistema
+Versión final integrada del widget
+APK funcional
+Todo el equipo
+El widget funciona completamente con backend integrado, sin errores críticos y con flujo completo validado
+Equipo 2:
+Equipo 3:
+Equipo 4:
+Entregable
+Formato
+Responsable
+Criterio de finalización
+Equipo 5:
+Criterio
+Descripción orientadora
+Peso sugerido
+Jugabilidad / claridad funcional
+Nivel de definición de mecánicas, reglas, acciones, estados y feedback.
+20%
+Diseño UI/UX
+Coherencia visual, jerarquía, claridad de navegación, legibilidad y experiencia de uso.
+20%
+Implementación técnica
+Viabilidad, consistencia arquitectónica, integración de plataformas y criterios de desarrollo.
+20%
+Integración entre equipos
+Capacidad del módulo para conectarse con backend, aplicación, arte y comunicación general.
+20%
+Innovación y valor educativo
+Aporte al aprendizaje sobre especies nativas, creatividad y pertinencia para IMAGINATIO XVIII.
+20%
+🔷 Lineamientos de edición colaborativa por equipos
+Este documento será trabajado de manera colaborativa. Cada equipo debe escribir únicamente en las secciones asignadas.Se debe mantener coherencia global del proyecto.NO eliminar contenido de otros equipos.
+🔹 Diferenciación de responsabilidades por tipo de juego
+Juego 2D (Widget Android / Web)
+Responsables: Equipo 1 y Equipo 2Secciones a completar:- Jugabilidad 2D- Acciones del usuario en interfaz- UI 2D- Animaciones UI- Flujo de usuario en widget
+Juego 3D (Aplicación Multiusuario)
+Responsables: Equipo 3Secciones a completar:- Jugabilidad 3D- Acciones en entorno 3D- Interacciones con objetos- Networking y sincronización- UI en mundo 3D
+Backend / Integración
+Responsables: Equipo 4Secciones a completar:- Arquitectura técnica- Base de datos- API- Sincronización de eventos
+UI/UX y Redes
+Responsables: Equipo 5Secciones a completar:- Diseño visual global- Lineamientos UI/UX- Identidad gráfica- Contenido para redes

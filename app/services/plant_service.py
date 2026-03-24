@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from app.models.plant import Plant, ActionType
 from app.core import plant_logic
 from app.repositories.plant_repository import plant_repository
+from app.repositories.user_repository import user_repository
 
 class PlantService:
     @staticmethod
@@ -24,10 +25,21 @@ class PlantService:
         return plant
     
     @staticmethod
-    def create_plant() -> Plant:
-        """Crea una nueva planta inicialmente"""
-        plant = Plant()
-        return plant_repository.save(plant)
+    def create_plant(owner_id: str) -> Plant:
+        """Crea una nueva planta asignada a un usuario y la activa si no tiene una"""
+        user = user_repository.get_by_id(owner_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="Owner user not found")
+
+        plant = Plant(owner_id=owner_id)
+        plant_repository.save(plant)
+        
+        # Asignar como activa si no tiene ninguna
+        if not user.active_plant_id:
+            user.active_plant_id = plant.id
+            user_repository.save(user)
+            
+        return plant
 
     @staticmethod
     def handle_action(plant_id: str, action: ActionType) -> Plant:
@@ -48,13 +60,31 @@ class PlantService:
             plant_repository.save(plant)
             raise HTTPException(status_code=400, detail="Plant is dead and cannot be interacted with.")
 
-        # 3. Aplicar acción específica
+        # Obtener el duelo para descontar de su inventario
+        user = user_repository.get_by_id(plant.owner_id)
+        if not user:
+            raise HTTPException(status_code=400, detail="Plant has no valid owner.")
+
+        # 3. Validar inventario y aplicar acción específica
         if action == ActionType.WATER:
+            if user.water_inventory < 1:
+                raise HTTPException(status_code=400, detail="Not enough water in inventory.")
+            user.water_inventory -= 1
             plant_logic.apply_water(plant)
+            
         elif action == ActionType.SUN:
+            if user.sun_inventory < 1:
+                raise HTTPException(status_code=400, detail="Not enough sun in inventory.")
+            user.sun_inventory -= 1
             plant_logic.collect_sun(plant)
+            
         elif action == ActionType.PRUNE:
+            if user.fertilizer_inventory < 1:
+                raise HTTPException(status_code=400, detail="Not enough fertilizer (abono) in inventory.")
+            user.fertilizer_inventory -= 1
             plant_logic.apply_pruning(plant)
+
+        user_repository.save(user)
 
         # 4. Verificar si procede un cambio de fase
         plant_logic.check_growth(plant)
