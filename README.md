@@ -1,92 +1,51 @@
 # Backend Plant API (Virtual Plants)
 
-API en FastAPI para el control y progresión de plantas virtuales.
+API en FastAPI para el control y progresión de plantas virtuales, integrado con autenticación simple, inventarios de usuario y mecánicas de minijuegos con restricciones de tiempo real.
 
 ## Cómo ejecutar
 
-1. Instalar dependencias
-
+1. Instalar dependencias:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Ejecutar el servidor uvicorn: (Importante, ejecutar con permisos de administrador)
-
+2. Ejecutar el servidor uvicorn:
 ```bash
 cd "Backend web Integracion multimedia"
-uvicorn app.main:app --reload
+fastapi dev app/main.py
+# (Alternativa: uvicorn app.main:app --reload)
 ```
 
-3. Abrir la documentación de Swagger:
-   [http://localhost:8000/docs](http://localhost:8000/docs)
+3. Abrir la documentación interactiva de Swagger:
+[http://localhost:8000/docs](http://localhost:8000/docs)
 
-## Ejemplos de Requests y Responses (Usando CURL)
+---
 
-### 1. Crear Planta
+## Módulos y Endpoints Implementados (Flujo Completo)
 
-```bash
-curl -X 'POST' \
-  'http://localhost:8000/plant/' \
-  -H 'accept: application/json' \
-  -d ''
-```
+A continuación se detalla el ciclo de vida del jugador y la planta:
 
-**Response:**
+### 👤 1. Autenticación y Perfil
+*   **`POST /auth/login`**: Punto de entrada. Envía un `{"username": "TuNombre"}` para registrar un nuevo jugador (si no existe) o iniciar sesión. El servidor te devolverá tu ID único (`User ID`).
 
-```json
-{
-  "id": "e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd",
-  "message": "Plant created successfully"
-}
-```
+### 🌱 2. Gestión de Plantas y Planta Activa
+*   **`POST /plant/?owner_id={tu_user_id}`**: Crea una nueva semilla (seed). Si el usuario no tenía plantas previas, esta se convierte automáticamente en su mascota principal (planta activa).
+*   **`GET /users/{tu_user_id}/active-plant`**: Recupera toda la información vital, estadísticas, ciclo y debuffs de tu planta actual en cuidado.
+*   **`GET /users/{tu_user_id}/inventory`**: Muestra una lista (Array) con todas las plantas que te pertenecen.
+*   **`PATCH /users/{tu_user_id}/active-plant`**: Permite cambiar la planta que estás cuidando actualmente. Recibe en el body `{"plant_id": "ID_NUEVA_PLANTA"}`.
 
-### 2. Consultar Planta
+### 🎮 3. Minijuegos y Ganancia de Recursos
+Como no puedes alimentar a una planta del aire, primero debes reunir recursos jugando.
+*   **`POST /users/{tu_user_id}/minigame`**: Registra tu puntuación en un minijuego. Recibe en el body un JSON con:
+    *   `"game_type"`: (Puede ser `"water"`, `"sun"`, o `"compost"`).
+    *   `"score"`: La cantidad de clicks o puntos que obtuviste.
+    *   **Lógica automática:** El backend convierte tu `score` en unidades reales de recurso y las guarda en tu inventario.
+    *   **Composta a Abono:** Si recoges 4 unidades de composta (`compost`), automáticamente se convierten en 1 unidad de abono (`fertilizer`).
+    *   **Cooldowns ⏱️:** Cada juego exige una espera de **10 Minutos** reales para poder volverse a jugar repetidamente.
 
-```bash
-curl -X 'GET' \
-  'http://localhost:8000/plant/e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd' \
-  -H 'accept: application/json'
-```
-
-**Response:**
-
-```json
-{
-  "id": "e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd",
-  "stage": "seed",
-  "water": 0.0,
-  "sun": 0.0,
-  "fertilizer": 0.0,
-  "health": 100.0,
-  "last_update": "2026-03-17T22:04:19Z",
-  "last_interaction": "2026-03-17T22:04:19Z",
-  "is_dead": false
-}
-```
-
-### 3. Regar Planta (Acción `water`)
-
-```bash
-curl -X 'POST' \
-  'http://localhost:8000/plant/e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd/water' \
-  -H 'accept: application/json' \
-  -d ''
-```
-
-**Response:**
-
-```json
-{
-  "id": "e44d5619-3c8c-4f76-ae0e-26f6eb8b6cfd",
-  "stage": "seed",
-  "water": 20.0,
-  "sun": 0.0,
-  "fertilizer": 0.0,
-  "health": 100.0,
-  "last_update": "2026-03-17T22:05:00Z",
-  "last_interaction": "2026-03-17T22:05:00Z",
-  "is_dead": false
-}
-```
-
-_(Nota: Nota como el `water` subió a 20.0, y luego de varios regados alcanzará el umbral para crecer hacia la próxima fase (bush))_
+### 💖 4. Cuidados reales de la Mascota
+Una vez tengas los recursos y tu planta activa identificada, puedes gastarlos usándolos en la planta.
+*   **`POST /plant/{plant_id}/{action}`**: Aplica el cuidado.
+    *   Puedes usar las acciones en la URL como: `/water` (gasta 1 agua), `/sun` (gasta 1 sol), `/prune` (gasta 1 abono).
+    *   **Validación estricta:** Si tu inventario está en `0`, te devolverá Error 400.
+    *   **Beneficio:** Evita que tu planta muera al reiniciar su contador de inactividad de 72h, le regenera salud y alimenta sus umbrales para que **evolucione a la siguiente fase** de crecimiento.
