@@ -29,10 +29,11 @@ def play_minigame(user_id: str, result: MinigameResult):
 @router.get("/{user_id}/inventory", response_model=List[PlantResponse])
 def get_user_inventory(user_id: str):
     """
-    Obtiene todas las plantas que pertenecen a un usuario.
+    Obtiene todas las plantas que pertenecen a un usuario y actualiza su estado.
     """
+    from app.services.plant_service import PlantService
     user = UserService.get_user(user_id)  # Valida que exista
-    plants = plant_repository.get_by_owner_id(user_id)
+    plants = PlantService.get_user_inventory(user_id)
     return plants
 
 @router.get("/{user_id}/active-plant", response_model=PlantResponse)

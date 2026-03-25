@@ -25,6 +25,19 @@ class PlantService:
         return plant
     
     @staticmethod
+    def get_user_inventory(user_id: str) -> list[Plant]:
+        """
+        Obtiene el inventario de plantas de un usuario,
+        actualizando el estado de cada una antes de devolverlas.
+        """
+        plants = plant_repository.get_by_owner_id(user_id)
+        current_time = datetime.now(timezone.utc)
+        for plant in plants:
+            plant_logic.update_plant_state(plant, current_time)
+            plant_repository.save(plant)
+        return plants
+    
+    @staticmethod
     def create_plant(owner_id: str) -> Plant:
         """Crea una nueva planta asignada a un usuario y la activa si no tiene una"""
         user = user_repository.get_by_id(owner_id)
