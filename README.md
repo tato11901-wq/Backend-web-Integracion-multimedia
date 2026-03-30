@@ -1,29 +1,61 @@
-# Backend Plant API (Virtual Plants)
+# Integración App Web - Proyecto Multimedia
+
+Este repositorio contiene tanto el Backend (FastAPI) como el Frontend (Astro + Preact + Tailwind) para el sistema de mascotas virtuales e integración de minijuegos.
+
+---
+
+## 💻 Frontend (Astro + Preact)
+
+La interfaz de usuario principal de las plantas y los minijuegos. Construida con **[Astro](https://astro.build)** para el enrutamiento y estructura modular de la página, y **[Preact](https://preactjs.com/)** para los componentes interactivos visuales (como los minijuegos) y el manejo fluido del estado (Signals), con los estilos gestionados mediante **Tailwind CSS**.
+
+### 🚀 Cómo ejecutar el Frontend
+
+1. **Navegar a la carpeta del Frontend:**
+```bash
+cd "Front/Imaginatio Web Front"
+```
+
+2. **Instalar dependencias:**
+```bash
+npm install
+```
+
+3. **Ejecutar el servidor de desarrollo:**
+```bash
+npm run dev
+```
+
+4. **Abrir la página en el navegador:**
+Visita la URL local proporcionada en la consola (por defecto `http://localhost:4321`).
+
+---
+
+## ⚙️ Backend (FastAPI)
 
 API en FastAPI para el control y progresión de plantas virtuales, integrado con autenticación simple, inventarios de usuario y mecánicas de minijuegos con restricciones de tiempo real.
 
-## Cómo ejecutar
+### 🚀 Cómo ejecutar el Backend
 
-1. Instalar dependencias:
+1. **Instalar dependencias:**
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Ejecutar el servidor uvicorn:
+2. **Ejecutar el servidor uvicorn:**
 ```bash
-cd "Backend web Integracion multimedia"
+# Estando en la raíz del backend:
 fastapi dev app/main.py
 # (Alternativa: uvicorn app.main:app --reload)
 ```
 
-3. Abrir la documentación interactiva de Swagger:
+3. **Abrir la documentación interactiva de Swagger:**
 [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ---
 
-## Módulos y Endpoints Implementados (Flujo Completo)
+## 🛠️ Módulos y Endpoints del Backend
 
-A continuación se detalla el ciclo de vida del jugador y la planta:
+A continuación se detalla el ciclo de vida del jugador y la planta en el servidor:
 
 ### 👤 1. Autenticación y Perfil
 *   **`POST /auth/login`**: Punto de entrada. Envía un `{"username": "TuNombre"}` para registrar un nuevo jugador (si no existe) o iniciar sesión. El servidor te devolverá tu ID único (`User ID`).
@@ -35,8 +67,8 @@ A continuación se detalla el ciclo de vida del jugador y la planta:
 *   **`PATCH /users/{tu_user_id}/active-plant`**: Permite cambiar la planta que estás cuidando actualmente. Recibe en el body `{"plant_id": "ID_NUEVA_PLANTA"}`.
 
 ### 🎮 3. Minijuegos y Ganancia de Recursos
-Como no puedes alimentar a una planta del aire, primero debes reunir recursos jugando.
-*   **`POST /users/{tu_user_id}/minigame`**: Registra tu puntuación en un minijuego. Recibe en el body un JSON con:
+Como no puedes alimentar a una planta del aire, primero debes reunir recursos jugando en el frontend.
+*   **`POST /users/{tu_user_id}/minigame`**: Registra tu puntuación en un minijuego al finalizarlo. Recibe en el body un JSON con:
     *   `"game_type"`: (Puede ser `"water"`, `"sun"`, o `"compost"`).
     *   `"score"`: La cantidad de clicks o puntos que obtuviste.
     *   **Lógica automática:** El backend convierte tu `score` en unidades reales de recurso y las guarda en tu inventario.
