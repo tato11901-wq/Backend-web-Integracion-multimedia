@@ -1,3 +1,37 @@
+# =========================
+# Frontend (Astro / Preact)
+# =========================
+Front/node_modules
+Front/dist
+Front/.astro
+
+# =========================
+# Backend (FastAPI / Python)
+# =========================
+back/__pycache__/
+back/*.pyc
+back/.venv
+back/env
+
+# =========================
+# Archivos de entorno
+# =========================
+.env
+Front/.env
+back/.env
+
+# =========================
+# Sistema
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Archivos pesados
+# =========================
 *.pdf
+
+# =========================
+# Archivo específico (solo si no lo necesitas en repo)
+# =========================
 IMAGINATIO_2026_DOCUMENTO_CONCEPTUAL.docx
-INFORME_ITERACION_1.md
