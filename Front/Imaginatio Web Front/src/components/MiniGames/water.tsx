@@ -4,13 +4,13 @@ import { addWater, isWaterGameOpen } from "../../store/resourceStore"
 export default function Water() {
 
   const [clicks, setClicks] = useState(0)
-  const [time, setTime] = useState(10)
+  const [time, setTime] = useState(5)
 
   // Solo renderiza si el estado global indica que está abierto
   if (!isWaterGameOpen.value) return null;
 
   useEffect(() => {
-    if (time > 0 && time < 10) {
+    if (time > 0 && time < 5) {
       const timer = setInterval(() => {
         setTime((prevTime) => prevTime - 1)
       }, 1000)
@@ -25,7 +25,7 @@ export default function Water() {
       addWater(clicks)
 
       setClicks(0)
-      setTime(10) // reinicia juego
+      setTime(5) // reinicia juego
 
       // Cierra el mini juego
       isWaterGameOpen.value = false
