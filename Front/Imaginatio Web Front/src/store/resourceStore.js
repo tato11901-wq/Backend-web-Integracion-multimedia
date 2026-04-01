@@ -10,3 +10,14 @@ export const isWaterGameOpen = signal(false)
 export function addWater(amount) {
   waterLevel.value = waterLevel.value + amount
 }
+
+// Estado global de la composta
+export const compostLevel = signal(0)
+
+// Estado del mini juego de composta
+export const isCompostGameOpen = signal(false)
+
+// Función para actualizar composta
+export function addCompost(amount) {
+  compostLevel.value = compostLevel.value + amount
+}

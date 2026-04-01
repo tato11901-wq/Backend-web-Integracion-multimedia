@@ -28,6 +28,56 @@ npm run dev
 4. **Abrir la página en el navegador:**
 Visita la URL local proporcionada en la consola (por defecto `http://localhost:4321`).
 
+### 🎮 Minijuegos del Frontend
+
+Los minijuegos son componentes Preact que se renderizan como paneles overlay (modal fullscreen). Se activan al hacer click en su botón correspondiente en el dashboard y se cierran al completarlos o presionar la **X**.
+
+El estado global de cada minijuego se maneja con **Preact Signals** en `src/store/resourceStore.js`.
+
+#### 💧 Minijuego de Agua (`MiniGames/water.tsx`)
+
+| Aspecto | Detalle |
+|---|---|
+| **Objetivo** | Hacer la mayor cantidad de clicks sobre el emoji 💧 |
+| **Tiempo** | 9 segundos (inicia al primer click) |
+| **Resultado** | Cada click = +1 recurso de agua |
+| **Trigger** | Click en la **Regadera** o **Cartel de Agua** |
+| **Señales** | `isWaterGameOpen`, `waterLevel`, `addWater()` |
+
+#### 🌱 Minijuego de Composta (`MiniGames/compost.tsx`)
+
+| Aspecto | Detalle |
+|---|---|
+| **Objetivo** | Seleccionar solo los 3 objetos **orgánicos** entre 8 objetos mezclados |
+| **Tiempo** | 5 segundos |
+| **Objetos orgánicos** | 🍌 Cáscara de plátano, 🍎 Corazón de manzana, 🥚 Cáscara de huevo |
+| **Objetos inorgánicos** | 🥤 Vaso de plástico, 🔋 Pila, 📎 Clip metálico, 🛍️ Bolsa de plástico, 🥫 Lata |
+| **Resultado** | Ganar = +1 composta / Perder = reintentar o cerrar |
+| **Trigger** | Click en la **Bolsa de Composta** o **Cartel de Composta** |
+| **Señales** | `isCompostGameOpen`, `compostLevel`, `addCompost()` |
+
+**Mecánica:**
+1. Se muestra una pantalla de inicio con instrucciones
+2. Al presionar "¡Empezar!", los 8 objetos se mezclan aleatoriamente (Fisher-Yates shuffle) en una grilla 4×2
+3. El jugador selecciona/deselecciona objetos tocándolos (toggle)
+4. Al acabarse el tiempo se evalúa: si seleccionó exactamente los 3 orgánicos → gana
+
+> **Nota:** Los emojis son placeholders temporales. Serán reemplazados por imágenes personalizadas en el arreglo `ALL_ITEMS` del componente.
+
+#### 📁 Estructura de archivos de minijuegos
+
+```
+src/
+├── store/
+│   └── resourceStore.js        # Signals globales (water, compost)
+├── components/
+│   └── MiniGames/
+│       ├── water.tsx            # Minijuego de agua
+│       └── compost.tsx          # Minijuego de composta
+└── pages/
+    └── index.astro              # Renderiza ambos con client:load
+```
+
 ---
 
 ## ⚙️ Backend (FastAPI)

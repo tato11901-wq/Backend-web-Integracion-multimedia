@@ -1,4 +1,4 @@
-import { isWaterGameOpen } from "../../store/resourceStore";
+import { isWaterGameOpen, isCompostGameOpen } from "../../store/resourceStore";
 
 export default function GameArea() {
   return (
@@ -25,10 +25,13 @@ export default function GameArea() {
       {/* Interactable Items (Compost & Watering can) */}
       <div className="absolute bottom-24 lg:bottom-32 left-1/2 ml-24 lg:ml-32 flex items-end gap-6 pointer-events-auto">
          
-         {/* Compost Bag Placeholder */}
-         <div className="w-20 h-24 bg-brown-200/50 border-4 border-dashed border-yellow-800 flex items-center justify-center cursor-pointer hover:bg-yellow-200/50 transition-colors">
-            <span className="text-yellow-900 font-bold text-xs text-center">[Img:<br/>Bolsa<br/>Composta]</span>
-         </div>
+         {/* Compost Bag Placeholder - Triggers minigame */}
+         <button 
+           onClick={() => isCompostGameOpen.value = true}
+           className="w-20 h-24 bg-brown-200/50 border-4 border-dashed border-yellow-800 flex items-center justify-center cursor-pointer hover:bg-yellow-200/50 transition-colors"
+         >
+            <span className="text-yellow-900 font-bold text-xs text-center">[Img:<br/>Bolsa<br/>Composta]<br/>(Click: Abrir)</span>
+         </button>
 
          {/* Watering Can Placeholder - Triggers minigame */}
          <button 
