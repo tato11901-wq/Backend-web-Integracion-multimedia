@@ -1,34 +1,38 @@
+import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
+import panelNombrePlanta from '../../assets/Recursos web media/Panel_NombrePlanta.png';
+import panelAvisoPlanta from '../../assets/Recursos web media/Panel_AvisoPlanta.png';
+import btnInventario from '../../assets/Recursos web media/btn_Inventario.png';
+import btnAyuda from '../../assets/Recursos web media/btn_ayuda.png';
+
 export default function TopHeader() {
   return (
-    <div className="flex flex-row justify-between items-start w-full px-6 pt-4 mb-4 lg:mb-6 z-10 relative">
-      
-      {/* Top Header Background Image Placeholder */}
-      <div className="absolute top-4 left-0 w-full h-16 z-0 flex items-center justify-center">
-         <div className="w-full h-full bg-slate-300/50 border-2 border-dashed border-slate-500 flex items-center justify-center text-slate-600 text-sm font-bold">
-            [Fondo Madera Top Bar]
-         </div>
+    <div className="flex flex-row justify-between items-start w-full px-6 pt-0 mb-4 lg:mb-6 z-30 relative pointer-events-none">
+
+      {/* Top Header Background - Panel HUD Superior */}
+      <div className="absolute top-5 left-2 right-2 lg:left-4 lg:right-4 h-30 z-0 flex items-center justify-center">
+        <img src={panelHudSuperior.src} alt="Panel HUD Superior" className="w-full h-full object-fill" />
       </div>
 
-      <div className="relative z-10 flex w-full justify-between items-center px-8 mt-1">
-          {/* Planta 1 - Left Image */}
-          <div className="w-40 h-10 lg:w-48 bg-slate-200 border-2 border-dashed border-slate-400 flex items-center justify-center cursor-pointer">
-            <span className="text-sm font-bold text-slate-500">[Img: Planta 1 Btn]</span>
-          </div>
+      <div className="relative z-10 flex w-full justify-between items-center px-8 mt-12 pointer-events-auto">
+        {/* Nombre de planta - Left */}
+        <div className="w-44 h-14 lg:w-52 lg:h-16 flex items-center justify-center cursor-pointer ml-10">
+          <img src={panelNombrePlanta.src} alt="Nombre Planta" className="w-full h-full object-contain" />
+        </div>
 
-          {/* Center message Image */}
-          <div className="w-[400px] h-12 bg-slate-200 border-2 border-dashed border-slate-400 flex items-center justify-center mx-4">
-            <span className="text-sm font-bold text-slate-500">[Img: Cartel "¡¡¡Necesito sol!!!"]</span>
-          </div>
+        {/* Aviso de planta - Center */}
+        <div className="w-full h-14 lg:h-16 flex items-center justify-center mx-4">
+          <img src={panelAvisoPlanta.src} alt="Aviso Planta" className="w-full h-full object-contain" />
+        </div>
 
-          {/* Right buttons Images */}
-          <div className="flex gap-4 shrink-0">
-            <div className="w-12 h-12 bg-slate-200 border-2 border-dashed border-slate-400 flex items-center justify-center cursor-pointer">
-               <span className="text-xs font-bold text-slate-500 text-center">[Img:<br/>Menú]</span>
-            </div>
-            <div className="w-12 h-12 bg-slate-200 border-2 border-dashed border-slate-400 flex items-center justify-center cursor-pointer">
-               <span className="text-xs font-bold text-slate-500 text-center">[Img:<br/>Help]</span>
-            </div>
+        {/* Right buttons: Inventario y Ayuda */}
+        <div className="flex gap-5 shrink-0 mr-10">
+          <div className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
+            <img src={btnInventario.src} alt="Inventario" className="w-full h-full object-contain" />
           </div>
+          <div className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
+            <img src={btnAyuda.src} alt="Ayuda" className="w-full h-full object-contain" />
+          </div>
+        </div>
       </div>
     </div>
   );
