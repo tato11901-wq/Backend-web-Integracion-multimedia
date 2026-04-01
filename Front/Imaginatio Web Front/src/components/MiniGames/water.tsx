@@ -35,7 +35,7 @@ export default function Water() {
 
   useEffect(() => {
     if (clicks === 1) {
-      setTime(9)
+      setTime(4)
     }
   }, [clicks])
 
