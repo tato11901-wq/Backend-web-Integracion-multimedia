@@ -18,7 +18,7 @@ export default function BottomActions() {
   return (
     <>
       {/* Left block: Iluminar and Regar */}
-      <div className="absolute left-4 bottom-24 lg:bottom-100 w-50 flex justify-center gap-4 z-30 pointer-events-auto">
+      <div className="absolute left-6 top-[16rem] lg:top-[16rem] w-50 flex justify-center gap-4 z-30 pointer-events-auto">
         {actions.slice(0, 2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
             <button className="w-20 h-24 lg:w-24 lg:h-28 flex flex-col items-center justify-center p-0 overflow-hidden">
@@ -37,7 +37,7 @@ export default function BottomActions() {
       </div>
 
       {/* Right block: Abonar */}
-      <div className="absolute right-6 bottom-24 lg:bottom-100 w-50 flex justify-center z-30 pointer-events-auto">
+      <div className="absolute right-6 top-[16rem] lg:top-[16rem] w-50 flex justify-center z-30 pointer-events-auto">
         {actions.slice(2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
             <button className="w-20 h-24 lg:w-24 lg:h-28 flex flex-col items-center justify-center p-0 overflow-hidden">
