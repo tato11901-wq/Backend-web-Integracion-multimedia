@@ -29,7 +29,7 @@ type GameState = "idle" | "playing" | "won" | "lost"
 export default function Compost() {
   const [items, setItems] = useState(() => shuffle(ALL_ITEMS))
   const [selected, setSelected] = useState<number[]>([])
-  const [time, setTime] = useState(5)
+  const [time, setTime] = useState(3)
   const [gameState, setGameState] = useState<GameState>("idle")
 
   // Solo renderiza si el estado global indica que está abierto
@@ -39,7 +39,7 @@ export default function Compost() {
   const startGame = useCallback(() => {
     setItems(shuffle(ALL_ITEMS))
     setSelected([])
-    setTime(5)
+    setTime(3)
     setGameState("playing")
   }, [])
 
@@ -88,7 +88,7 @@ export default function Compost() {
   const handleClose = () => {
     setGameState("idle")
     setSelected([])
-    setTime(5)
+    setTime(3)
     isCompostGameOpen.value = false
   }
 
@@ -112,7 +112,7 @@ export default function Compost() {
               🌱 Minijuego de Composta
             </span>
             <p class="text-black text-center text-sm">
-              Selecciona solo los objetos <strong>orgánicos</strong> en menos de 5 segundos.
+              Selecciona solo los objetos <strong>orgánicos</strong> en menos de 3 segundos.
             </p>
             <button
               onClick={startGame}
