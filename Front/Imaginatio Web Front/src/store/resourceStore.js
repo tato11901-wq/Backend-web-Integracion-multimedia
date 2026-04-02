@@ -21,3 +21,6 @@ export const isCompostGameOpen = signal(false)
 export function addCompost(amount) {
   compostLevel.value = compostLevel.value + amount
 }
+
+// Estado del pop up de información de la planta
+export const isPlantInfoOpen = signal(false)

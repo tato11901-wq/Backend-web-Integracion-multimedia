@@ -15,13 +15,19 @@ export default function TopHeader() {
 
       <div className="relative z-10 flex w-full justify-between items-center px-8 mt-12 pointer-events-auto">
         {/* Nombre de planta - Left */}
-        <div className="w-44 h-14 lg:w-52 lg:h-16 flex items-center justify-center cursor-pointer ml-10">
+        <div className="relative w-44 h-14 lg:w-52 lg:h-16 flex items-center justify-center cursor-pointer ml-10">
           <img src={panelNombrePlanta.src} alt="Nombre Planta" className="w-full h-full object-contain" />
+          <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm lg:text-base pt-1">
+            Planta Fase 3
+          </span>
         </div>
 
         {/* Aviso de planta - Center */}
-        <div className="w-full h-14 lg:h-16 flex items-center justify-center mx-4">
+        <div className="relative w-full h-14 lg:h-16 flex items-center justify-center mx-4">
           <img src={panelAvisoPlanta.src} alt="Aviso Planta" className="w-full h-full object-contain" />
+          <span className="absolute inset-0 flex items-center justify-center text-white font-medium text-xs lg:text-sm pt-1">
+            Lorem ipsum dolor sit amet.
+          </span>
         </div>
 
         {/* Right buttons: Inventario y Ayuda */}
