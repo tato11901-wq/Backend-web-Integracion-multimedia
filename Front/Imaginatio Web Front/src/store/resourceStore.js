@@ -27,3 +27,6 @@ export const isPlantInfoOpen = signal(false)
 
 // Estado del inventario
 export const isInventoryOpen = signal(false)
+
+// Estado del modal de ayuda
+export const isHelpModalOpen = signal(false)
