@@ -4,6 +4,7 @@ import RightSigns from "./dashboard/RightSigns";
 import GameArea from "./dashboard/GameArea";
 import BottomActions from "./dashboard/BottomActions";
 import Inventory from "./dashboard/Inventory";
+import HelpModal from "./dashboard/HelpModal";
 import fondoMain from '../assets/Recursos web media/FondoMain.png';
 
 export default function MainUI() {
@@ -27,6 +28,7 @@ export default function MainUI() {
 
       {/* Modals and Overlays */}
       <Inventory />
+      <HelpModal />
 
     </div>
   )

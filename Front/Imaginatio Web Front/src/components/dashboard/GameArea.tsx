@@ -3,15 +3,16 @@ import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoC
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
 import plantaFase3 from '../../assets/Recursos planta/PlantaFase3.gif';
+import solEscenario from '../../assets/Recursos web media/SolEscenario.png';
 
 export default function GameArea() {
    return (
       <>
          <div className="absolute inset-0 z-10 flex flex-col justify-end items-center pointer-events-none p-8">
 
-            {/* Sun / Light Cursor representation */}
-            <div className="absolute top-32 left-32 w-24 h-24 bg-yellow-200/50 border-2 border-dashed border-yellow-500 rounded-full flex items-center justify-center pointer-events-auto cursor-pointer">
-               <span className="text-yellow-700 font-bold text-xs">[Click: Luz]</span>
+            {/* Sun / Background Element */}
+            <div className="absolute top-10 right-1/2 mr-36 lg:top-16 lg:mr-35 w-32 h-32 lg:w-48 lg:h-48 flex items-center justify-center drop-shadow-[0_0_15px_rgba(255,255,150,0.5)]">
+               <img src={solEscenario.src} alt="Sol" className="w-full h-full object-contain" />
             </div>
 
             {/* Main Center Plant Container */}
@@ -26,7 +27,7 @@ export default function GameArea() {
             </div>
 
             {/* Interactable Items (Compost & Watering can) */}
-            <div className="absolute bottom-24 lg:bottom-32 left-1/2 ml-24 lg:ml-32 flex items-end gap-6 pointer-events-auto">
+            <div className="absolute bottom-24 lg:bottom-32 left-1/2 ml-36 lg:ml-56 flex items-end gap-6 pointer-events-auto">
 
                {/* Compost Bag - Triggers minigame */}
                <button

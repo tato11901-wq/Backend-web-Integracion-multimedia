@@ -1,4 +1,4 @@
-import { isInventoryOpen } from '../../store/resourceStore';
+import { isInventoryOpen, isHelpModalOpen } from '../../store/resourceStore';
 import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
 import panelNombrePlanta from '../../assets/Recursos web media/Panel_NombrePlanta.png';
 import panelAvisoPlanta from '../../assets/Recursos web media/Panel_AvisoPlanta.png';
@@ -39,7 +39,10 @@ export default function TopHeader() {
           >
             <img src={btnInventario.src} alt="Inventario" className="w-full h-full object-contain" />
           </div>
-          <div className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
+          <div
+            onClick={() => isHelpModalOpen.value = true}
+            className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90"
+          >
             <img src={btnAyuda.src} alt="Ayuda" className="w-full h-full object-contain" />
           </div>
         </div>
