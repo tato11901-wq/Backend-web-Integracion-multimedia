@@ -3,7 +3,6 @@ import btnMinijuegoComposta from '../../assets/Recursos web media/btn_minijuegoc
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
 import plantaFase3 from '../../assets/Recursos planta/PlantaFase3.gif';
-import plantaMaceta01 from '../../assets/Recursos web media/Planta_Maceta_01.png';
 
 export default function GameArea() {
    return (
@@ -21,13 +20,8 @@ export default function GameArea() {
                className="relative mb-24 lg:mb-32 flex flex-col items-center pointer-events-auto cursor-pointer hover:scale-105 transition-transform duration-200"
             >
                {/* Plant Image */}
-               <div className="w-64 h-auto lg:w-80 lg:h-auto flex items-center justify-center z-20">
+               <div className="w-64 h-auto lg:w-100 lg:h-auto flex items-center justify-center z-20">
                   <img src={plantaFase3.src} alt="Planta Fase 3" className="w-full h-full object-contain" />
-               </div>
-
-               {/* Pot Image */}
-               <div className="w-48 h-auto -mt-16 lg:-mt-20 z-10">
-                  <img src={plantaMaceta01.src} alt="Maceta" className="w-full h-full object-contain" />
                </div>
             </div>
 

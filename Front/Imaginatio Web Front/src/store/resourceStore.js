@@ -24,3 +24,6 @@ export function addCompost(amount) {
 
 // Estado del pop up de información de la planta
 export const isPlantInfoOpen = signal(false)
+
+// Estado del inventario
+export const isInventoryOpen = signal(false)

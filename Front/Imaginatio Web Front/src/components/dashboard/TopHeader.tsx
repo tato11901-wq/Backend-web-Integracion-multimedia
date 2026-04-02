@@ -1,3 +1,4 @@
+import { isInventoryOpen } from '../../store/resourceStore';
 import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
 import panelNombrePlanta from '../../assets/Recursos web media/Panel_NombrePlanta.png';
 import panelAvisoPlanta from '../../assets/Recursos web media/Panel_AvisoPlanta.png';
@@ -32,7 +33,10 @@ export default function TopHeader() {
 
         {/* Right buttons: Inventario y Ayuda */}
         <div className="flex gap-5 shrink-0 mr-10">
-          <div className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
+          <div
+            onClick={() => isInventoryOpen.value = true}
+            className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90"
+          >
             <img src={btnInventario.src} alt="Inventario" className="w-full h-full object-contain" />
           </div>
           <div className="w-14 h-14 lg:w-16 lg:h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
