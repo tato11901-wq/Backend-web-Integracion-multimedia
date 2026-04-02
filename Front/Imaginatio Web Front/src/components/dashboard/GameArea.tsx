@@ -1,5 +1,5 @@
 import { isWaterGameOpen, isCompostGameOpen, isPlantInfoOpen } from "../../store/resourceStore";
-import btnMinijuegoComposta from '../../assets/Recursos web media/btn_minijuegocomposta.png';
+import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
 import plantaFase3 from '../../assets/Recursos planta/PlantaFase3.gif';
