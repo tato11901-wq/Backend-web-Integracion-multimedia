@@ -1,6 +1,6 @@
 import panelEstadoSol from '../../assets/Recursos web media/Panel_EstadoSol.png';
 import panelEstadoAgua from '../../assets/Recursos web media/Panel_EstadoAgua.png';
-import { waterLevel, isWaterGameOpen } from "../../store/resourceStore";
+import { waterLevel } from "../../store/resourceStore";
 
 export default function LeftSigns() {
   return (

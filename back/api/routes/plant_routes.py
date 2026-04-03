@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from app.schemas.plant import PlantResponse, PlantCreateResponse
-from app.models.plant import ActionType
-from app.services.plant_service import PlantService
+from schemas.plant import PlantResponse, PlantCreateResponse
+from models.plant import ActionType
+from services.plant_service import PlantService
 
 router = APIRouter(prefix="/plant", tags=["plants"])
 

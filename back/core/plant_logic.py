@@ -1,5 +1,5 @@
 from datetime import datetime
-from app.models.plant import Plant, PlantStage
+from models.plant import Plant, PlantStage
 
 # Constantes de mecánicas
 MAX_HEALTH = 100.0

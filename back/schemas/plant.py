@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
-from app.models.plant import PlantStage
+from typing import Optional, Dict
+from models.plant import PlantStage
 
 class PlantResponse(BaseModel):
     """

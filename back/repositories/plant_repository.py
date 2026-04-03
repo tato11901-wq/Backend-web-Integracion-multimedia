@@ -1,5 +1,5 @@
-from typing import Optional, Dict
-from app.models.plant import Plant
+from typing import Optional, Dict, List
+from models.plant import Plant
 
 class PlantRepository:
     """

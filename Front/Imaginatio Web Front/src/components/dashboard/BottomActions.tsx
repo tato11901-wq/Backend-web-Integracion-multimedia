@@ -2,6 +2,13 @@ import btnIluminar from '../../assets/Recursos web media/btn_iluminar.png';
 import btnRegar from '../../assets/Recursos web media/btn_regar.png';
 import btnAbonar from '../../assets/Recursos web media/btn_abonar.png';
 
+import { 
+  waterInventory, 
+  sunInventory, 
+  fertilizerInventory,
+  username
+} from "../../store/resourceStore";
+
 const btnImages: Record<string, ImageMetadata> = {
   Iluminar: btnIluminar,
   Regar: btnRegar,
@@ -10,9 +17,9 @@ const btnImages: Record<string, ImageMetadata> = {
 
 export default function BottomActions() {
   const actions = [
-    { label: 'Iluminar', badge: 1 },
-    { label: 'Regar', badge: 6 },
-    { label: 'Abonar', badge: 0 }
+    { label: 'Iluminar', badge: sunInventory.value },
+    { label: 'Regar', badge: waterInventory.value },
+    { label: 'Abonar', badge: fertilizerInventory.value }
   ];
 
   return (
@@ -57,7 +64,7 @@ export default function BottomActions() {
 
       {/* User label bottom left fixed */}
       <div className="absolute left-8 -bottom-2 text-slate-700 text-xs lg:text-sm font-bold z-30 pointer-events-auto bg-white/50 px-2 py-1 rounded">
-        Bienvenido: Andres
+        Bienvenido: {username.value}
       </div>
     </>
   );

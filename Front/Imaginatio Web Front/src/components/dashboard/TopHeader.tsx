@@ -1,4 +1,4 @@
-import { isInventoryOpen, isHelpModalOpen } from '../../store/resourceStore';
+import { isInventoryOpen, isHelpModalOpen, username } from '../../store/resourceStore';
 import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
 import panelNombrePlanta from '../../assets/Recursos web media/Panel_NombrePlanta.png';
 import panelAvisoPlanta from '../../assets/Recursos web media/Panel_AvisoPlanta.png';
@@ -19,7 +19,7 @@ export default function TopHeader() {
         <div className="relative w-44 h-14 lg:w-52 lg:h-16 flex items-center justify-center cursor-pointer ml-10">
           <img src={panelNombrePlanta.src} alt="Nombre Planta" className="w-full h-full object-contain" />
           <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm lg:text-base pt-1">
-            Planta Fase 3
+            {username.value || "Jardinero"}
           </span>
         </div>
 
@@ -27,7 +27,7 @@ export default function TopHeader() {
         <div className="relative w-full h-14 lg:h-16 flex items-center justify-center mx-4">
           <img src={panelAvisoPlanta.src} alt="Aviso Planta" className="w-full h-full object-contain" />
           <span className="absolute inset-0 flex items-center justify-center text-white font-medium text-xs lg:text-sm pt-1">
-            Lorem ipsum dolor sit amet.
+            ¡Bienvenido al invernadero Imaginatio!
           </span>
         </div>
 

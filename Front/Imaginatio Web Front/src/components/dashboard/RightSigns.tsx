@@ -1,6 +1,6 @@
 import panelEstadoAbono from '../../assets/Recursos web media/Panel_EstadoAbono.png';
 import panelEstadoComposta from '../../assets/Recursos web media/Panel_EstadoComposta.png';
-import { compostLevel, isCompostGameOpen } from "../../store/resourceStore";
+import { compostLevel, fertilizerInventory } from "../../store/resourceStore";
 
 export default function RightSigns() {
   return (

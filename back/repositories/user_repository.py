@@ -1,5 +1,5 @@
 from typing import Optional, Dict
-from app.models.user import User
+from models.user import User
 
 class UserRepository:
     """

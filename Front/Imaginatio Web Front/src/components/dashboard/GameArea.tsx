@@ -1,4 +1,10 @@
-import { isWaterGameOpen, isCompostGameOpen, isPlantInfoOpen } from "../../store/resourceStore";
+import { 
+  isWaterGameOpen, 
+  isCompostGameOpen, 
+  isPlantInfoOpen,
+  isWaterOnCooldown,
+  isCompostOnCooldown
+} from "../../store/resourceStore";
 import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
@@ -6,6 +12,22 @@ import plantaFase3 from '../../assets/Recursos planta/PlantaFase3.gif';
 import solEscenario from '../../assets/Recursos web media/SolEscenario.png';
 
 export default function GameArea() {
+   const handleOpenWater = () => {
+      if (isWaterOnCooldown.value) {
+         alert("La regadera está vacía. Debes esperar a que se recupere el agua.");
+         return;
+      }
+      isWaterGameOpen.value = true;
+   };
+
+   const handleOpenCompost = () => {
+      if (isCompostOnCooldown.value) {
+         alert("No hay suficientes residuos orgánicos listos. Espera un poco más.");
+         return;
+      }
+      isCompostGameOpen.value = true;
+   };
+
    return (
       <>
          <div className="absolute inset-0 z-10 flex flex-col justify-end items-center pointer-events-none p-8">
@@ -31,16 +53,16 @@ export default function GameArea() {
 
                {/* Compost Bag - Triggers minigame */}
                <button
-                  onClick={() => isCompostGameOpen.value = true}
-                  className="w-20 h-auto flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-80 active:scale-90"
+                  onClick={handleOpenCompost}
+                  className={`w-20 h-auto flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-80 active:scale-90 ${isCompostOnCooldown.value ? "grayscale opacity-50 cursor-not-allowed" : ""}`}
                >
                   <img src={btnMinijuegoComposta.src} alt="Bolsa Composta" className="w-full h-full object-contain" />
                </button>
 
                {/* Watering Can - Triggers minigame */}
                <button
-                  onClick={() => isWaterGameOpen.value = true}
-                  className="w-25 h-auto flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-80 active:scale-90"
+                  onClick={handleOpenWater}
+                  className={`w-25 h-auto flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-80 active:scale-90 ${isWaterOnCooldown.value ? "grayscale opacity-50 cursor-not-allowed" : ""}`}
                >
                   <img src={btnMinijuegoAgua.src} alt="Regadera" className="w-full h-full object-contain" />
                </button>
@@ -78,11 +100,12 @@ export default function GameArea() {
                         Sed non ipsum odio. Suspendisse dictum lacus justo, non fringilla felis tristique pretium. Donec rutrum lorem lorem, tincidunt mattis arcu luctus varius.
                         <br /><br />
                         (Fin del contenido...)
-                     </p>
-                  </div>
-               </div>
-            </div>
-         )}
-      </>
-   );
-}
+                      </p>
+                   </div>
+                </div>
+             </div>
+          )}
+       </>
+    );
+ }
+

@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
 from fastapi import HTTPException
-from app.models.plant import Plant, ActionType
-from app.core import plant_logic
-from app.repositories.plant_repository import plant_repository
-from app.repositories.user_repository import user_repository
+from models.plant import Plant, ActionType
+from core import plant_logic
+from repositories.plant_repository import plant_repository
+from repositories.user_repository import user_repository
 
 class PlantService:
     @staticmethod

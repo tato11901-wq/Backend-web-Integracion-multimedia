@@ -31,4 +31,5 @@ class UserResponse(BaseModel):
 
 class LoginResponse(BaseModel):
     user: UserResponse
+    token: str          # JWT para autenticación
     message: str

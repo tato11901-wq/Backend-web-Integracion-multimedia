@@ -1,6 +1,6 @@
 from fastapi import HTTPException
-from app.models.user import User
-from app.repositories.user_repository import user_repository
+from models.user import User
+from repositories.user_repository import user_repository
 
 class UserService:
     @staticmethod
@@ -24,7 +24,7 @@ class UserService:
     @staticmethod
     def process_minigame(user_id: str, result) -> User:
         user = UserService.get_user(user_id)
-        from app.schemas.user import MinigameType
+        from schemas.user import MinigameType
         import datetime
 
         now = datetime.datetime.now(datetime.timezone.utc)
@@ -72,7 +72,7 @@ class UserService:
     @staticmethod
     def set_active_plant(user_id: str, plant_id: str) -> User:
         user = UserService.get_user(user_id)
-        from app.repositories.plant_repository import plant_repository
+        from repositories.plant_repository import plant_repository
         
         plant = plant_repository.get_by_id(plant_id)
         if not plant or plant.owner_id != user_id:
