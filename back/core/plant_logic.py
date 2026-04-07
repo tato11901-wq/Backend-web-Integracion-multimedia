@@ -1,18 +1,12 @@
 from datetime import datetime
 from models.plant import Plant, PlantStage
+from core.species_loader import SPECIES_CATALOG
 
 # Constantes de mecánicas
 MAX_HEALTH = 100.0
 DEATH_HOURS_THRESHOLD = 72.0
 HEALTH_LOSS_PER_HOUR = 100.0 / 72.0  # ~1.38/h
 RESOURCE_LOSS_PER_HOUR = 1.0
-
-# Umbrales para avanzar de fase. Los recursos requeridos se consumirán al evolucionar.
-STAGE_THRESHOLDS = {
-    PlantStage.SEED: {"water": 50, "sun": 50, "fertilizer": 0, "next": PlantStage.BUSH},
-    PlantStage.BUSH: {"water": 100, "sun": 100, "fertilizer": 50, "next": PlantStage.TREE},
-    PlantStage.TREE: {"water": 200, "sun": 200, "fertilizer": 100, "next": PlantStage.ENT},
-}
 
 def update_plant_state(plant: Plant, current_time: datetime):
     """
@@ -67,27 +61,40 @@ def apply_pruning(plant: Plant):
 def _heal_plant(plant: Plant, amount: float):
     plant.health = min(MAX_HEALTH, plant.health + amount)
 
-def check_growth(plant: Plant):
+def check_growth(plant: Plant) -> bool:
     """
     Verifica si la planta tiene los recursos para avanzar a la siguiente fase
-    y la promociona restando los requisitos si es el caso.
+    y la promociona restando los requisitos si es el caso. Retorna True si evolucionó.
     """
     if plant.is_dead or plant.stage == PlantStage.ENT:
-        return
+        return False
 
-    thresholds = STAGE_THRESHOLDS.get(plant.stage)
-    if not thresholds:
-        return
+    species_data = SPECIES_CATALOG.get(plant.species_id)
+    if not species_data:
+        return False
+    
+    reqs = species_data.get("evolution_requirements", {}).get(plant.stage.value)
+    if not reqs:
+        return False
 
-    req_water = thresholds["water"]
-    req_sun = thresholds["sun"]
-    req_fert = thresholds["fertilizer"]
+    req_water = reqs.get("water", 0)
+    req_sun = reqs.get("sun", 0)
+    req_fert = reqs.get("fertilizer", 0)
 
     if plant.water >= req_water and plant.sun >= req_sun and plant.fertilizer >= req_fert:
-        # Evolucionar a siguiente fase y descontar recursos
-        plant.stage = thresholds["next"]
-        plant.water -= req_water
-        plant.sun -= req_sun
-        plant.fertilizer -= req_fert
-        # Bonus completo de salud al crecer de fase
-        plant.health = MAX_HEALTH
+        # Definir la progresión explícitamente
+        next_stage_map = {
+            PlantStage.SEED: PlantStage.SMALL_BUSH,
+            PlantStage.SMALL_BUSH: PlantStage.LARGE_BUSH,
+            PlantStage.LARGE_BUSH: PlantStage.ENT
+        }
+        next_stage = next_stage_map.get(plant.stage)
+        if next_stage:
+            # Evolucionar a siguiente fase y Reiniciar recursos a 0
+            plant.stage = next_stage
+            plant.water = 0.0
+            plant.sun = 0.0
+            plant.fertilizer = 0.0
+            plant.health = MAX_HEALTH
+            return True
+    return False

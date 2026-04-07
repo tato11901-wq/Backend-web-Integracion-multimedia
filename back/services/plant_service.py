@@ -2,17 +2,18 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 from models.plant import Plant, ActionType
 from core import plant_logic
+from core.species_loader import SPECIES_CATALOG
 from repositories.plant_repository import plant_repository
 from repositories.user_repository import user_repository
 
 class PlantService:
     @staticmethod
-    def get_plant(plant_id: str) -> Plant:
+    def get_plant(plant_id: str, owner_id: str) -> Plant:
         """
         Obtiene una planta y actualiza sus variables por el paso del tiempo
         (sin reiniciar el contador de inactividad de interacción).
         """
-        plant = plant_repository.get_by_id(plant_id)
+        plant = plant_repository.get_by_id(owner_id, plant_id)
         if not plant:
             raise HTTPException(status_code=404, detail="Plant not found")
         
@@ -38,13 +39,16 @@ class PlantService:
         return plants
     
     @staticmethod
-    def create_plant(owner_id: str) -> Plant:
+    def create_plant(owner_id: str, species_id: str) -> Plant:
         """Crea una nueva planta asignada a un usuario y la activa si no tiene una"""
+        if species_id not in SPECIES_CATALOG:
+            raise HTTPException(status_code=404, detail="Especie no existe en el catálogo")
+
         user = user_repository.get_by_id(owner_id)
         if not user:
             raise HTTPException(status_code=404, detail="Owner user not found")
 
-        plant = Plant(owner_id=owner_id)
+        plant = Plant(owner_id=owner_id, species_id=species_id)
         plant_repository.save(plant)
         
         # Asignar como activa si no tiene ninguna
@@ -55,11 +59,11 @@ class PlantService:
         return plant
 
     @staticmethod
-    def handle_action(plant_id: str, action: ActionType) -> Plant:
+    def handle_action(plant_id: str, owner_id: str, action: ActionType) -> Plant:
         """
-        Calcula el paso del tiempo, aplica una acción y verifica evoluciones.
+        Calcula el paso del tiempo, y aplica una acción utilizando recursos del inventario del usuario.
         """
-        plant = plant_repository.get_by_id(plant_id)
+        plant = plant_repository.get_by_id(owner_id, plant_id)
         if not plant:
             raise HTTPException(status_code=404, detail="Plant not found")
 
@@ -73,7 +77,7 @@ class PlantService:
             plant_repository.save(plant)
             raise HTTPException(status_code=400, detail="Plant is dead and cannot be interacted with.")
 
-        # Obtener el duelo para descontar de su inventario
+        # Obtener el dueño para descontar de su inventario
         user = user_repository.get_by_id(plant.owner_id)
         if not user:
             raise HTTPException(status_code=400, detail="Plant has no valid owner.")
@@ -99,11 +103,34 @@ class PlantService:
 
         user_repository.save(user)
 
-        # 4. Verificar si procede un cambio de fase
-        plant_logic.check_growth(plant)
-
-        # 5. La interacción renueva el contador de inactividad de las mecánicas
+        # 4. La interacción renueva el contador de inactividad de las mecánicas
         plant.last_interaction = current_time
         
-        # 6. Persistir cambios
+        # 5. Persistir cambios
+        return plant_repository.save(plant)
+
+    @staticmethod
+    def evolve_plant(plant_id: str, owner_id: str) -> Plant:
+        """
+        Intenta evolucionar a la planta.
+        """
+        plant = plant_repository.get_by_id(owner_id, plant_id)
+        if not plant:
+            raise HTTPException(status_code=404, detail="Plant not found")
+
+        if plant.is_dead:
+            raise HTTPException(status_code=400, detail="Plant is dead and cannot evolve.")
+
+        current_time = datetime.now(timezone.utc)
+        plant_logic.update_plant_state(plant, current_time)
+
+        if plant.is_dead:
+            plant_repository.save(plant)
+            raise HTTPException(status_code=400, detail="Plant is dead and cannot evolve.")
+
+        success = plant_logic.check_growth(plant)
+        if not success:
+            raise HTTPException(status_code=400, detail="No cumple los requisitos para evolucionar")
+
+        plant.last_interaction = current_time
         return plant_repository.save(plant)

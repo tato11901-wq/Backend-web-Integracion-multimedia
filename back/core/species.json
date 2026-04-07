@@ -1,0 +1,416 @@
+{
+  "aliso": {
+    "id": "aliso",
+    "common_name": "Aliso",
+    "scientific_name": "Alnus acuminata",
+    "classification": "Hidro",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 75.0,
+        "sun": 25.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 150,
+        "sun": 50,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 300,
+        "sun": 100,
+        "fertilizer": 100
+      }
+    }
+  },
+  "cajeto": {
+    "id": "cajeto",
+    "common_name": "Cajeto",
+    "scientific_name": "Citharexylum subflavescens",
+    "classification": "Solar",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 25.0,
+        "sun": 75.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 50,
+        "sun": 150,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 100,
+        "sun": 300,
+        "fertilizer": 100
+      }
+    }
+  },
+  "espino": {
+    "id": "espino",
+    "common_name": "Espino",
+    "scientific_name": "Duranta mutisii",
+    "classification": "Solar",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 25.0,
+        "sun": 75.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 50,
+        "sun": 150,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 100,
+        "sun": 300,
+        "fertilizer": 100
+      }
+    }
+  },
+  "alcaparro_grande": {
+    "id": "alcaparro_grande",
+    "common_name": "Alcaparro grande",
+    "scientific_name": "Senna viarum",
+    "classification": "Solar",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 25.0,
+        "sun": 75.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 50,
+        "sun": 150,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 100,
+        "sun": 300,
+        "fertilizer": 100
+      }
+    }
+  },
+  "roble": {
+    "id": "roble",
+    "common_name": "Roble",
+    "scientific_name": "Quercus humboldtii",
+    "classification": "Montaña",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "manzano": {
+    "id": "manzano",
+    "common_name": "Manzano",
+    "scientific_name": "Billia rosea",
+    "classification": "Templado",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "alcaparro_enano": {
+    "id": "alcaparro_enano",
+    "common_name": "Alcaparro enano",
+    "scientific_name": "Senna multiglandulosa",
+    "classification": "Xerofito",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 15.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 30,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 60,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "dividivi": {
+    "id": "dividivi",
+    "common_name": "Dividivi",
+    "scientific_name": "Caesalpinia spinosa",
+    "classification": "Xerofito",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 15.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 30,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 60,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "cedrillo": {
+    "id": "cedrillo",
+    "common_name": "Cedrillo",
+    "scientific_name": "Smallanthus pyramidalis",
+    "classification": "Hidro",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 75.0,
+        "sun": 25.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 150,
+        "sun": 50,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 300,
+        "sun": 100,
+        "fertilizer": 100
+      }
+    }
+  },
+  "mangle": {
+    "id": "mangle",
+    "common_name": "Mangle",
+    "scientific_name": "Escallonia pendula",
+    "classification": "Templado",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "drago": {
+    "id": "drago",
+    "common_name": "Drago",
+    "scientific_name": "Croton coriaceus",
+    "classification": "Solar",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 25.0,
+        "sun": 75.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 50,
+        "sun": 150,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 100,
+        "sun": 300,
+        "fertilizer": 100
+      }
+    }
+  },
+  "pino_romerón": {
+    "id": "pino_romerón",
+    "common_name": "Pino romerón",
+    "scientific_name": "Retrophyllum rospigliosii",
+    "classification": "Montaña",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "cucharo_negro": {
+    "id": "cucharo_negro",
+    "common_name": "Cucharo negro",
+    "scientific_name": "Myrsine coriacea",
+    "classification": "Hidro",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 75.0,
+        "sun": 25.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 150,
+        "sun": 50,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 300,
+        "sun": 100,
+        "fertilizer": 100
+      }
+    }
+  },
+  "sietecueros": {
+    "id": "sietecueros",
+    "common_name": "Sietecueros",
+    "scientific_name": "Tibouchina lepidota",
+    "classification": "Templado",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "nogal": {
+    "id": "nogal",
+    "common_name": "Nogal",
+    "scientific_name": "Juglans neotropica",
+    "classification": "Montaña",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "cedro": {
+    "id": "cedro",
+    "common_name": "Cedro",
+    "scientific_name": "Cedrela montana",
+    "classification": "Templado",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "duraznillo": {
+    "id": "duraznillo",
+    "common_name": "Duraznillo",
+    "scientific_name": "Abatia parviflora",
+    "classification": "Montaña",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  },
+  "pasto": {
+    "id": "pasto",
+    "common_name": "Pasto",
+    "scientific_name": "Cynodon dactylon.",
+    "classification": "Base",
+    "evolution_requirements": {
+      "SEED": {
+        "water": 50.0,
+        "sun": 50.0,
+        "fertilizer": 0
+      },
+      "SMALL_BUSH": {
+        "water": 100,
+        "sun": 100,
+        "fertilizer": 50
+      },
+      "LARGE_BUSH": {
+        "water": 200,
+        "sun": 200,
+        "fertilizer": 100
+      }
+    }
+  }
+}
