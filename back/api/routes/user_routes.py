@@ -46,9 +46,7 @@ def get_my_active_plant(user_id: str = Depends(get_current_user_id)):
     if not user.active_plant_id:
         raise HTTPException(status_code=404, detail="El usuario no tiene ninguna planta activa.")
     
-    plant = plant_repository.get_by_id(user_id, user.active_plant_id)
-    if not plant:
-        raise HTTPException(status_code=404, detail="La planta activa no existe o fue eliminada.")
+    plant = PlantService.get_plant(user.active_plant_id, user_id)
     return plant
 
 @router.patch("/me/active-plant", response_model=UserResponse)

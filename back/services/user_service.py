@@ -7,11 +7,24 @@ class UserService:
     def login_or_register(username: str) -> User:
         """
         Busca un usuario por username. Si no existe, lo crea.
+        Si el usuario no tiene plantas, se le asigna la planta base 'pasto'.
         """
         user = user_repository.get_by_username(username)
         if not user:
             user = User(username=username)
             user_repository.save(user)
+        
+        # Verificar si el usuario tiene plantas
+        from repositories.plant_repository import plant_repository
+        user_plants = plant_repository.get_by_owner_id(user.id)
+        
+        if not user_plants:
+            # Importación tardía para evitar circular dependency
+            from services.plant_service import PlantService
+            PlantService.create_plant(owner_id=user.id, species_id="pasto")
+            # Recargar el objeto usuario por si acaso se actualizó el active_plant_id
+            user = user_repository.get_by_id(user.id)
+            
         return user
 
     @staticmethod
@@ -74,7 +87,7 @@ class UserService:
         user = UserService.get_user(user_id)
         from repositories.plant_repository import plant_repository
         
-        plant = plant_repository.get_by_id(plant_id)
+        plant = plant_repository.get_by_id(user_id, plant_id)
         if not plant or plant.owner_id != user_id:
             raise HTTPException(status_code=400, detail="Planta no encontrada o no pertenece a este usuario")
             
