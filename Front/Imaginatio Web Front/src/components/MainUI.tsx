@@ -9,6 +9,7 @@ import GameArea from "./dashboard/GameArea";
 import BottomActions from "./dashboard/BottomActions";
 import Inventory from "./dashboard/Inventory";
 import HelpModal from "./dashboard/HelpModal";
+import { useScale } from "../hooks/useScale";
 import fondoMain from '../assets/Recursos web media/FondoMain.png';
 
 export default function MainUI() {
@@ -44,49 +45,70 @@ export default function MainUI() {
     return (
       <div className="flex flex-col h-screen w-full bg-[#2d4a1d] items-center justify-center p-4">
         <div className="bg-[#f5e6c8] p-10 rounded-3xl border-8 border-[#4e341b] shadow-2xl flex flex-col items-center gap-6 max-w-sm w-full">
-           <span className="text-6xl animate-bounce">🌿</span>
-           <h1 className="text-3xl font-black text-[#4e341b] uppercase text-center">Imaginatio</h1>
-           <form onSubmit={handleLogin} className="flex flex-col w-full gap-4">
-              <label className="text-sm font-bold text-[#4e341b] uppercase">Nombre de usuario</label>
-              <input 
-                type="text" 
-                value={tempName}
-                onInput={(e) => setTempName((e.target as HTMLInputElement).value)}
-                placeholder="Ej: Jardinero88"
-                className="w-full px-4 py-3 rounded-xl border-4 border-[#8B4513] bg-[#fff9eb] text-black font-bold focus:outline-none focus:ring-2 ring-green-600"
-              />
-              <button 
-                disabled={loading}
-                className="w-full bg-[#1b4332] hover:bg-[#2d6a4f] text-white font-black py-4 rounded-xl shadow-lg transition transform active:scale-95 disabled:opacity-50"
-              >
-                {loading ? "CARGANDO..." : "ENTRAR AL JARDÍN"}
-              </button>
-           </form>
-           <p className="text-[10px] text-[#4e341b]/60 text-center uppercase tracking-tight">
-             La sesión se guardará localmente en este navegador.
-           </p>
+          <span className="text-6xl animate-bounce">🌿</span>
+          <h1 className="text-3xl font-black text-[#4e341b] uppercase text-center">Imaginatio</h1>
+          <form onSubmit={handleLogin} className="flex flex-col w-full gap-4">
+            <label className="text-sm font-bold text-[#4e341b] uppercase">Nombre de usuario</label>
+            <input
+              type="text"
+              value={tempName}
+              onInput={(e) => setTempName((e.target as HTMLInputElement).value)}
+              placeholder="Ej: Jardinero88"
+              className="w-full px-4 py-3 rounded-xl border-4 border-[#8B4513] bg-[#fff9eb] text-black font-bold focus:outline-none focus:ring-2 ring-green-600"
+            />
+            <button
+              disabled={loading}
+              className="w-full bg-[#1b4332] hover:bg-[#2d6a4f] text-white font-black py-4 rounded-xl shadow-lg transition transform active:scale-95 disabled:opacity-50"
+            >
+              {loading ? "CARGANDO..." : "ENTRAR AL JARDÍN"}
+            </button>
+          </form>
+          <p className="text-[10px] text-[#4e341b]/60 text-center uppercase tracking-tight">
+            La sesión se guardará localmente en este navegador.
+          </p>
         </div>
       </div>
     );
   }
 
+  const stage = useScale(1080);
+
   return (
-    <div className="flex flex-col h-[100dvh] w-full bg-[#8fb35b] font-sans relative overflow-hidden text-slate-100 transition-all select-none">
-      <div className="absolute inset-0 z-0">
-        <img src={fondoMain.src} alt="Fondo Invernadero" className="w-full h-full object-fill" />
+    <div className="w-screen h-screen bg-[#2d4a1d] relative overflow-hidden text-slate-100 transition-all select-none">
+      {/* Global Background (Fallback) */}
+      <div className="absolute inset-0 pointer-events-none">
+        <img src={fondoMain.src} alt="Fondo" className="w-full h-full object-cover opacity-60" />
       </div>
 
-      <TopHeader />
+      {/* Adaptive Stage - Absolute centering to ensure full coverage */}
+      <div 
+        className="absolute top-1/2 left-1/2 shadow-2xl overflow-hidden"
+        style={{
+          width: `${stage.virtualWidth}px`,
+          height: `${stage.virtualHeight}px`,
+          transform: `translate(-50%, -50%) scale(${stage.scale})`,
+          flexShrink: 0
+        }}
+      >
+        {/* Stage Content Background */}
+        <div className="absolute inset-0 z-0">
+          <img src={fondoMain.src} alt="Escenario" className="w-full h-full object-cover" />
+        </div>
 
-      <div className="flex flex-row flex-grow w-full h-full relative z-10 mx-auto">
-        <LeftSigns />
-        <GameArea />
-        <RightSigns />
-        <BottomActions />
+        <div className="relative z-10 flex flex-col w-full h-full">
+          <TopHeader />
+
+          <div className="flex flex-row flex-grow w-full h-full relative z-10 mx-auto">
+            <LeftSigns />
+            <GameArea />
+            <RightSigns />
+            <BottomActions />
+          </div>
+
+          <Inventory />
+          <HelpModal />
+        </div>
       </div>
-
-      <Inventory />
-      <HelpModal />
     </div>
   );
 }
