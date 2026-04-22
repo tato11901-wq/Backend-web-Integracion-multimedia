@@ -6,19 +6,19 @@
     "classification": "Hidro",
     "evolution_requirements": {
       "SEED": {
-        "water": 75.0,
-        "sun": 25.0,
-        "fertilizer": 0
+        "water": 6,
+        "sun": 2,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 150,
-        "sun": 50,
-        "fertilizer": 50
+        "water": 8,
+        "sun": 4,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 300,
-        "sun": 100,
-        "fertilizer": 100
+        "water": 10,
+        "sun": 6,
+        "fertilizer": 8
       }
     }
   },
@@ -29,19 +29,19 @@
     "classification": "Solar",
     "evolution_requirements": {
       "SEED": {
-        "water": 25.0,
-        "sun": 75.0,
-        "fertilizer": 0
+        "water": 2,
+        "sun": 6,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 50,
-        "sun": 150,
-        "fertilizer": 50
+        "water": 4,
+        "sun": 8,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 100,
-        "sun": 300,
-        "fertilizer": 100
+        "water": 6,
+        "sun": 10,
+        "fertilizer": 8
       }
     }
   },
@@ -52,19 +52,19 @@
     "classification": "Solar",
     "evolution_requirements": {
       "SEED": {
-        "water": 25.0,
-        "sun": 75.0,
-        "fertilizer": 0
+        "water": 2,
+        "sun": 6,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 50,
-        "sun": 150,
-        "fertilizer": 50
+        "water": 4,
+        "sun": 8,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 100,
-        "sun": 300,
-        "fertilizer": 100
+        "water": 6,
+        "sun": 10,
+        "fertilizer": 8
       }
     }
   },
@@ -75,19 +75,19 @@
     "classification": "Solar",
     "evolution_requirements": {
       "SEED": {
-        "water": 25.0,
-        "sun": 75.0,
-        "fertilizer": 0
+        "water": 2,
+        "sun": 6,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 50,
-        "sun": 150,
-        "fertilizer": 50
+        "water": 4,
+        "sun": 8,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 100,
-        "sun": 300,
-        "fertilizer": 100
+        "water": 6,
+        "sun": 10,
+        "fertilizer": 8
       }
     }
   },
@@ -98,19 +98,19 @@
     "classification": "Montaña",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 2,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 4,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 6,
+        "fertilizer": 8
       }
     }
   },
@@ -121,19 +121,19 @@
     "classification": "Templado",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 4,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 6,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 8,
+        "fertilizer": 8
       }
     }
   },
@@ -144,19 +144,19 @@
     "classification": "Xerofito",
     "evolution_requirements": {
       "SEED": {
-        "water": 15.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 2,
+        "sun": 4,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 30,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 4,
+        "sun": 6,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 60,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 6,
+        "sun": 8,
+        "fertilizer": 8
       }
     }
   },
@@ -167,19 +167,19 @@
     "classification": "Xerofito",
     "evolution_requirements": {
       "SEED": {
-        "water": 15.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 2,
+        "sun": 4,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 30,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 4,
+        "sun": 6,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 60,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 6,
+        "sun": 8,
+        "fertilizer": 8
       }
     }
   },
@@ -190,19 +190,19 @@
     "classification": "Hidro",
     "evolution_requirements": {
       "SEED": {
-        "water": 75.0,
-        "sun": 25.0,
-        "fertilizer": 0
+        "water": 6,
+        "sun": 2,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 150,
-        "sun": 50,
-        "fertilizer": 50
+        "water": 8,
+        "sun": 4,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 300,
-        "sun": 100,
-        "fertilizer": 100
+        "water": 10,
+        "sun": 6,
+        "fertilizer": 8
       }
     }
   },
@@ -213,19 +213,19 @@
     "classification": "Templado",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 4,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 6,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 8,
+        "fertilizer": 8
       }
     }
   },
@@ -236,19 +236,19 @@
     "classification": "Solar",
     "evolution_requirements": {
       "SEED": {
-        "water": 25.0,
-        "sun": 75.0,
-        "fertilizer": 0
+        "water": 2,
+        "sun": 6,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 50,
-        "sun": 150,
-        "fertilizer": 50
+        "water": 4,
+        "sun": 8,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 100,
-        "sun": 300,
-        "fertilizer": 100
+        "water": 6,
+        "sun": 10,
+        "fertilizer": 8
       }
     }
   },
@@ -259,19 +259,19 @@
     "classification": "Montaña",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 2,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 4,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 6,
+        "fertilizer": 8
       }
     }
   },
@@ -282,19 +282,19 @@
     "classification": "Hidro",
     "evolution_requirements": {
       "SEED": {
-        "water": 75.0,
-        "sun": 25.0,
-        "fertilizer": 0
+        "water": 6,
+        "sun": 2,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 150,
-        "sun": 50,
-        "fertilizer": 50
+        "water": 8,
+        "sun": 4,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 300,
-        "sun": 100,
-        "fertilizer": 100
+        "water": 10,
+        "sun": 6,
+        "fertilizer": 8
       }
     }
   },
@@ -305,19 +305,19 @@
     "classification": "Templado",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 4,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 6,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 8,
+        "fertilizer": 8
       }
     }
   },
@@ -328,19 +328,19 @@
     "classification": "Montaña",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 2,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 4,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 6,
+        "fertilizer": 8
       }
     }
   },
@@ -351,19 +351,19 @@
     "classification": "Templado",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 4,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 6,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 8,
+        "fertilizer": 8
       }
     }
   },
@@ -374,19 +374,19 @@
     "classification": "Montaña",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 2,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 4,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 6,
+        "fertilizer": 8
       }
     }
   },
@@ -397,19 +397,19 @@
     "classification": "Base",
     "evolution_requirements": {
       "SEED": {
-        "water": 50.0,
-        "sun": 50.0,
-        "fertilizer": 0
+        "water": 4,
+        "sun": 4,
+        "fertilizer": 4
       },
       "SMALL_BUSH": {
-        "water": 100,
-        "sun": 100,
-        "fertilizer": 50
+        "water": 6,
+        "sun": 6,
+        "fertilizer": 6
       },
       "LARGE_BUSH": {
-        "water": 200,
-        "sun": 200,
-        "fertilizer": 100
+        "water": 8,
+        "sun": 8,
+        "fertilizer": 8
       }
     }
   }

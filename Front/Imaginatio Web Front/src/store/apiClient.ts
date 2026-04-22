@@ -75,6 +75,13 @@ export async function endMinigame(sessionToken: string, payload: Record<string, 
   });
 }
 
+export async function sunClick(sessionToken: string) {
+  return apiFetch("/minigame/sun/click", {
+    method: "POST",
+    body: JSON.stringify({ session_token: sessionToken }),
+  });
+}
+
 // ── User State ──
 export async function fetchMyState() {
   return apiFetch("/users/me");

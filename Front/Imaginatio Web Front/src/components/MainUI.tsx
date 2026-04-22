@@ -10,21 +10,33 @@ import BottomActions from "./dashboard/BottomActions";
 import Inventory from "./dashboard/Inventory";
 import HelpModal from "./dashboard/HelpModal";
 import { useScale } from "../hooks/useScale";
+import Water from "./MiniGames/water";
+import Compost from "./MiniGames/compost";
+import Sun from "./MiniGames/sun";
 import fondoMain from '../assets/Recursos web media/FondoMain.png';
 
 export default function MainUI() {
-  const [isLogged, setIsLogged] = useState(!!getToken());
+  // "checking" evita el parpadeo: mientras no sabemos si hay token, no mostramos nada.
+  const [authState, setAuthState] = useState<"checking" | "logged" | "guest">("checking");
   const [tempName, setTempName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Intentar recuperar estado si ya hay token
   useEffect(() => {
-    if (isLogged) {
+    const token = getToken(); // solo se ejecuta en el cliente, nunca en SSR
+    if (token) {
       fetchMyState()
-        .then(res => syncUserState(res))
-        .catch(() => setIsLogged(false));
+        .then(res => {
+          syncUserState(res);
+          setAuthState("logged");
+        })
+        .catch(() => {
+          // Token inválido o expirado → ir a login
+          setAuthState("guest");
+        });
+    } else {
+      setAuthState("guest");
     }
-  }, [isLogged]);
+  }, []);
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
@@ -33,7 +45,7 @@ export default function MainUI() {
     try {
       const res = await login(tempName);
       syncUserState(res.user);
-      setIsLogged(true);
+      setAuthState("logged");
     } catch (err) {
       alert("Error al iniciar sesión");
     } finally {
@@ -41,7 +53,12 @@ export default function MainUI() {
     }
   };
 
-  if (!isLogged) {
+  // Mientras verifica el token: pantalla en negro sin parpadeo
+  if (authState === "checking") {
+    return <div className="flex h-screen w-full bg-[#1a2e0e]" />;
+  }
+
+  if (authState === "guest") {
     return (
       <div className="flex flex-col h-screen w-full bg-[#2d4a1d] items-center justify-center p-4">
         <div className="bg-[#f5e6c8] p-10 rounded-3xl border-8 border-[#4e341b] shadow-2xl flex flex-col items-center gap-6 max-w-sm w-full">
@@ -73,43 +90,49 @@ export default function MainUI() {
 
   const stage = useScale(1080);
 
-  return (
-    <div className="w-screen h-screen bg-[#2d4a1d] relative overflow-hidden text-slate-100 transition-all select-none">
-      {/* Global Background (Fallback) */}
-      <div className="absolute inset-0 pointer-events-none">
-        <img src={fondoMain.src} alt="Fondo" className="w-full h-full object-cover opacity-60" />
+return (
+  <div className="w-screen h-screen bg-[#2d4a1d] relative overflow-hidden text-slate-100 transition-all select-none">
+    
+    {/* Global Background */}
+    <div className="absolute inset-0 pointer-events-none">
+      <img src={fondoMain.src} alt="Fondo" className="w-full h-full object-cover opacity-60" />
+    </div>
+
+    {/* Stage escalado */}
+    <div 
+      className="absolute top-1/2 left-1/2 shadow-2xl overflow-hidden"
+      style={{
+        width: `${stage.virtualWidth}px`,
+        height: `${stage.virtualHeight}px`,
+        transform: `translate(-50%, -50%) scale(${stage.scale})`,
+        flexShrink: 0
+      }}
+    >
+      <div className="absolute inset-0 z-0">
+        <img src={fondoMain.src} alt="Escenario" className="w-full h-full object-cover" />
       </div>
 
-      {/* Adaptive Stage - Absolute centering to ensure full coverage */}
-      <div 
-        className="absolute top-1/2 left-1/2 shadow-2xl overflow-hidden"
-        style={{
-          width: `${stage.virtualWidth}px`,
-          height: `${stage.virtualHeight}px`,
-          transform: `translate(-50%, -50%) scale(${stage.scale})`,
-          flexShrink: 0
-        }}
-      >
-        {/* Stage Content Background */}
-        <div className="absolute inset-0 z-0">
-          <img src={fondoMain.src} alt="Escenario" className="w-full h-full object-cover" />
+      <div className="relative z-10 flex flex-col w-full h-full">
+        <TopHeader />
+
+        <div className="flex flex-row flex-grow w-full h-full relative z-10 mx-auto">
+          <LeftSigns />
+          <GameArea />
+          <RightSigns />
+          <BottomActions />
         </div>
 
-        <div className="relative z-10 flex flex-col w-full h-full">
-          <TopHeader />
-
-          <div className="flex flex-row flex-grow w-full h-full relative z-10 mx-auto">
-            <LeftSigns />
-            <GameArea />
-            <RightSigns />
-            <BottomActions />
-          </div>
-
-          <Inventory />
-          <HelpModal />
-        </div>
+        <Inventory />
+        <HelpModal />
       </div>
     </div>
-  );
+
+    {/* 🔥 Minijuegos como overlay GLOBAL */}
+    <Water />
+    <Compost />
+    <Sun />
+
+  </div>
+);
 }
 

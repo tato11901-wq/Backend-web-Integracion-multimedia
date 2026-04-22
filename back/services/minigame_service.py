@@ -43,6 +43,15 @@ MINIGAME_CONFIG = {
             {"id": 11, "name": "Vidrio roto",       "emoji": "🪟"},
         ],
     },
+    "sun": {
+        "cooldown_seconds": 600,           # 10 minutos
+        "total_clicks": 4,                 # 4 clicks por partida
+        # Probabilidades de subir de tier (tier actual → siguiente)
+        # tier_up_probs[i] = probabilidad de subir estando en tier i
+        # Índice 0 sin uso; tier 1→2=80%, 2→3=60%, 3→4=40%, 4→5=20%, 5→5=0%
+        "tier_up_probs": [0, 0.80, 0.60, 0.40, 0.20, 0.0],
+        "max_tier": 5,
+    },
 }
 
 class MinigameService:
@@ -83,8 +92,86 @@ class MinigameService:
             session.generated_layout = all_items
             session.organic_ids = [item["id"] for item in organic_sample]
 
+        # 5. Para soles (caja): inicializar tier y clicks
+        if game_type == "sun":
+            session.current_tier = 1
+            session.clicks_remaining = config["total_clicks"]
+
         session_repository.save(session)
         return session
+
+    # ─────────── SUN CLICK: Procesar un click individual de la caja ───────────
+    @staticmethod
+    def process_sun_click(user_id: str, session_token: str) -> dict:
+        """
+        Procesa un click individual en la caja de soles.
+        Actualiza el tier según probabilidad y devuelve el estado actual.
+        Si no quedan clicks, finaliza la sesión y otorga la recompensa.
+        """
+        session = session_repository.get_by_token(session_token)
+
+        if not session:
+            raise HTTPException(400, "Sesión no encontrada o expirada")
+        if session.user_id != user_id:
+            raise HTTPException(403, "Esta sesión no te pertenece")
+        if session.ended:
+            raise HTTPException(400, "Esta sesión ya fue procesada")
+        if session.game_type != "sun":
+            raise HTTPException(400, "Esta sesión no es de tipo 'sun'")
+        if session.clicks_remaining <= 0:
+            raise HTTPException(400, "No quedan clicks en esta sesión")
+
+        config = MINIGAME_CONFIG["sun"]
+
+        # Intentar subir de tier según probabilidad
+        tier_before = session.current_tier
+        prob = config["tier_up_probs"][session.current_tier]
+        tier_up = random.random() < prob
+        if tier_up and session.current_tier < config["max_tier"]:
+            session.current_tier += 1
+
+        session.clicks_remaining -= 1
+        is_last_click = session.clicks_remaining == 0
+
+        # Si es el último click: cerrar sesión y dar recompensa
+        if is_last_click:
+            session.ended = True
+            now = datetime.now(timezone.utc)
+            reward = session.current_tier  # Recompensa = tier alcanzado (1–5 soles)
+
+            user = user_repository.get_by_id(user_id)
+            user.sun_inventory += reward
+            user.last_sun_minigame = now
+            user_repository.save(user)
+            session_repository.delete(session_token)
+
+            cooldown_ends = now + timedelta(seconds=config["cooldown_seconds"])
+
+            return {
+                "click_number": config["total_clicks"] - 0,  # último click
+                "tier_before": tier_before,
+                "tier_after": session.current_tier,
+                "tier_up": tier_up,
+                "clicks_remaining": 0,
+                "finished": True,
+                "reward": reward,
+                "cooldown_ends_at": cooldown_ends.isoformat(),
+                "user": user,
+            }
+
+        # Click intermedio: guardar sesión actualizada y devolver estado
+        session_repository.save(session)
+        return {
+            "click_number": config["total_clicks"] - session.clicks_remaining,
+            "tier_before": tier_before,
+            "tier_after": session.current_tier,
+            "tier_up": tier_up,
+            "clicks_remaining": session.clicks_remaining,
+            "finished": False,
+            "reward": None,
+            "cooldown_ends_at": None,
+            "user": None,
+        }
 
     # ─────────── END: Procesar resultado ───────────
     @staticmethod
