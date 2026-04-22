@@ -37,3 +37,7 @@ Thumbs.db
 IMAGINATIO_2026_DOCUMENTO_CONCEPTUAL.docx
 ListaEspeciesArbolesNativosCAMPUS.xlsx
 *.pyc
+
+# Python cache
+__pycache__/
+*.py[cod]
