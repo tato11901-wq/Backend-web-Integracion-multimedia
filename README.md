@@ -96,6 +96,18 @@ pip install -r requirements.txt
 cd back
 uvicorn main:app --reload
 ```
+### O ALTERNATIVA
+
+1. **Instalar dependencias ALTERNATIVA:**
+```bash
+python -m pip install -r requirements.txt
+```
+
+2. **Ejecutar el servidor uvicorn ALTERNATIVA:**
+```bash
+cd back
+python -m uvicorn main:app --reload
+```
 
 ---
 

@@ -1,3 +1,9 @@
+import {
+   isWaterGameOpen,
+   isCompostGameOpen,
+   isPlantInfoOpen,
+   isWaterOnCooldown,
+   isCompostOnCooldown
 import { 
   isWaterGameOpen, 
   isCompostGameOpen, 
@@ -10,8 +16,9 @@ import {
 import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
-import plantaFase3 from '../../assets/Recursos planta/PlantaFase3.gif';
+import plantaSpriteSheet from '../../assets/Recursos planta/plantaSpriteSheet.png';
 import solEscenario from '../../assets/Recursos web media/SolEscenario.png';
+import { SpriteAnimator } from './SpriteAnimator';
 
 export default function GameArea() {
    const handleOpenWater = () => {
@@ -49,11 +56,19 @@ export default function GameArea() {
             {/* Main Center Plant Container */}
             <div
                onClick={() => isPlantInfoOpen.value = true}
-               className="relative mb-24 lg:mb-32 flex flex-col items-center pointer-events-auto cursor-pointer hover:scale-105 transition-transform duration-200"
+               className="relative mb-24 lg:mb-24 flex flex-col items-center pointer-events-auto cursor-pointer hover:scale-105 transition-transform duration-200"
             >
-               {/* Plant Image */}
-               <div className="w-64 h-auto lg:w-100 lg:h-auto flex items-center justify-center z-20">
-                  <img src={plantaFase3.src} alt="Planta Fase 3" className="w-full h-full object-contain" />
+               {/* Plant Image (SpriteSheet) */}
+               <div className="w-64 h-auto lg:w-80 lg:h-auto flex items-center justify-center z-20">
+                  {/* Ajusta frameWidth, frameHeight y frameCount a los valores exactos, la altura es 510 */}
+                  <SpriteAnimator
+                     src={plantaSpriteSheet.src}
+                     frameWidth={477} // 2863 ancho total / 6 cuadros aprox. Ajústalo a medida.
+                     frameHeight={510} // Altura de la imagen completa
+                     frameCount={6}    // Cantidad de fotogramas, ajústalo según tu imagen
+                     fps={12}
+                     className="w-full h-full object-contain"
+                  />
                </div>
             </div>
 
@@ -109,12 +124,12 @@ export default function GameArea() {
                         Sed non ipsum odio. Suspendisse dictum lacus justo, non fringilla felis tristique pretium. Donec rutrum lorem lorem, tincidunt mattis arcu luctus varius.
                         <br /><br />
                         (Fin del contenido...)
-                      </p>
-                   </div>
-                </div>
-             </div>
-          )}
-       </>
-    );
- }
+                     </p>
+                  </div>
+               </div>
+            </div>
+         )}
+      </>
+   );
+}
 

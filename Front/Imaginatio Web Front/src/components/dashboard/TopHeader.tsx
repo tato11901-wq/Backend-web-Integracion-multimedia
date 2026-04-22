@@ -7,14 +7,14 @@ import btnAyuda from '../../assets/Recursos web media/btn_ayuda.png';
 
 export default function TopHeader() {
   return (
-    <div className="flex flex-row justify-between items-start w-full px-6 pt-0 mb-4 lg:mb-6 z-30 relative pointer-events-none">
+    <div className="flex flex-row justify-between items-start w-full px-6 pt-0 z-30 relative pointer-events-none">
 
       {/* Top Header Background - Panel HUD Superior */}
-      <div className="absolute top-5 left-2 right-2 lg:left-4 lg:right-4 h-30 z-0 flex items-center justify-center">
+      <div className="absolute top-0 left-2 right-2 lg:left-4 lg:right-4 h-30 z-0 flex items-center justify-center">
         <img src={panelHudSuperior.src} alt="Panel HUD Superior" className="w-full h-full object-fill" />
       </div>
 
-      <div className="relative z-10 flex w-full justify-between items-center px-8 mt-12 pointer-events-auto">
+      <div className="relative z-10 flex w-full justify-between items-center px-8 mt-6 pointer-events-auto">
         {/* Nombre de planta - Left */}
         <div className="relative w-44 h-14 lg:w-52 lg:h-16 flex items-center justify-center cursor-pointer ml-10">
           <img src={panelNombrePlanta.src} alt="Nombre Planta" className="w-full h-full object-contain" />
