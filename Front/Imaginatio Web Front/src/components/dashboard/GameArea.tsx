@@ -2,8 +2,10 @@ import {
   isWaterGameOpen, 
   isCompostGameOpen, 
   isPlantInfoOpen,
+  isSunGameOpen,
   isWaterOnCooldown,
-  isCompostOnCooldown
+  isCompostOnCooldown,
+  isSunOnCooldown
 } from "../../store/resourceStore";
 import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
@@ -28,13 +30,20 @@ export default function GameArea() {
       isCompostGameOpen.value = true;
    };
 
+   const handleOpenSun = () => {
+      isSunGameOpen.value = true;
+   };
+
    return (
       <>
          <div className="absolute inset-0 z-10 flex flex-col justify-end items-center pointer-events-none p-8">
 
-            {/* Sun / Background Element */}
-            <div className="absolute top-10 right-1/2 mr-36 lg:top-16 lg:mr-35 w-32 h-32 lg:w-48 lg:h-48 flex items-center justify-center drop-shadow-[0_0_15px_rgba(255,255,150,0.5)]">
-               <img src={solEscenario.src} alt="Sol" className="w-full h-full object-contain" />
+            {/* Sun / Background Element - clickeable, sin cambio visual por cooldown */}
+            <div
+               onClick={handleOpenSun}
+               className="absolute top-10 right-1/2 mr-36 lg:top-16 lg:mr-35 w-32 h-32 lg:w-48 lg:h-48 flex items-center justify-center drop-shadow-[0_0_15px_rgba(255,255,150,0.5)] cursor-pointer pointer-events-auto transition-all duration-200 hover:scale-110 active:scale-95"
+            >
+               <img src={solEscenario.src} alt="Sol - Minijuego de Soles" className="w-full h-full object-contain" />
             </div>
 
             {/* Main Center Plant Container */}

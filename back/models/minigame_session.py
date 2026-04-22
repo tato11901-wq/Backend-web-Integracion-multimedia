@@ -4,6 +4,7 @@ Modelo de sesión temporal de minijuego.
 Cada vez que un usuario inicia un minijuego, el backend crea una sesión
 que registra el momento exacto de inicio (para calcular duración real)
 y, para el minijuego de compost, el layout generado por el servidor.
+Para el minijuego de soles (caja), almacena el tier actual y clicks restantes.
 
 Cuando se migre a base de datos, este modelo se convertirá en una tabla
 con TTL o limpieza por cron job.
@@ -26,3 +27,7 @@ class MinigameSession:
         self.generated_layout: Optional[list[dict]] = None
         # IDs de los items orgánicos en ESTA partida específica
         self.organic_ids: Optional[list[int]] = None
+
+        # Solo para soles (caja): estado progresivo por clicks
+        self.current_tier: int = 1          # Tier actual (1–5)
+        self.clicks_remaining: int = 0      # Clicks que le quedan al usuario

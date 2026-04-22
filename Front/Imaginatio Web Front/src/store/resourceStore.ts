@@ -17,6 +17,7 @@ export const compostLevel = compostInventory;
 // ── Cooldowns (Timestamps ISO del Backend) ──
 export const waterCooldownEnds = signal<string | null>(null);
 export const compostCooldownEnds = signal<string | null>(null);
+export const sunCooldownEnds = signal<string | null>(null);
 
 export const isWaterOnCooldown = computed(() => {
   if (!waterCooldownEnds.value) return false;
@@ -28,9 +29,15 @@ export const isCompostOnCooldown = computed(() => {
   return new Date(compostCooldownEnds.value) > new Date();
 });
 
+export const isSunOnCooldown = computed(() => {
+  if (!sunCooldownEnds.value) return false;
+  return new Date(sunCooldownEnds.value) > new Date();
+});
+
 // ── Estado de la UI ──
 export const isWaterGameOpen = signal(false);
 export const isCompostGameOpen = signal(false);
+export const isSunGameOpen = signal(false);
 export const isPlantInfoOpen = signal(false);
 export const isInventoryOpen = signal(false);
 export const isHelpModalOpen = signal(false);
@@ -50,7 +57,6 @@ export function syncUserState(backendUser: any) {
   // Sincronizar cooldowns si vienen en la respuesta
   if (backendUser.last_water_minigame) {
     const lastPlayed = new Date(backendUser.last_water_minigame);
-    // Añadimos un pequeño margen de 5 segundos para compensar latencia/drift del reloj
     const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
     waterCooldownEnds.value = ends.toISOString();
   }
@@ -59,5 +65,11 @@ export function syncUserState(backendUser: any) {
     const lastPlayed = new Date(backendUser.last_compost_minigame);
     const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
     compostCooldownEnds.value = ends.toISOString();
+  }
+
+  if (backendUser.last_sun_minigame) {
+    const lastPlayed = new Date(backendUser.last_sun_minigame);
+    const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
+    sunCooldownEnds.value = ends.toISOString();
   }
 }

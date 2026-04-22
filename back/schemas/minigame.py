@@ -13,7 +13,7 @@ from schemas.user import UserResponse
 
 class MinigameStartRequest(BaseModel):
     """Solicitud para iniciar un minijuego."""
-    game_type: str  # "water" | "compost"
+    game_type: str  # "water" | "compost" | "sun"
 
 
 class MinigameStartResponse(BaseModel):
@@ -42,3 +42,26 @@ class MinigameResponse(BaseModel):
     cooldown_ends_at: str
     user: UserResponse
     message: str
+
+
+# ─────────── Schemas exclusivos del minijuego de soles (caja) ───────────
+
+class SunClickRequest(BaseModel):
+    """Click individual en la caja de soles."""
+    session_token: str
+
+
+class SunClickResponse(BaseModel):
+    """
+    Estado devuelto tras cada click en la caja.
+    Si finished=True, incluye reward, cooldown_ends_at y user.
+    """
+    click_number: int           # Número de click (1–4)
+    tier_before: int            # Tier antes del click
+    tier_after: int             # Tier después del click
+    tier_up: bool               # Si subió de tier en este click
+    clicks_remaining: int       # Clicks que quedan
+    finished: bool              # True si es el último click
+    reward: Optional[int] = None                    # Solo si finished=True
+    cooldown_ends_at: Optional[str] = None          # Solo si finished=True
+    user: Optional[UserResponse] = None             # Solo si finished=True
