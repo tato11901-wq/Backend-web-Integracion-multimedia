@@ -67,6 +67,8 @@ export const Plant = () => {
           frameWidth: 477,
           frameHeight: 510,
           frameCount: 18,
+          scale: 2.5,
+          hitbox: "w-32 h-32",
         };
       case "arbusto_pequeño":
         return {
@@ -74,6 +76,8 @@ export const Plant = () => {
           frameWidth: 477,
           frameHeight: 510,
           frameCount: 18,
+          scale: 2.3,
+          hitbox: "w-48 h-48",
         };
       case "arbusto_grande":
         return {
@@ -81,6 +85,8 @@ export const Plant = () => {
           frameWidth: 477,
           frameHeight: 510,
           frameCount: 18,
+          scale: 2,
+          hitbox: "w-56 h-64",
         };
       case "ent":
       default:
@@ -89,6 +95,8 @@ export const Plant = () => {
           frameWidth: 477,
           frameHeight: 510,
           frameCount: 18,
+          scale: 1.2,
+          hitbox: "w-64 h-80",
         };
     }
   };
@@ -96,18 +104,16 @@ export const Plant = () => {
   const config = getSpriteConfig();
 
   return (
-    <div
-      onClick={() => (isPlantInfoOpen.value = true)}
-      className="relative mb-24 flex flex-col items-center pointer-events-auto cursor-pointer hover:scale-105 transition-transform duration-200"
-    >
-      {/* Plant Image (SpriteSheet) */}
-      <div className="w-80 h-auto flex items-center justify-center z-20 relative">
+    <div className="relative mb-24 flex flex-col items-center pointer-events-none group">
+      {/* Plant Container (Visual) */}
+      <div className="w-80 h-auto flex items-center justify-center z-20 relative transition-transform duration-300 group-hover:scale-105">
         <SpriteAnimator
           key={displayPhase} // Forzar re-montaje cuando cambia la fase visual
           src={config.src}
           frameWidth={config.frameWidth}
           frameHeight={config.frameHeight}
           frameCount={config.frameCount}
+          scale={config.scale}
           fps={20}
           className="w-full h-full object-contain drop-shadow-2xl"
         />
@@ -140,6 +146,13 @@ export const Plant = () => {
           </div>
         )}
       </div>
+
+      {/* Invisible Hitbox (Interaction) */}
+      <div
+        onClick={() => (isPlantInfoOpen.value = true)}
+        className={`absolute bottom-0 left-1/2 -translate-x-1/2 z-40 pointer-events-auto cursor-pointer ${config.hitbox}`}
+        title="Ver detalles de la planta"
+      />
     </div>
   );
 };
