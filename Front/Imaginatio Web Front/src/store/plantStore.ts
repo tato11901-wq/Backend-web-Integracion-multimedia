@@ -23,6 +23,9 @@ export const plantFertilizerProgress = signal<number>(0);
 
 export const isDebugOpen = signal<boolean>(false);
 
+// Signal to trigger water animation
+export const waterAnimationTrigger = signal<number>(0);
+
 // Tiempos para decaimiento de salud exacto al backend (72 horas para morir)
 export const HEALTH_LOSS_PER_HOUR = 100.0 / 72.0;
 export const plantLastUpdate = signal<number>(Date.now());
@@ -189,6 +192,7 @@ export function applyWater() {
 
   // Descontar inventario
   waterInventory.value -= 1;
+  waterAnimationTrigger.value += 1;
 
   // Recuperación básica de salud (el agua cura)
   plantHealth.value = Math.min(MAX_HEALTH, plantHealth.value + 15);
