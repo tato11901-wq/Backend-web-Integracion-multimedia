@@ -53,14 +53,14 @@ export function syncUserState(backendUser: any) {
   sunInventory.value = backendUser.sun_inventory;
   compostInventory.value = backendUser.compost_inventory;
   fertilizerInventory.value = backendUser.fertilizer_inventory;
-  
+
   // Sincronizar cooldowns si vienen en la respuesta
   if (backendUser.last_water_minigame) {
     const lastPlayed = new Date(backendUser.last_water_minigame);
     const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
     waterCooldownEnds.value = ends.toISOString();
   }
-  
+
   if (backendUser.last_compost_minigame) {
     const lastPlayed = new Date(backendUser.last_compost_minigame);
     const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);

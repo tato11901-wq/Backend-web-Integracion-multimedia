@@ -10,9 +10,8 @@ import {
 import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
-import plantaSpriteSheet from '../../assets/Recursos planta/plantaSpriteSheet.png';
 import solEscenario from '../../assets/Recursos web media/SolEscenario.png';
-import { SpriteAnimator } from './SpriteAnimator';
+import Plant from './Plant';
 
 export default function GameArea() {
    const handleOpenWater = () => {
@@ -42,32 +41,16 @@ export default function GameArea() {
             {/* Sun / Background Element - clickeable, sin cambio visual por cooldown */}
             <div
                onClick={handleOpenSun}
-               className="absolute top-10 right-1/2 mr-36 lg:top-16 lg:mr-35 w-32 h-32 lg:w-48 lg:h-48 flex items-center justify-center drop-shadow-[0_0_15px_rgba(255,255,150,0.5)] cursor-pointer pointer-events-auto transition-all duration-200 hover:scale-110 active:scale-95"
+               className="absolute top-16 right-1/2 mr-35 w-48 h-48 flex items-center justify-center drop-shadow-[0_0_15px_rgba(255,255,150,0.5)] cursor-pointer pointer-events-auto transition-all duration-200 hover:scale-110 active:scale-95"
             >
                <img src={solEscenario.src} alt="Sol - Minijuego de Soles" className="w-full h-full object-contain" />
             </div>
 
             {/* Main Center Plant Container */}
-            <div
-               onClick={() => isPlantInfoOpen.value = true}
-               className="relative mb-24 lg:mb-24 flex flex-col items-center pointer-events-auto cursor-pointer hover:scale-105 transition-transform duration-200"
-            >
-               {/* Plant Image (SpriteSheet) */}
-               <div className="w-64 h-auto lg:w-80 lg:h-auto flex items-center justify-center z-20">
-                  {/* Ajusta frameWidth, frameHeight y frameCount a los valores exactos, la altura es 510 */}
-                  <SpriteAnimator
-                     src={plantaSpriteSheet.src}
-                     frameWidth={477} // 2863 ancho total / 6 cuadros aprox. Ajústalo a medida.
-                     frameHeight={510} // Altura de la imagen completa
-                     frameCount={6}    // Cantidad de fotogramas, ajústalo según tu imagen
-                     fps={12}
-                     className="w-full h-full object-contain"
-                  />
-               </div>
-            </div>
+            <Plant />
 
             {/* Interactable Items (Compost & Watering can) */}
-            <div className="absolute bottom-24 lg:bottom-32 left-1/2 ml-36 lg:ml-56 flex items-end gap-6 pointer-events-auto">
+            <div className="absolute bottom-32 left-1/2 ml-56 flex items-end gap-6 pointer-events-auto">
 
                {/* Compost Bag - Triggers minigame */}
                <button

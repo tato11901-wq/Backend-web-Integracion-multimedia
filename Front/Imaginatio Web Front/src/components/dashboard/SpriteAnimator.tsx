@@ -40,11 +40,11 @@ export function SpriteAnimator({
       lastTime = time;
 
       const currentFps = fpsRef.current;
-      
+
       if (currentFps > 0) {
         timeAccumulator += deltaTime;
         const frameDuration = 1000 / currentFps;
-        
+
         // Evita saltos gigantes de frames si la pestaña estuvo inactiva
         if (timeAccumulator > frameDuration * 10) {
           timeAccumulator = frameDuration;
@@ -65,7 +65,7 @@ export function SpriteAnimator({
     if (frameCount > 1) {
       animationFrameId = requestAnimationFrame(animate);
     }
-    
+
     return () => cancelAnimationFrame(animationFrameId);
   }, [frameCount]);
 

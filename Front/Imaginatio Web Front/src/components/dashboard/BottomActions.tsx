@@ -2,9 +2,9 @@ import btnIluminar from '../../assets/Recursos web media/btn_iluminar.png';
 import btnRegar from '../../assets/Recursos web media/btn_regar.png';
 import btnAbonar from '../../assets/Recursos web media/btn_abonar.png';
 
-import { 
-  waterInventory, 
-  sunInventory, 
+import {
+  waterInventory,
+  sunInventory,
   fertilizerInventory,
   username
 } from "../../store/resourceStore";
@@ -25,18 +25,18 @@ export default function BottomActions() {
   return (
     <>
       {/* Left block: Iluminar and Regar */}
-      <div className="absolute left-6 top-[16rem] lg:top-[16rem] w-50 flex justify-center gap-4 z-30 pointer-events-auto">
+      <div className="absolute left-6 top-[25rem] w-64 flex justify-center gap-6 z-30 pointer-events-auto">
         {actions.slice(0, 2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
-            <button className="w-20 h-24 lg:w-24 lg:h-28 flex flex-col items-center justify-center p-0 overflow-hidden">
+            <button className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden">
               <img src={btnImages[act.label].src} alt={`Btn ${act.label}`} className="w-full h-full object-contain" />
             </button>
             {/* Cantidad de recurso sobre el cuadro rojo del botón */}
-            <span className="absolute top-0 right-0 w-5 h-5 lg:w-6 lg:h-6 flex items-center text-white font-bold text-[10px] lg:text-xs z-10 pointer-events-none">
+            <span className="absolute top-0 right-0 w-13 h-8 lg:w-13 lg:h-8 flex items-center justify-center text-white font-bold lg:text-lg z-10 pointer-events-none">
               {act.badge}
             </span>
             {/* Label sobre la parte inferior verde */}
-            <span className="absolute bottom-3 left-0 w-full text-center text-white font-bold text-[8px] lg:text-[10px] z-10 pointer-events-none drop-shadow-md">
+            <span className="absolute bottom-4 left-0 w-full text-center text-white font-bold text-[14px] z-10 pointer-events-none drop-shadow-md">
               {act.label}
             </span>
           </div>
@@ -44,18 +44,18 @@ export default function BottomActions() {
       </div>
 
       {/* Right block: Abonar */}
-      <div className="absolute right-6 top-[16rem] lg:top-[16rem] w-50 flex justify-center z-30 pointer-events-auto">
+      <div className="absolute right-6 top-[25rem] w-64 flex justify-center z-30 pointer-events-auto">
         {actions.slice(2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
-            <button className="w-20 h-24 lg:w-24 lg:h-28 flex flex-col items-center justify-center p-0 overflow-hidden">
+            <button className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden">
               <img src={btnImages[act.label].src} alt={`Btn ${act.label}`} className="w-full h-full object-contain" />
             </button>
             {/* Cantidad de recurso sobre el cuadro rojo del botón */}
-            <span className="absolute top-0 right-0 w-5 h-5 lg:w-6 lg:h-6 flex items-center text-white font-bold text-[10px] lg:text-xs z-10 pointer-events-none">
+            <span className="absolute top-0 right-0 w-13 h-8 lg:w-13 lg:h-8 flex items-center justify-center text-white font-bold lg:text-lg z-10 pointer-events-none">
               {act.badge}
             </span>
             {/* Label sobre la parte inferior verde */}
-            <span className="absolute bottom-3 left-0 w-full text-center text-white font-bold text-[8px] lg:text-[10px] z-10 pointer-events-none drop-shadow-md">
+            <span className="absolute bottom-4 left-0 w-full text-center text-white font-bold text-[14px] z-10 pointer-events-none drop-shadow-md">
               {act.label}
             </span>
           </div>

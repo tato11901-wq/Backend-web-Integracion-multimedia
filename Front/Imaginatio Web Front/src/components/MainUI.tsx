@@ -90,49 +90,49 @@ export default function MainUI() {
 
   const stage = useScale(1080);
 
-return (
-  <div className="w-screen h-screen bg-[#2d4a1d] relative overflow-hidden text-slate-100 transition-all select-none">
-    
-    {/* Global Background */}
-    <div className="absolute inset-0 pointer-events-none">
-      <img src={fondoMain.src} alt="Fondo" className="w-full h-full object-cover opacity-60" />
-    </div>
+  return (
+    <div className="w-screen h-screen bg-[#2d4a1d] relative overflow-hidden text-slate-100 transition-all select-none">
 
-    {/* Stage escalado */}
-    <div 
-      className="absolute top-1/2 left-1/2 shadow-2xl overflow-hidden"
-      style={{
-        width: `${stage.virtualWidth}px`,
-        height: `${stage.virtualHeight}px`,
-        transform: `translate(-50%, -50%) scale(${stage.scale})`,
-        flexShrink: 0
-      }}
-    >
-      <div className="absolute inset-0 z-0">
-        <img src={fondoMain.src} alt="Escenario" className="w-full h-full object-cover" />
+      {/* Global Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <img src={fondoMain.src} alt="Fondo" className="w-full h-full object-cover opacity-60" />
       </div>
 
-      <div className="relative z-10 flex flex-col w-full h-full">
-        <TopHeader />
-
-        <div className="flex flex-row flex-grow w-full h-full relative z-10 mx-auto">
-          <LeftSigns />
-          <GameArea />
-          <RightSigns />
-          <BottomActions />
+      {/* Stage escalado */}
+      <div
+        className="absolute top-1/2 left-1/2 shadow-2xl overflow-hidden"
+        style={{
+          width: `${stage.virtualWidth}px`,
+          height: `${stage.virtualHeight}px`,
+          transform: `translate(-50%, -50%) scale(${stage.scale})`,
+          flexShrink: 0
+        }}
+      >
+        <div className="absolute inset-0 z-0">
+          <img src={fondoMain.src} alt="Escenario" className="w-full h-full object-cover" />
         </div>
 
-        <Inventory />
-        <HelpModal />
+        <div className="relative z-10 flex flex-col w-full h-full">
+          <TopHeader />
+
+          <div className="flex flex-row flex-grow w-full h-full relative z-10 mx-auto">
+            <LeftSigns />
+            <GameArea />
+            <RightSigns />
+            <BottomActions />
+          </div>
+
+          <Inventory />
+          <HelpModal />
+        </div>
       </div>
+
+      {/* 🔥 Minijuegos como overlay GLOBAL */}
+      <Water />
+      <Compost />
+      <Sun />
+
     </div>
-
-    {/* 🔥 Minijuegos como overlay GLOBAL */}
-    <Water />
-    <Compost />
-    <Sun />
-
-  </div>
-);
+  );
 }
 
