@@ -7,11 +7,13 @@ import {
   isCompostOnCooldown,
   isSunOnCooldown
 } from "../../store/resourceStore";
+import { isDebugOpen } from "../../store/plantStore";
 import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
 import solEscenario from '../../assets/Recursos web media/SolEscenario.png';
 import Plant from './Plant';
+import DebugPanel from './DebugPanel';
 
 export default function GameArea() {
    const handleOpenWater = () => {
@@ -22,7 +24,13 @@ export default function GameArea() {
       isWaterGameOpen.value = true;
    };
 
-   const handleOpenCompost = () => {
+   const handleOpenCompost = (e: React.MouseEvent) => {
+      // Botón oculto (modo admin): Activación por combinación de teclas
+      if (e.altKey || e.shiftKey) {
+         isDebugOpen.value = true;
+         return;
+      }
+
       if (isCompostOnCooldown.value) {
          alert("No hay suficientes residuos orgánicos listos. Espera un poco más.");
          return;
@@ -106,6 +114,8 @@ export default function GameArea() {
                </div>
             </div>
          )}
+         
+         <DebugPanel />
       </>
    );
 }

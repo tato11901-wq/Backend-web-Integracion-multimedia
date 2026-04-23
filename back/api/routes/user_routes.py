@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from core.auth import get_current_user_id
-from schemas.user import UserResponse, ActivePlantUpdate
+from schemas.user import UserResponse, ActivePlantUpdate, DebugTimeRequest
 from schemas.plant import PlantResponse
 from repositories.plant_repository import plant_repository
 from services.user_service import UserService
@@ -55,4 +55,28 @@ def set_my_active_plant(update_data: ActivePlantUpdate, user_id: str = Depends(g
     Cambia cuál planta es la activa de forma segura.
     """
     user = UserService.set_active_plant(user_id, update_data.plant_id)
+    return user
+
+@router.post("/me/debug/fast-forward", response_model=UserResponse)
+def fast_forward_time(req: DebugTimeRequest, user_id: str = Depends(get_current_user_id)):
+    """
+    DEBUG: Adelanta el tiempo de los cooldowns de los minijuegos.
+    """
+    from datetime import timedelta
+    from repositories.user_repository import user_repository
+    
+    user = user_repository.get_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        
+    delta = timedelta(hours=req.hours)
+    
+    if user.last_water_minigame:
+        user.last_water_minigame -= delta
+    if user.last_compost_minigame:
+        user.last_compost_minigame -= delta
+    if user.last_sun_minigame:
+        user.last_sun_minigame -= delta
+        
+    user_repository.save(user)
     return user

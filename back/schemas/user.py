@@ -11,6 +11,9 @@ class MinigameResult(BaseModel):
     game_type: MinigameType
     score: int  # Clicks, soles recogidos o compostas recogidas
 
+class DebugTimeRequest(BaseModel):
+    hours: float
+
 class UserLogin(BaseModel):
     username: str
 

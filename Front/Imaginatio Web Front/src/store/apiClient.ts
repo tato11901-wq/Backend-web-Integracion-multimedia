@@ -94,3 +94,10 @@ export async function fetchMyInventory() {
 export async function fetchMyActivePlant() {
   return apiFetch("/users/me/active-plant");
 }
+
+export async function fastForwardBackendTime(hours: number) {
+  return apiFetch("/users/me/debug/fast-forward", {
+    method: "POST",
+    body: JSON.stringify({ hours }),
+  });
+}

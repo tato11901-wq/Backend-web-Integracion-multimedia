@@ -9,6 +9,12 @@ import {
   username
 } from "../../store/resourceStore";
 
+import {
+  applyWater,
+  applySun,
+  applyFertilizer
+} from "../../store/plantStore";
+
 const btnImages: Record<string, ImageMetadata> = {
   Iluminar: btnIluminar,
   Regar: btnRegar,
@@ -17,9 +23,9 @@ const btnImages: Record<string, ImageMetadata> = {
 
 export default function BottomActions() {
   const actions = [
-    { label: 'Iluminar', badge: sunInventory.value },
-    { label: 'Regar', badge: waterInventory.value },
-    { label: 'Abonar', badge: fertilizerInventory.value }
+    { label: 'Iluminar', badge: sunInventory.value, action: applySun },
+    { label: 'Regar', badge: waterInventory.value, action: applyWater },
+    { label: 'Abonar', badge: fertilizerInventory.value, action: applyFertilizer }
   ];
 
   return (
@@ -28,7 +34,10 @@ export default function BottomActions() {
       <div className="absolute left-6 top-[25rem] w-64 flex justify-center gap-6 z-30 pointer-events-auto">
         {actions.slice(0, 2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
-            <button className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden">
+            <button 
+              onClick={act.action}
+              className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden cursor-pointer"
+            >
               <img src={btnImages[act.label].src} alt={`Btn ${act.label}`} className="w-full h-full object-contain" />
             </button>
             {/* Cantidad de recurso sobre el cuadro rojo del botón */}
@@ -47,7 +56,10 @@ export default function BottomActions() {
       <div className="absolute right-6 top-[25rem] w-64 flex justify-center z-30 pointer-events-auto">
         {actions.slice(2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
-            <button className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden">
+            <button 
+              onClick={act.action}
+              className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden cursor-pointer"
+            >
               <img src={btnImages[act.label].src} alt={`Btn ${act.label}`} className="w-full h-full object-contain" />
             </button>
             {/* Cantidad de recurso sobre el cuadro rojo del botón */}

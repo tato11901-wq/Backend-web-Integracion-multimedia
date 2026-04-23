@@ -34,6 +34,23 @@ export const isSunOnCooldown = computed(() => {
   return new Date(sunCooldownEnds.value) > new Date();
 });
 
+export function fastForwardCooldowns(hours: number) {
+  const shiftMs = hours * 60 * 60 * 1000;
+  
+  if (waterCooldownEnds.value) {
+    const d = new Date(waterCooldownEnds.value);
+    waterCooldownEnds.value = new Date(d.getTime() - shiftMs).toISOString();
+  }
+  if (compostCooldownEnds.value) {
+    const d = new Date(compostCooldownEnds.value);
+    compostCooldownEnds.value = new Date(d.getTime() - shiftMs).toISOString();
+  }
+  if (sunCooldownEnds.value) {
+    const d = new Date(sunCooldownEnds.value);
+    sunCooldownEnds.value = new Date(d.getTime() - shiftMs).toISOString();
+  }
+}
+
 // ── Estado de la UI ──
 export const isWaterGameOpen = signal(false);
 export const isCompostGameOpen = signal(false);
