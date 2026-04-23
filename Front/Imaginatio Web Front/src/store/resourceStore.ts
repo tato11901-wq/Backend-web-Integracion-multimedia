@@ -10,6 +10,10 @@ export const sunInventory = signal(0);
 export const compostInventory = signal(0);
 export const fertilizerInventory = signal(0);
 
+// ── Planta Activa ──
+export const activePlantId = signal<string | null>(null);
+export const plantName = signal("Mi Planta");
+
 // Aliases para compatibilidad con código antiguo mientras se refactoriza
 export const waterLevel = waterInventory;
 export const compostLevel = compostInventory;
@@ -53,6 +57,11 @@ export function syncUserState(backendUser: any) {
   sunInventory.value = backendUser.sun_inventory;
   compostInventory.value = backendUser.compost_inventory;
   fertilizerInventory.value = backendUser.fertilizer_inventory;
+
+  // Sincronizar planta activa
+  if (backendUser.active_plant_id) {
+    activePlantId.value = backendUser.active_plant_id;
+  }
 
   // Sincronizar cooldowns si vienen en la respuesta
   if (backendUser.last_water_minigame) {

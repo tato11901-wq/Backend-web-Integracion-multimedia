@@ -94,3 +94,10 @@ export async function fetchMyInventory() {
 export async function fetchMyActivePlant() {
   return apiFetch("/users/me/active-plant");
 }
+
+export async function renamePlant(plantId: string, name: string) {
+  return apiFetch(`/plant/${plantId}/rename`, {
+    method: "PATCH",
+    body: JSON.stringify({ name }),
+  });
+}
