@@ -1,11 +1,11 @@
-import { 
-  isWaterGameOpen, 
-  isCompostGameOpen, 
-  isPlantInfoOpen,
-  isSunGameOpen,
-  isWaterOnCooldown,
-  isCompostOnCooldown,
-  isSunOnCooldown
+import {
+   isWaterGameOpen,
+   isCompostGameOpen,
+   isPlantInfoOpen,
+   isSunGameOpen,
+   isWaterOnCooldown,
+   isCompostOnCooldown,
+   isSunOnCooldown
 } from "../../store/resourceStore";
 import { isDebugOpen } from "../../store/plantStore";
 import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
@@ -82,22 +82,22 @@ export default function GameArea() {
          {/* Plant Info Popup */}
          {isPlantInfoOpen.value && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 pointer-events-auto">
-               <div className="relative w-[320px] h-[450px] lg:w-[450px] lg:h-[550px] flex flex-col items-center justify-start p-8 lg:p-10">
+               <div className="relative w-[450px] h-[600px] lg:w-[650px] lg:h-[800px] flex flex-col items-center justify-start p-10 lg:p-14">
                   {/* Background Panel */}
                   <img src={panelDescripcionPlanta.src} alt="Panel Descripcion" className="absolute inset-0 w-full h-full object-fill -z-10" />
 
                   {/* Close button */}
                   <button
                      onClick={() => isPlantInfoOpen.value = false}
-                     className="absolute top-4 right-4 w-8 h-8 bg-red-500/80 hover:bg-red-500 text-white font-bold rounded-full border-2 border-red-700 shadow-sm transition-all hover:scale-110 active:scale-95 flex items-center justify-center"
+                     className="absolute top-6 right-6 w-10 h-10 bg-red-500/80 hover:bg-red-500 text-white font-bold rounded-full border-2 border-red-700 shadow-sm transition-all hover:scale-110 active:scale-95 flex items-center justify-center"
                   >
                      X
                   </button>
 
                   {/* Content */}
-                  <h2 className="text-[#4e341b] text-xl lg:text-3xl font-bold mb-4 mt-15 text-center drop-shadow-sm">Información de la Planta</h2>
+                  <h2 className="text-[#4e341b] text-2xl lg:text-4xl font-bold mb-6 mt-16 text-center drop-shadow-sm">Información de la Planta</h2>
 
-                  <div className="flex-1 w-full overflow-y-auto px-4 mt-2 text-[#4e341b] text-sm lg:text-base font-medium leading-relaxed
+                  <div className="flex-1 w-full overflow-y-auto px-6 mt-4 text-[#4e341b] text-base lg:text-xl font-medium leading-relaxed
                                   scrollbar-thin scrollbar-thumb-[#8B4513] scrollbar-track-[#f5e6c8]">
                      <p>
                         Aquí aparecerá la descripción detallada de la planta, sus características, consejos de cuidado, o curiosidades.
@@ -114,7 +114,7 @@ export default function GameArea() {
                </div>
             </div>
          )}
-         
+
          <DebugPanel />
       </>
    );

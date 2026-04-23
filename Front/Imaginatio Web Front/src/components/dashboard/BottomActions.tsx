@@ -34,7 +34,7 @@ export default function BottomActions() {
       <div className="absolute left-6 top-[25rem] w-64 flex justify-center gap-6 z-30 pointer-events-auto">
         {actions.slice(0, 2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
-            <button 
+            <button
               onClick={act.action}
               className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden cursor-pointer"
             >
@@ -56,7 +56,7 @@ export default function BottomActions() {
       <div className="absolute right-6 top-[25rem] w-64 flex justify-center z-30 pointer-events-auto">
         {actions.slice(2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
-            <button 
+            <button
               onClick={act.action}
               className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden cursor-pointer"
             >
@@ -75,7 +75,7 @@ export default function BottomActions() {
       </div>
 
       {/* User label bottom left fixed */}
-      <div className="absolute left-8 -bottom-2 text-slate-700 text-xs lg:text-sm font-bold z-30 pointer-events-auto bg-white/50 px-2 py-1 rounded">
+      <div className="absolute left-8 bottom-4 text-slate-700 text-xs lg:text-sm font-bold z-30 pointer-events-auto bg-white/50 px-2 py-1 rounded">
         Bienvenido: {username.value}
       </div>
     </>

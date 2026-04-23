@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "preact/hooks";
 import { isInventoryOpen, isHelpModalOpen, plantName, activePlantId } from '../../store/resourceStore';
 import { fetchMyActivePlant, renamePlant } from '../../store/apiClient';
+import { syncPlantState } from '../../store/plantStore';
 import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
 import panelNombrePlanta from '../../assets/Recursos web media/Panel_NombrePlanta.png';
 import panelAvisoPlanta from '../../assets/Recursos web media/Panel_AvisoPlanta.png';
@@ -22,6 +23,9 @@ export default function TopHeader() {
         if (plant?.id) {
           activePlantId.value = plant.id;
         }
+
+        // Sincroniza los recursos y la fase desde el backend
+        syncPlantState(plant);
       })
       .catch(() => {
         // No active plant yet — keep default

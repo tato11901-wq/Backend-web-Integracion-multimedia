@@ -58,6 +58,19 @@ export function loadPlantFromJSON() {
   }
 }
 
+export function syncPlantState(backendPlant: any) {
+  if (backendPlant) {
+    if (backendPlant.stage) plantPhase.value = backendPlant.stage;
+    if (typeof backendPlant.health === "number") plantHealth.value = backendPlant.health;
+    if (typeof backendPlant.water === "number") plantWaterProgress.value = backendPlant.water;
+    if (typeof backendPlant.sun === "number") plantSunProgress.value = backendPlant.sun;
+    if (typeof backendPlant.fertilizer === "number") plantFertilizerProgress.value = backendPlant.fertilizer;
+    if (backendPlant.last_update) {
+      plantLastUpdate.value = new Date(backendPlant.last_update).getTime();
+    }
+  }
+}
+
 // Cargar estado inicial
 if (typeof window !== "undefined") {
   loadPlantFromJSON();
