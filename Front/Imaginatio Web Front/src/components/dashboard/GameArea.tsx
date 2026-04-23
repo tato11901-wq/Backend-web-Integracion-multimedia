@@ -24,7 +24,7 @@ export default function GameArea() {
       isWaterGameOpen.value = true;
    };
 
-   const handleOpenCompost = (e: React.MouseEvent) => {
+   const handleOpenCompost = (e: MouseEvent) => {
       // Botón oculto (modo admin): Activación por combinación de teclas
       if (e.altKey || e.shiftKey) {
          isDebugOpen.value = true;
