@@ -18,10 +18,11 @@ class Plant:
     Representación interna (Modelo) de la planta.
     En una base de datos real, esto sería un modelo de SQLAlchemy u ORM similar.
     """
-    def __init__(self, owner_id: str = None, plant_id: str = None, species_id: str = "aliso"):
+    def __init__(self, owner_id: str = None, plant_id: str = None, species_id: str = "aliso", name: str = "Mi Planta"):
         self.id = plant_id or str(uuid.uuid4())
         self.owner_id = owner_id
         self.species_id = species_id
+        self.name = name
         self.stage = PlantStage.SEED
         self.water = 0.0
         self.sun = 0.0

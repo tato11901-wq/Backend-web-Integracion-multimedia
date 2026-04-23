@@ -101,3 +101,10 @@ export async function fastForwardBackendTime(hours: number) {
     body: JSON.stringify({ hours }),
   });
 }
+
+export async function renamePlant(plantId: string, name: string) {
+  return apiFetch(`/plant/${plantId}/rename`, {
+    method: "PATCH",
+    body: JSON.stringify({ name }),
+  });
+}

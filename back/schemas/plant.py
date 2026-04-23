@@ -9,6 +9,7 @@ class PlantResponse(BaseModel):
     """
     id: str
     owner_id: Optional[str] = None
+    name: str = "Mi Planta"
     stage: PlantStage
     water: float
     sun: float

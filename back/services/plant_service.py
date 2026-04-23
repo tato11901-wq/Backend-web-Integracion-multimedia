@@ -134,3 +134,15 @@ class PlantService:
 
         plant.last_interaction = current_time
         return plant_repository.save(plant)
+
+    @staticmethod
+    def rename_plant(plant_id: str, owner_id: str, new_name: str) -> Plant:
+        """
+        Cambia el nombre de una planta.
+        """
+        plant = plant_repository.get_by_id(owner_id, plant_id)
+        if not plant:
+            raise HTTPException(status_code=404, detail="Plant not found")
+
+        plant.name = new_name.strip()[:12]  # Limitar a 12 caracteres
+        return plant_repository.save(plant)
