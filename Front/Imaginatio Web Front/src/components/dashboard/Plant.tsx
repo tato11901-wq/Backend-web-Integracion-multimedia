@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "preact/hooks";
 import { isPlantInfoOpen } from "../../store/resourceStore";
-import { plantPhase, type PlantPhase, waterAnimationTrigger } from "../../store/plantStore";
+import { plantPhase, type PlantPhase, waterAnimationTrigger, fertilizerAnimationTrigger, sunAnimationTrigger, isWatering, isFertilizing, isSunning, isEvolving } from "../../store/plantStore";
 import { SpriteAnimator } from './SpriteAnimator';
 
 // Importar spritesheets de las diferentes fases
@@ -10,19 +10,16 @@ import fase3SpriteSheet from '../../assets/Recursos planta/fase3_idle_spriteshee
 import entSpriteSheet from '../../assets/Recursos planta/end_idle_spritesheet.png';
 import evolucionSpriteSheet from '../../assets/Recursos estadosPlanta/Evolucion.png';
 import watherSpriteSheet from '../../assets/Recursos estadosPlanta/Wather.png';
+import abonoSpriteSheet from '../../assets/Recursos estadosPlanta/Abono.png';
+import solSpriteSheet from '../../assets/Recursos estadosPlanta/Sol.png';
 
 export const Plant = () => {
-  const [isEvolving, setIsEvolving] = useState(false);
-  const [isWatering, setIsWatering] = useState(false);
   const [displayPhase, setDisplayPhase] = useState<PlantPhase>(plantPhase.value);
   const prevPhaseRef = useRef(plantPhase.value);
-  const prevWaterRef = useRef(waterAnimationTrigger.value);
 
   // Detect phase changes to trigger evolution animation
   useEffect(() => {
     if (prevPhaseRef.current !== plantPhase.value) {
-      setIsEvolving(true);
-
       // Delay visual change of the plant to sync with the evolution animation explosion (approx 1.5s)
       const newPhase = plantPhase.value;
       const phaseTimer = setTimeout(() => {
@@ -31,32 +28,11 @@ export const Plant = () => {
 
       prevPhaseRef.current = plantPhase.value;
 
-      // La animación tiene 43 frames. A 20 fps son 2.15 segundos.
-      const timer = setTimeout(() => {
-        setIsEvolving(false);
-      }, 2150);
-
       return () => {
-        clearTimeout(timer);
         clearTimeout(phaseTimer);
       };
     }
   }, [plantPhase.value]);
-
-  // Detect watering action
-  useEffect(() => {
-    if (prevWaterRef.current !== waterAnimationTrigger.value) {
-      setIsWatering(true);
-      prevWaterRef.current = waterAnimationTrigger.value;
-
-      // La animación de Wather tiene 8 frames. A 12 fps son ~667ms.
-      const timer = setTimeout(() => {
-        setIsWatering(false);
-      }, 667);
-
-      return () => clearTimeout(timer);
-    }
-  }, [waterAnimationTrigger.value]);
 
   // Mapear cada fase a su spritesheet y configuración usando displayPhase
   const getSpriteConfig = () => {
@@ -119,7 +95,7 @@ export const Plant = () => {
         />
 
         {/* Evolution Animation Overlay */}
-        {isEvolving && (
+        {isEvolving.value && (
           <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none scale-[2.5]">
             <SpriteAnimator
               src={evolucionSpriteSheet.src}
@@ -133,15 +109,43 @@ export const Plant = () => {
         )}
 
         {/* Water Animation Overlay */}
-        {isWatering && (
+        {isWatering.value && (
           <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none scale-[2.5] -translate-y-55">
             <SpriteAnimator
               src={watherSpriteSheet.src}
               frameWidth={500}
               frameHeight={500}
-              frameCount={8}
+              frameCount={16}
               fps={12}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain mix-blend-screen"
+            />
+          </div>
+        )}
+
+        {/* Fertilizer Animation Overlay */}
+        {isFertilizing.value && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none scale-[2] -translate-y-40">
+            <SpriteAnimator
+              src={abonoSpriteSheet.src}
+              frameWidth={500}
+              frameHeight={500}
+              frameCount={25}
+              fps={20}
+              className="w-full h-full object-contain mix-blend-screen"
+            />
+          </div>
+        )}
+
+        {/* Sun Animation Overlay */}
+        {isSunning.value && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none scale-[2.5] -translate-y-50">
+            <SpriteAnimator
+              src={solSpriteSheet.src}
+              frameWidth={500}
+              frameHeight={500}
+              frameCount={35}
+              fps={20}
+              className="w-full h-full object-contain mix-blend-screen opacity-50"
             />
           </div>
         )}

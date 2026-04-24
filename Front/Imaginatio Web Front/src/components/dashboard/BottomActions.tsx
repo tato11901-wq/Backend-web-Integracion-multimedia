@@ -12,7 +12,11 @@ import {
 import {
   applyWater,
   applySun,
-  applyFertilizer
+  applyFertilizer,
+  isWatering,
+  isFertilizing,
+  isSunning,
+  isEvolving
 } from "../../store/plantStore";
 
 const btnImages: Record<string, ImageMetadata> = {
@@ -22,6 +26,8 @@ const btnImages: Record<string, ImageMetadata> = {
 };
 
 export default function BottomActions() {
+  const isAnyAnimating = isWatering.value || isFertilizing.value || isSunning.value || isEvolving.value;
+  
   const actions = [
     { label: 'Iluminar', badge: sunInventory.value, action: applySun },
     { label: 'Regar', badge: waterInventory.value, action: applyWater },
@@ -31,12 +37,13 @@ export default function BottomActions() {
   return (
     <>
       {/* Left block: Iluminar and Regar */}
-      <div className="absolute left-6 top-[25rem] w-64 flex justify-center gap-6 z-30 pointer-events-auto">
+      <div className={`absolute left-6 top-[25rem] w-64 flex justify-center gap-6 z-30 pointer-events-auto ${isAnyAnimating ? 'opacity-50 pointer-events-none' : ''}`}>
         {actions.slice(0, 2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
             <button
               onClick={act.action}
-              className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden cursor-pointer"
+              disabled={isAnyAnimating}
+              className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden cursor-pointer disabled:cursor-not-allowed"
             >
               <img src={btnImages[act.label].src} alt={`Btn ${act.label}`} className="w-full h-full object-contain" />
             </button>
@@ -53,12 +60,13 @@ export default function BottomActions() {
       </div>
 
       {/* Right block: Abonar */}
-      <div className="absolute right-6 top-[25rem] w-64 flex justify-center z-30 pointer-events-auto">
+      <div className={`absolute right-6 top-[25rem] w-64 flex justify-center z-30 pointer-events-auto ${isAnyAnimating ? 'opacity-50 pointer-events-none' : ''}`}>
         {actions.slice(2).map(act => (
           <div key={act.label} className="relative transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90">
             <button
               onClick={act.action}
-              className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden cursor-pointer"
+              disabled={isAnyAnimating}
+              className="w-32 h-38 flex flex-col items-center justify-center p-0 overflow-hidden cursor-pointer disabled:cursor-not-allowed"
             >
               <img src={btnImages[act.label].src} alt={`Btn ${act.label}`} className="w-full h-full object-contain" />
             </button>
