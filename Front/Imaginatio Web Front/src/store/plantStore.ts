@@ -25,6 +25,12 @@ export const isDebugOpen = signal<boolean>(false);
 
 // Signal to trigger water animation
 export const waterAnimationTrigger = signal<number>(0);
+export const fertilizerAnimationTrigger = signal<number>(0);
+export const sunAnimationTrigger = signal<number>(0);
+export const isWatering = signal<boolean>(false);
+export const isFertilizing = signal<boolean>(false);
+export const isSunning = signal<boolean>(false);
+export const isEvolving = signal<boolean>(false);
 
 // Tiempos para decaimiento de salud exacto al backend (72 horas para morir)
 export const HEALTH_LOSS_PER_HOUR = 100.0 / 72.0;
@@ -88,7 +94,7 @@ effect(() => {
   const ____ = plantSunProgress.value;
   const _____ = plantFertilizerProgress.value;
   const ______ = plantLastUpdate.value;
-  
+
   if (typeof window !== "undefined") {
     savePlantToJSON();
   }
@@ -101,12 +107,12 @@ export function updatePassiveHealth() {
 
   const now = Date.now();
   const diffMs = now - plantLastUpdate.value;
-  
+
   // Evitar procesamientos de tiempos negativos por desajustes del reloj
   if (diffMs > 0) {
     const hoursPassed = diffMs / (1000 * 60 * 60);
     const healthLost = HEALTH_LOSS_PER_HOUR * hoursPassed;
-    
+
     // Si la salud se pierde, actualizamos
     if (healthLost > 0) {
       plantHealth.value = Math.max(0, plantHealth.value - healthLost);
@@ -148,19 +154,31 @@ export function checkEvolution() {
 }
 
 export function evolvePlant() {
-  if (plantPhase.value === "semilla") {
-    plantPhase.value = "arbusto_pequeño";
-  } else if (plantPhase.value === "arbusto_pequeño") {
-    plantPhase.value = "arbusto_grande";
-  } else if (plantPhase.value === "arbusto_grande") {
-    plantPhase.value = "ent";
-  }
+  // Determinar el retraso basado en qué animación está activa
+  let delay = 0;
+  if (isWatering.value) delay = 1450; // Un poco más que 1333ms
+  if (isSunning.value) delay = 1800;  // Un poco más que 1750ms
+  if (isFertilizing.value) delay = 1300; // Un poco más que 1250ms
 
-  // Reiniciar progresos parciales
-  plantWaterProgress.value = 0;
-  plantSunProgress.value = 0;
-  plantFertilizerProgress.value = 0;
-  plantHealth.value = MAX_HEALTH;
+  setTimeout(() => {
+    isEvolving.value = true;
+    if (plantPhase.value === "semilla") {
+      plantPhase.value = "arbusto_pequeño";
+    } else if (plantPhase.value === "arbusto_pequeño") {
+      plantPhase.value = "arbusto_grande";
+    } else if (plantPhase.value === "arbusto_grande") {
+      plantPhase.value = "ent";
+    }
+
+    // Reiniciar progresos parciales
+    plantWaterProgress.value = 0;
+    plantSunProgress.value = 0;
+    plantFertilizerProgress.value = 0;
+    plantHealth.value = MAX_HEALTH;
+
+    // 2.15s es la duración de la animación de evolución
+    setTimeout(() => (isEvolving.value = false), 2150);
+  }, delay);
 }
 
 export function resetPlant() {
@@ -184,15 +202,19 @@ export function applyWater() {
     alert("No tienes agua en el inventario.");
     return;
   }
-  
+
   if (plantHealth.value <= 0) {
     alert("La planta no tiene salud.");
     return;
   }
 
+  if (isWatering.value) return;
+
   // Descontar inventario
   waterInventory.value -= 1;
   waterAnimationTrigger.value += 1;
+  isWatering.value = true;
+  setTimeout(() => (isWatering.value = false), 1334);
 
   // Recuperación básica de salud (el agua cura)
   plantHealth.value = Math.min(MAX_HEALTH, plantHealth.value + 15);
@@ -212,13 +234,18 @@ export function applySun() {
     alert("No tienes soles en el inventario.");
     return;
   }
-  
+
   if (plantHealth.value <= 0) {
     alert("La planta no tiene salud.");
     return;
   }
 
+  if (isSunning.value) return;
+
   sunInventory.value -= 1;
+  sunAnimationTrigger.value += 1;
+  isSunning.value = true;
+  setTimeout(() => (isSunning.value = false), 1750);
 
   // El sol cura un poco también
   plantHealth.value = Math.min(MAX_HEALTH, plantHealth.value + 5);
@@ -240,7 +267,12 @@ export function applyFertilizer() {
     return;
   }
 
+  if (isFertilizing.value) return;
+
   fertilizerInventory.value -= 1;
+  fertilizerAnimationTrigger.value += 1;
+  isFertilizing.value = true;
+  setTimeout(() => (isFertilizing.value = false), 1250);
 
   plantHealth.value = Math.min(MAX_HEALTH, plantHealth.value + 30);
 
