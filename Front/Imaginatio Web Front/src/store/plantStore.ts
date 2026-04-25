@@ -241,21 +241,20 @@ export function evolvePlant() {
       evolvePlantApi(activePlantId.value).catch(e => console.error("Error evolucionando:", e));
     }
 
-    // Los valores de agua y sol se mantienen, excepto si es Ent
+    // Al evolucionar: maxear agua y sol a los requerimientos de la nueva fase
     if (plantPhase.value === "ent") {
       plantWaterProgress.value = 10;
       plantSunProgress.value = 10;
       plantFertilizerProgress.value = 10;
       plantHealth.value = 100;
     } else {
-      // Recalcular salud visual con nuevos requerimientos
       const reqs = EVOLUTION_REQUIREMENTS[plantPhase.value];
       if (reqs) {
-        const displayW = Math.ceil(plantWaterProgress.value);
-        const displayS = Math.ceil(plantSunProgress.value);
-        const wPct = (displayW / reqs.water) * 100;
-        const sPct = (displayS / reqs.sun) * 100;
-        plantHealth.value = Math.min(100, Math.min(wPct, sPct));
+        // Maxear agua y sol al nuevo máximo
+        plantWaterProgress.value = reqs.water;
+        plantSunProgress.value = reqs.sun;
+        // Salud = 100% porque acabamos de maxear los recursos
+        plantHealth.value = 100;
       }
       plantFertilizerProgress.value = 0;
     }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "preact/hooks";
 import { userId, syncUserState, username } from "../store/resourceStore";
 import { login, fetchMyState, getToken } from "../store/apiClient";
+import { initUnityBridge } from "../store/unityBridge";
 
 import TopHeader from "./dashboard/TopHeader";
 import LeftSigns from "./dashboard/LeftSigns";
@@ -27,6 +28,7 @@ export default function MainUI() {
       fetchMyState()
         .then(res => {
           syncUserState(res);
+          initUnityBridge(); // Inicializar JSON canónico con datos del usuario
           setAuthState("logged");
         })
         .catch(() => {
@@ -45,6 +47,7 @@ export default function MainUI() {
     try {
       const res = await login(tempName);
       syncUserState(res.user);
+      initUnityBridge(); // Inicializar JSON canónico con datos del usuario
       setAuthState("logged");
     } catch (err) {
       alert("Error al iniciar sesión");

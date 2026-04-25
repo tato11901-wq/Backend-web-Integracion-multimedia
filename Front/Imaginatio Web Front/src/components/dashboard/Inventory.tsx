@@ -5,6 +5,7 @@ import { syncPlantState, setEvolutionRequirementsFromSpecies, plantSpeciesId } f
 import { fetchMyInventory, setActivePlant, deletePlant, createPlant } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY, FALLBACK_SPECIES, type SpriteConfig } from "../../config/plantSpriteRegistry";
 import type { PlantPhase } from "../../store/plantStore";
+import { syncInventoryToUnityData, initUnityBridge } from "../../store/unityBridge";
 
 import fondoInventario from "../../assets/Recursos inventario/Fondo_Inventario.png";
 import panelHudInventario from "../../assets/Recursos inventario/Panel_HUDInventario.png";
@@ -96,7 +97,11 @@ export default function Inventory() {
   const loadInventory = () => {
     setLoading(true);
     fetchMyInventory()
-      .then((data: BackendPlant[]) => setPlants(data ?? []))
+      .then((data: BackendPlant[]) => {
+        setPlants(data ?? []);
+        // Sincronizar con el JSON canónico de Unity (solo escritura en localStorage, no muta signals)
+        syncInventoryToUnityData(data ?? []);
+      })
       .catch(() => setPlants([]))
       .finally(() => setLoading(false));
   };
