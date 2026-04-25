@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from core.auth import get_current_user_id
 from schemas.user import UserResponse, ActivePlantUpdate, DebugTimeRequest
 from schemas.plant import PlantResponse
@@ -80,3 +81,24 @@ def fast_forward_time(req: DebugTimeRequest, user_id: str = Depends(get_current_
         
     user_repository.save(user)
     return user
+
+class DebugResourcesRequest(BaseModel):
+    water: int = 0
+    sun: int = 0
+    fertilizer: int = 0
+
+@router.post("/me/debug/add-resources", response_model=UserResponse)
+def add_debug_resources(req: DebugResourcesRequest, user_id: str = Depends(get_current_user_id)):
+    """
+    DEBUG: Añade recursos directamente al inventario.
+    """
+    from repositories.user_repository import user_repository
+    user = user_repository.get_by_id(user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        
+    user.water_inventory += req.water
+    user.sun_inventory += req.sun
+    user.fertilizer_inventory += req.fertilizer
+    
+    return user_repository.save(user)

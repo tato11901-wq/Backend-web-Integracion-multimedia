@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "preact/hooks";
-import { isPlantInfoOpen } from "../../store/resourceStore";
+import { isPlantInfoOpen, activePlantId } from "../../store/resourceStore";
 import {
   plantPhase,
   plantSpeciesId,
@@ -21,20 +21,45 @@ import solSpriteSheet       from '../../assets/Recursos estadosPlanta/Sol.png';
 export const Plant = () => {
   const [displayPhase, setDisplayPhase] = useState<PlantPhase>(plantPhase.value);
   const [displaySpecies, setDisplaySpecies] = useState<string>(plantSpeciesId.value);
+  
   const prevPhaseRef = useRef(plantPhase.value);
+  const prevPlantIdRef = useRef(activePlantId.value);
 
-  // Retrasar el cambio visual de fase para sincronizarlo con la animación de evolución
+  // Sincronización inmediata al cambiar de planta (evita flickering)
+  useEffect(() => {
+    if (prevPlantIdRef.current !== activePlantId.value) {
+      setDisplayPhase(plantPhase.value);
+      setDisplaySpecies(plantSpeciesId.value);
+      prevPhaseRef.current = plantPhase.value;
+      prevPlantIdRef.current = activePlantId.value;
+    }
+  }, [activePlantId.value, plantPhase.value, plantSpeciesId.value]);
+
+  // Retrasar el cambio visual de fase SOLO durante la evolución
   useEffect(() => {
     if (prevPhaseRef.current !== plantPhase.value) {
       const newPhase = plantPhase.value;
-      const timer = setTimeout(() => setDisplayPhase(newPhase), 1500);
-      prevPhaseRef.current = plantPhase.value;
-      return () => clearTimeout(timer);
+      
+      // Si estamos en proceso de evolución, esperamos a que la animación avance
+      if (isEvolving.value) {
+        const timer = setTimeout(() => {
+          setDisplayPhase(newPhase);
+          prevPhaseRef.current = newPhase;
+        }, 1500);
+        return () => clearTimeout(timer);
+      } else {
+        // Si no hay evolución (ej: cambio de planta), actualizamos ya
+        setDisplayPhase(newPhase);
+        prevPhaseRef.current = newPhase;
+      }
     }
-  }, [plantPhase.value]);
+  }, [plantPhase.value, isEvolving.value]);
 
   useEffect(() => {
-    setDisplaySpecies(plantSpeciesId.value);
+    // Solo actualizamos la especie si no es un cambio de planta (manejado arriba)
+    if (prevPlantIdRef.current === activePlantId.value) {
+      setDisplaySpecies(plantSpeciesId.value);
+    }
   }, [plantSpeciesId.value]);
 
   const config = getSpriteConfig(displaySpecies, displayPhase);

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "preact/hooks";
+import { batch } from "@preact/signals";
 import { isInventoryOpen, activePlantId, inventoryVersion, plantName, refreshInventory } from "../../store/resourceStore";
 import { syncPlantState, setEvolutionRequirementsFromSpecies, plantSpeciesId } from "../../store/plantStore";
 import { fetchMyInventory, setActivePlant, deletePlant, createPlant } from "../../store/apiClient";
@@ -133,13 +134,16 @@ export default function Inventory() {
     setSwitching(plant.id);
     try {
       await setActivePlant(plant.id);
-      activePlantId.value = plant.id;
-      plantName.value = plant.name;          // ← actualizar nombre en HUD
-      syncPlantState(plant);
-      if (plant.species_data) setEvolutionRequirementsFromSpecies(plant.species_data);
-      plantSpeciesId.value = plant.species_id;
-      setSelectedPlant(null);               // ← cerrar subpanel antes de cerrar modal
-      isInventoryOpen.value = false;
+      
+      batch(() => {
+        activePlantId.value = plant.id;
+        plantName.value = plant.name;          // ← actualizar nombre en HUD
+        syncPlantState(plant);
+        if (plant.species_data) setEvolutionRequirementsFromSpecies(plant.species_data);
+        plantSpeciesId.value = plant.species_id;
+        setSelectedPlant(null);               // ← cerrar subpanel antes de cerrar modal
+        isInventoryOpen.value = false;
+      });
     } catch (e: any) {
       alert(e.message ?? "Error al cambiar la planta activa.");
     } finally {

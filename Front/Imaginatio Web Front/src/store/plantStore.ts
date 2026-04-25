@@ -1,5 +1,6 @@
-import { signal, effect } from "@preact/signals";
-import { waterInventory, sunInventory, fertilizerInventory } from "./resourceStore";
+import { signal, effect, batch } from "@preact/signals";
+import { waterInventory, sunInventory, fertilizerInventory, activePlantId } from "./resourceStore";
+import { applyPlantAction, evolvePlantApi } from "./apiClient";
 
 export type PlantPhase = "seed" | "small_bush" | "large_bush" | "ent";
 
@@ -119,21 +120,23 @@ export function loadPlantFromJSON() {
 
 export function syncPlantState(backendPlant: any) {
   if (backendPlant) {
-    if (backendPlant.stage) plantPhase.value = backendPlant.stage;
-    if (typeof backendPlant.health === "number") plantHealth.value = backendPlant.health;
-    if (typeof backendPlant.water === "number") plantWaterProgress.value = backendPlant.water;
-    if (typeof backendPlant.sun === "number") plantSunProgress.value = backendPlant.sun;
-    if (typeof backendPlant.fertilizer === "number") plantFertilizerProgress.value = backendPlant.fertilizer;
-    if (backendPlant.last_update) {
-      plantLastUpdate.value = new Date(backendPlant.last_update).getTime();
-    }
-    if (backendPlant.species_id) {
-      plantSpeciesId.value = backendPlant.species_id;
-    }
-    // Si la respuesta incluye los datos de la especie (evolution_requirements), los cargamos
-    if (backendPlant.species_data) {
-      setEvolutionRequirementsFromSpecies(backendPlant.species_data);
-    }
+    batch(() => {
+      if (backendPlant.stage) plantPhase.value = backendPlant.stage;
+      if (typeof backendPlant.health === "number") plantHealth.value = backendPlant.health;
+      if (typeof backendPlant.water === "number") plantWaterProgress.value = backendPlant.water;
+      if (typeof backendPlant.sun === "number") plantSunProgress.value = backendPlant.sun;
+      if (typeof backendPlant.fertilizer === "number") plantFertilizerProgress.value = backendPlant.fertilizer;
+      if (backendPlant.last_update) {
+        plantLastUpdate.value = new Date(backendPlant.last_update).getTime();
+      }
+      if (backendPlant.species_id) {
+        plantSpeciesId.value = backendPlant.species_id;
+      }
+      // Si la respuesta incluye los datos de la especie (evolution_requirements), los cargamos
+      if (backendPlant.species_data) {
+        setEvolutionRequirementsFromSpecies(backendPlant.species_data);
+      }
+    });
   }
 }
 
@@ -233,6 +236,11 @@ export function evolvePlant() {
       plantPhase.value = "ent";
     }
 
+    // Notificar al backend en segundo plano
+    if (activePlantId.value) {
+      evolvePlantApi(activePlantId.value).catch(e => console.error("Error evolucionando:", e));
+    }
+
     // Los valores de agua y sol se mantienen, excepto si es Ent
     if (plantPhase.value === "ent") {
       plantWaterProgress.value = 10;
@@ -301,6 +309,11 @@ export function applyWater() {
     plantHealth.value = Math.min(100, Math.min(wPct, sPct));
   }
 
+  // Notificar al backend en segundo plano
+  if (activePlantId.value) {
+    applyPlantAction(activePlantId.value, "water").catch(e => console.error(e));
+  }
+
   checkEvolution();
 }
 
@@ -331,6 +344,11 @@ export function applySun() {
     plantHealth.value = Math.min(100, Math.min(wPct, sPct));
   }
 
+  // Notificar al backend en segundo plano
+  if (activePlantId.value) {
+    applyPlantAction(activePlantId.value, "sun").catch(e => console.error(e));
+  }
+
   checkEvolution();
 }
 
@@ -352,6 +370,11 @@ export function applyFertilizer() {
   // El abono da +1 unidad de progreso
   if (reqs) {
     plantFertilizerProgress.value = Math.min(reqs.fertilizer, plantFertilizerProgress.value + 1);
+  }
+
+  // Notificar al backend en segundo plano
+  if (activePlantId.value) {
+    applyPlantAction(activePlantId.value, "prune").catch(e => console.error(e));
   }
 
   checkEvolution();

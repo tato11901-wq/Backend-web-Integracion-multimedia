@@ -44,7 +44,8 @@ async function apiFetch(path: string, options: RequestInit = {}) {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "Error de red imprevisto" }));
-    throw new Error(err.detail || `Error del servidor: ${res.status}`);
+    const detailStr = typeof err.detail === "object" ? JSON.stringify(err.detail) : err.detail;
+    throw new Error(detailStr || `Error del servidor: ${res.status}`);
   }
 
   return res.json();
@@ -102,6 +103,13 @@ export async function fastForwardBackendTime(hours: number) {
   });
 }
 
+export async function addDebugResourcesBackend(water: number, sun: number, fertilizer: number) {
+  return apiFetch("/users/me/debug/add-resources", {
+    method: "POST",
+    body: JSON.stringify({ water, sun, fertilizer }),
+  });
+}
+
 export async function renamePlant(plantId: string, name: string) {
   return apiFetch(`/plant/${plantId}/rename`, {
     method: "PATCH",
@@ -126,6 +134,18 @@ export async function setActivePlant(plantId: string) {
 export async function deletePlant(plantId: string) {
   return apiFetch(`/plant/${plantId}`, {
     method: "DELETE",
+  });
+}
+
+export async function applyPlantAction(plantId: string, action: "water" | "sun" | "prune") {
+  return apiFetch(`/plant/${plantId}/${action}`, {
+    method: "POST",
+  });
+}
+
+export async function evolvePlantApi(plantId: string) {
+  return apiFetch(`/plant/${plantId}/evolve`, {
+    method: "POST",
   });
 }
 

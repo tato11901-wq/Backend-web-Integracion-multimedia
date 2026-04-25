@@ -35,6 +35,15 @@ def get_plant(plant_id: str, owner_id: str = Depends(get_current_user_id)):
     plant = PlantService.get_plant(plant_id, owner_id)
     return plant
 
+@router.post("/{plant_id}/evolve", response_model=PlantResponse)
+def evolve_action(plant_id: str, owner_id: str = Depends(get_current_user_id)):
+    """
+    Intenta evolucionar la planta si se cumplen sus requisitos basados en la especie.
+    Resetea los recursos a 0 si es exitosa.
+    """
+    plant = PlantService.evolve_plant(plant_id, owner_id)
+    return plant
+
 @router.post("/{plant_id}/{action}", response_model=PlantResponse)
 def apply_action(plant_id: str, action: ActionType, owner_id: str = Depends(get_current_user_id)):
     """
@@ -43,15 +52,6 @@ def apply_action(plant_id: str, action: ActionType, owner_id: str = Depends(get_
     Esto interactúa con la planta, reseteando la cuenta regresiva.
     """
     plant = PlantService.handle_action(plant_id, owner_id, action)
-    return plant
-
-@router.post("/{plant_id}/evolve", response_model=PlantResponse)
-def evolve_action(plant_id: str, owner_id: str = Depends(get_current_user_id)):
-    """
-    Intenta evolucionar la planta si se cumplen sus requisitos basados en la especie.
-    Resetea los recursos a 0 si es exitosa.
-    """
-    plant = PlantService.evolve_plant(plant_id, owner_id)
     return plant
 
 class RenamePlantRequest(BaseModel):

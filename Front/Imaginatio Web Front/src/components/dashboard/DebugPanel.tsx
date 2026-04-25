@@ -25,7 +25,7 @@ import {
   refreshInventory
 } from "../../store/resourceStore";
 
-import { fastForwardBackendTime, createPlant, fetchMyActivePlant } from "../../store/apiClient";
+import { fastForwardBackendTime, createPlant, fetchMyActivePlant, addDebugResourcesBackend } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY } from "../../config/plantSpriteRegistry";
 
 // Especies con sprites disponibles en el registro
@@ -65,6 +65,19 @@ export default function DebugPanel() {
       setCreateMsg(`❌ ${e.message ?? "Error al crear la planta."}`);
     } finally {
       setCreatingPlant(false);
+    }
+  };
+
+  const handleAddResource = async (type: 'water' | 'sun' | 'fertilizer') => {
+    try {
+      const water = type === 'water' ? 5 : 0;
+      const sun = type === 'sun' ? 5 : 0;
+      const fertilizer = type === 'fertilizer' ? 5 : 0;
+      
+      const updatedUser = await addDebugResourcesBackend(water, sun, fertilizer);
+      syncUserState(updatedUser);
+    } catch (e) {
+      console.error("Error añadiendo recursos en backend", e);
     }
   };
 
@@ -165,19 +178,19 @@ export default function DebugPanel() {
             <h3 className="text-base text-slate-400 uppercase font-bold mb-3">Trampas y Simuladores</h3>
             <div className="flex gap-3 mb-3">
               <button 
-                onClick={() => waterInventory.value += 5}
+                onClick={() => handleAddResource('water')}
                 className="flex-1 bg-blue-700 hover:bg-blue-600 text-sm py-2 rounded font-bold transition-transform active:scale-95"
               >
                 +5 Agua
               </button>
               <button 
-                onClick={() => sunInventory.value += 5}
+                onClick={() => handleAddResource('sun')}
                 className="flex-1 bg-yellow-600 hover:bg-yellow-500 text-sm py-2 rounded font-bold transition-transform active:scale-95"
               >
                 +5 Sol
               </button>
               <button 
-                onClick={() => fertilizerInventory.value += 5}
+                onClick={() => handleAddResource('fertilizer')}
                 className="flex-1 bg-emerald-700 hover:bg-emerald-600 text-sm py-2 rounded font-bold transition-transform active:scale-95"
               >
                 +5 Abono
