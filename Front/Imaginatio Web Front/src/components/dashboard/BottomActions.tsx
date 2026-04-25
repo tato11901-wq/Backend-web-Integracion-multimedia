@@ -49,7 +49,7 @@ export default function BottomActions() {
             </button>
             {/* Cantidad de recurso sobre el cuadro rojo del botón */}
             <span className="absolute top-0 right-0 w-13 h-8 lg:w-13 lg:h-8 flex items-center justify-center text-white font-bold lg:text-lg z-10 pointer-events-none">
-              {act.badge}
+              {Math.floor(act.badge)}
             </span>
             {/* Label sobre la parte inferior verde */}
             <span className="absolute bottom-4 left-0 w-full text-center text-white font-bold text-[14px] z-10 pointer-events-none drop-shadow-md">

@@ -1,29 +1,77 @@
 import { signal, effect } from "@preact/signals";
 import { waterInventory, sunInventory, fertilizerInventory } from "./resourceStore";
 
-export type PlantPhase = "semilla" | "arbusto_pequeño" | "arbusto_grande" | "ent";
+export type PlantPhase = "seed" | "small_bush" | "large_bush" | "ent";
 
-// Requisitos de evolución (Agua, Sol, Abono)
-export const EVOLUTION_REQUIREMENTS: Record<PlantPhase, { water: number; sun: number; fertilizer: number } | null> = {
-  semilla: { water: 3, sun: 3, fertilizer: 1 },
-  arbusto_pequeño: { water: 5, sun: 5, fertilizer: 2 },
-  arbusto_grande: { water: 7, sun: 7, fertilizer: 3 },
-  ent: null, // Máximo nivel
+export interface SpeciesRequirements {
+  water: number;
+  sun: number;
+  fertilizer: number;
+}
+
+// Requisitos de evolución por especie y fase — se actualizan dinámicamente desde el backend
+// Los valores por defecto corresponden al "pasto" (especie base)
+let _evolutionRequirements: Record<PlantPhase, SpeciesRequirements | null> = {
+  seed:        { water: 4, sun: 4, fertilizer: 4 },
+  small_bush:  { water: 6, sun: 6, fertilizer: 6 },
+  large_bush:  { water: 8, sun: 8, fertilizer: 8 },
+  ent: null,
 };
+
+// Mapeo de las claves del backend (MAYÚSCULAS) a las del frontend (minúsculas)
+const PHASE_KEY_MAP: Record<string, PlantPhase> = {
+  SEED: "seed",
+  SMALL_BUSH: "small_bush",
+  LARGE_BUSH: "large_bush",
+};
+
+export function setEvolutionRequirementsFromSpecies(speciesData: any) {
+  const reqs = speciesData?.evolution_requirements;
+  if (!reqs) return;
+
+  const newReqs: Record<PlantPhase, SpeciesRequirements | null> = {
+    seed:       null,
+    small_bush: null,
+    large_bush: null,
+    ent:        null,
+  };
+
+  for (const [key, val] of Object.entries(reqs)) {
+    const phase = PHASE_KEY_MAP[key];
+    if (phase && val && typeof val === "object") {
+      newReqs[phase] = val as SpeciesRequirements;
+    }
+  }
+
+  _evolutionRequirements = newReqs;
+}
+
+export function getEvolutionRequirements(): Record<PlantPhase, SpeciesRequirements | null> {
+  return _evolutionRequirements;
+}
+
+// Para compatibilidad con los componentes existentes que importan EVOLUTION_REQUIREMENTS directamente,
+// exportamos un objeto proxy reactivo.
+export const EVOLUTION_REQUIREMENTS = new Proxy({} as Record<PlantPhase, SpeciesRequirements | null>, {
+  get(_target, prop: string) {
+    return _evolutionRequirements[prop as PlantPhase];
+  }
+});
 
 export const MAX_HEALTH = 100;
 export const CRITICAL_HEALTH_THRESHOLD = 20;
 
 // Estado de la planta
-export const plantPhase = signal<PlantPhase>("semilla");
+export const plantPhase = signal<PlantPhase>("seed");
 export const plantHealth = signal<number>(100);
-export const plantWaterProgress = signal<number>(0);
-export const plantSunProgress = signal<number>(0);
+export const plantWaterProgress = signal<number>(4); // Default pasto seed
+export const plantSunProgress = signal<number>(4);   // Default pasto seed
 export const plantFertilizerProgress = signal<number>(0);
+export const plantSpeciesId = signal<string>("pasto"); // Especie activa
 
 export const isDebugOpen = signal<boolean>(false);
 
-// Signal to trigger water animation
+// Signals de animación
 export const waterAnimationTrigger = signal<number>(0);
 export const fertilizerAnimationTrigger = signal<number>(0);
 export const sunAnimationTrigger = signal<number>(0);
@@ -32,7 +80,7 @@ export const isFertilizing = signal<boolean>(false);
 export const isSunning = signal<boolean>(false);
 export const isEvolving = signal<boolean>(false);
 
-// Tiempos para decaimiento de salud exacto al backend (72 horas para morir)
+// Para decaimiento
 export const HEALTH_LOSS_PER_HOUR = 100.0 / 72.0;
 export const plantLastUpdate = signal<number>(Date.now());
 
@@ -46,6 +94,7 @@ export function savePlantToJSON() {
     sunProgress: plantSunProgress.value,
     fertilizerProgress: plantFertilizerProgress.value,
     lastUpdate: plantLastUpdate.value,
+    speciesId: plantSpeciesId.value,
   };
   localStorage.setItem("imaginatio_plant_state", JSON.stringify(state));
 }
@@ -61,6 +110,7 @@ export function loadPlantFromJSON() {
       if (typeof state.sunProgress === "number") plantSunProgress.value = state.sunProgress;
       if (typeof state.fertilizerProgress === "number") plantFertilizerProgress.value = state.fertilizerProgress;
       if (typeof state.lastUpdate === "number") plantLastUpdate.value = state.lastUpdate;
+      if (state.speciesId) plantSpeciesId.value = state.speciesId;
     } catch (e) {
       console.error("Error parsing plant JSON state", e);
     }
@@ -77,6 +127,13 @@ export function syncPlantState(backendPlant: any) {
     if (backendPlant.last_update) {
       plantLastUpdate.value = new Date(backendPlant.last_update).getTime();
     }
+    if (backendPlant.species_id) {
+      plantSpeciesId.value = backendPlant.species_id;
+    }
+    // Si la respuesta incluye los datos de la especie (evolution_requirements), los cargamos
+    if (backendPlant.species_data) {
+      setEvolutionRequirementsFromSpecies(backendPlant.species_data);
+    }
   }
 }
 
@@ -87,13 +144,13 @@ if (typeof window !== "undefined") {
 
 // Autoguardado cuando cambian los valores
 effect(() => {
-  // Solo referenciamos los valores para que Preact Signals suscriba este efecto
   const _ = plantPhase.value;
   const __ = plantHealth.value;
   const ___ = plantWaterProgress.value;
   const ____ = plantSunProgress.value;
   const _____ = plantFertilizerProgress.value;
   const ______ = plantLastUpdate.value;
+  const _______ = plantSpeciesId.value;
 
   if (typeof window !== "undefined") {
     savePlantToJSON();
@@ -101,34 +158,41 @@ effect(() => {
 });
 
 // --- Lógica de Decaimiento de Salud (en segundo plano) ---
-// Calcula y aplica la misma fórmula del backend (100 de salud / 72 horas)
 export function updatePassiveHealth() {
-  if (plantHealth.value <= 0) return;
+  if (plantHealth.value <= 0 || plantPhase.value === "ent") return;
 
   const now = Date.now();
   const diffMs = now - plantLastUpdate.value;
 
-  // Evitar procesamientos de tiempos negativos por desajustes del reloj
   if (diffMs > 0) {
     const hoursPassed = diffMs / (1000 * 60 * 60);
-    const healthLost = HEALTH_LOSS_PER_HOUR * hoursPassed;
+    const reqs = EVOLUTION_REQUIREMENTS[plantPhase.value];
 
-    // Si la salud se pierde, actualizamos
-    if (healthLost > 0) {
-      plantHealth.value = Math.max(0, plantHealth.value - healthLost);
+    if (reqs) {
+      // Decaimiento fijo: 6 unidades por hora (1 cada 10 min)
+      const resourceLost = hoursPassed * 6.0;
+      plantWaterProgress.value = Math.max(0, plantWaterProgress.value - resourceLost);
+      plantSunProgress.value = Math.max(0, plantSunProgress.value - resourceLost);
+      
+      // La salud visual es el porcentaje de cumplimiento del recurso más bajo (basado en unidades visibles)
+      const displayW = Math.ceil(plantWaterProgress.value);
+      const displayS = Math.ceil(plantSunProgress.value);
+      const wPct = (displayW / reqs.water) * 100;
+      const sPct = (displayS / reqs.sun) * 100;
+      plantHealth.value = Math.min(100, Math.min(wPct, sPct));
+      
       plantLastUpdate.value = now;
+
+      if (plantWaterProgress.value <= 0 || plantSunProgress.value <= 0) {
+        plantHealth.value = 0;
+      }
     }
-  } else {
-    // Si la última actualización es en el futuro (desajuste reloj), forzamos reinicio
-    plantLastUpdate.value = now;
   }
 }
 
-// Actualizar salud tan pronto se carga para aplicar el decaimiento de tiempo offline
+// Iniciar timer de decaimiento
 if (typeof window !== "undefined") {
   updatePassiveHealth();
-
-  // Y luego actualizarla cada 1 minuto
   setInterval(() => {
     updatePassiveHealth();
   }, 60000);
@@ -154,27 +218,39 @@ export function checkEvolution() {
 }
 
 export function evolvePlant() {
-  // Determinar el retraso basado en qué animación está activa
   let delay = 0;
-  if (isWatering.value) delay = 1450; // Un poco más que 1333ms
-  if (isSunning.value) delay = 1800;  // Un poco más que 1750ms
-  if (isFertilizing.value) delay = 1300; // Un poco más que 1250ms
+  if (isWatering.value) delay = 1450;
+  if (isSunning.value) delay = 1800;
+  if (isFertilizing.value) delay = 1300;
 
   setTimeout(() => {
     isEvolving.value = true;
-    if (plantPhase.value === "semilla") {
-      plantPhase.value = "arbusto_pequeño";
-    } else if (plantPhase.value === "arbusto_pequeño") {
-      plantPhase.value = "arbusto_grande";
-    } else if (plantPhase.value === "arbusto_grande") {
+    if (plantPhase.value === "seed") {
+      plantPhase.value = "small_bush";
+    } else if (plantPhase.value === "small_bush") {
+      plantPhase.value = "large_bush";
+    } else if (plantPhase.value === "large_bush") {
       plantPhase.value = "ent";
     }
 
-    // Reiniciar progresos parciales
-    plantWaterProgress.value = 0;
-    plantSunProgress.value = 0;
-    plantFertilizerProgress.value = 0;
-    plantHealth.value = MAX_HEALTH;
+    // Los valores de agua y sol se mantienen, excepto si es Ent
+    if (plantPhase.value === "ent") {
+      plantWaterProgress.value = 10;
+      plantSunProgress.value = 10;
+      plantFertilizerProgress.value = 10;
+      plantHealth.value = 100;
+    } else {
+      // Recalcular salud visual con nuevos requerimientos
+      const reqs = EVOLUTION_REQUIREMENTS[plantPhase.value];
+      if (reqs) {
+        const displayW = Math.ceil(plantWaterProgress.value);
+        const displayS = Math.ceil(plantSunProgress.value);
+        const wPct = (displayW / reqs.water) * 100;
+        const sPct = (displayS / reqs.sun) * 100;
+        plantHealth.value = Math.min(100, Math.min(wPct, sPct));
+      }
+      plantFertilizerProgress.value = 0;
+    }
 
     // 2.15s es la duración de la animación de evolución
     setTimeout(() => (isEvolving.value = false), 2150);
@@ -182,102 +258,111 @@ export function evolvePlant() {
 }
 
 export function resetPlant() {
-  plantPhase.value = "semilla";
-  plantHealth.value = MAX_HEALTH;
-  plantWaterProgress.value = 0;
-  plantSunProgress.value = 0;
+  plantPhase.value = "seed";
+  // Usar los requerimientos de la especie activa
+  const seedReqs = EVOLUTION_REQUIREMENTS["seed"];
+  plantWaterProgress.value = seedReqs?.water ?? 4;
+  plantSunProgress.value = seedReqs?.sun ?? 4;
   plantFertilizerProgress.value = 0;
+  plantHealth.value = 100;
   plantLastUpdate.value = Date.now();
 }
 
 export function fastForwardTime(hours: number) {
-  // Simulamos que el tiempo pasó restando horas al lastUpdate
   plantLastUpdate.value -= hours * 60 * 60 * 1000;
-  // Forzamos el cálculo de la salud
   updatePassiveHealth();
 }
 
 export function applyWater() {
-  if (waterInventory.value < 1) {
-    alert("No tienes agua en el inventario.");
-    return;
-  }
+  if (waterInventory.value < 1 || plantHealth.value <= 0 || isWatering.value) return;
 
-  if (plantHealth.value <= 0) {
-    alert("La planta no tiene salud.");
-    return;
-  }
+  const reqs = EVOLUTION_REQUIREMENTS[plantPhase.value];
+  if (!reqs) return;
 
-  if (isWatering.value) return;
+  // Bloquear si el display ya muestra el máximo
+  if (Math.ceil(plantWaterProgress.value) >= reqs.water) return;
 
   // Descontar inventario
   waterInventory.value -= 1;
   waterAnimationTrigger.value += 1;
+
   isWatering.value = true;
   setTimeout(() => (isWatering.value = false), 1334);
 
-  // Recuperación básica de salud (el agua cura)
-  plantHealth.value = Math.min(MAX_HEALTH, plantHealth.value + 15);
-
-  // Si no está crítica, cuenta como progreso
-  if (!isCritical()) {
-    plantWaterProgress.value += 1;
-    checkEvolution();
-  } else {
-    // Si estaba crítica, el agua se usó principalmente para recuperarla.
-    console.log("Planta en estado crítico: El agua se ha usado para recuperarla, sin progreso evolutivo.");
+  // El agua sube +1 unidad hasta el máximo requerido
+  if (reqs) {
+    plantWaterProgress.value = Math.min(reqs.water, plantWaterProgress.value + 1);
+    
+    // Actualizar salud visual (basado en unidades visibles)
+    const displayW = Math.ceil(plantWaterProgress.value);
+    const displayS = Math.ceil(plantSunProgress.value);
+    const wPct = (displayW / reqs.water) * 100;
+    const sPct = (displayS / reqs.sun) * 100;
+    plantHealth.value = Math.min(100, Math.min(wPct, sPct));
   }
+
+  checkEvolution();
 }
 
 export function applySun() {
-  if (sunInventory.value < 1) {
-    alert("No tienes soles en el inventario.");
-    return;
-  }
+  if (sunInventory.value < 1 || plantHealth.value <= 0 || isSunning.value) return;
 
-  if (plantHealth.value <= 0) {
-    alert("La planta no tiene salud.");
-    return;
-  }
+  const reqs = EVOLUTION_REQUIREMENTS[plantPhase.value];
+  if (!reqs) return;
 
-  if (isSunning.value) return;
+  // Bloquear si el display ya muestra el máximo
+  if (Math.ceil(plantSunProgress.value) >= reqs.sun) return;
 
   sunInventory.value -= 1;
   sunAnimationTrigger.value += 1;
+
   isSunning.value = true;
   setTimeout(() => (isSunning.value = false), 1750);
 
-  // El sol cura un poco también
-  plantHealth.value = Math.min(MAX_HEALTH, plantHealth.value + 5);
-
-  if (!isCritical()) {
-    plantSunProgress.value += 1;
-    checkEvolution();
+  // El sol sube +1 unidad hasta el máximo requerido
+  if (reqs) {
+    plantSunProgress.value = Math.min(reqs.sun, plantSunProgress.value + 1);
+    
+    // Actualizar salud visual (basado en unidades visibles)
+    const displayW = Math.ceil(plantWaterProgress.value);
+    const displayS = Math.ceil(plantSunProgress.value);
+    const wPct = (displayW / reqs.water) * 100;
+    const sPct = (displayS / reqs.sun) * 100;
+    plantHealth.value = Math.min(100, Math.min(wPct, sPct));
   }
+
+  checkEvolution();
 }
 
 export function applyFertilizer() {
-  if (fertilizerInventory.value < 1) {
-    alert("No tienes abono en el inventario.");
-    return;
-  }
+  if (fertilizerInventory.value < 1 || plantHealth.value <= 0 || isFertilizing.value) return;
 
-  if (plantHealth.value <= 0) {
-    alert("La planta no tiene salud.");
-    return;
-  }
+  const reqs = EVOLUTION_REQUIREMENTS[plantPhase.value];
+  if (!reqs) return;
 
-  if (isFertilizing.value) return;
+  // Bloquear si el display ya muestra el máximo
+  if (reqs.fertilizer > 0 && Math.ceil(plantFertilizerProgress.value) >= reqs.fertilizer) return;
 
   fertilizerInventory.value -= 1;
   fertilizerAnimationTrigger.value += 1;
+
   isFertilizing.value = true;
   setTimeout(() => (isFertilizing.value = false), 1250);
 
-  plantHealth.value = Math.min(MAX_HEALTH, plantHealth.value + 30);
-
-  if (!isCritical()) {
-    plantFertilizerProgress.value += 1;
-    checkEvolution(); // El abono es el trigger final
+  // El abono da +1 unidad de progreso
+  if (reqs) {
+    // También restaura 1 unidad de agua/sol como bonus
+    plantWaterProgress.value = Math.min(reqs.water, plantWaterProgress.value + 1);
+    plantSunProgress.value = Math.min(reqs.sun, plantSunProgress.value + 1);
+    
+    const displayW = Math.ceil(plantWaterProgress.value);
+    const displayS = Math.ceil(plantSunProgress.value);
+    const wPct = (displayW / reqs.water) * 100;
+    const sPct = (displayS / reqs.sun) * 100;
+    plantHealth.value = Math.min(100, Math.min(wPct, sPct));
   }
+
+  plantFertilizerProgress.value = Math.min(reqs.fertilizer, plantFertilizerProgress.value + 1);
+
+  checkEvolution();
 }

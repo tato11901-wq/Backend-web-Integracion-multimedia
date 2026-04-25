@@ -1,180 +1,322 @@
-import { useState } from "preact/hooks";
-import { isInventoryOpen } from "../../store/resourceStore";
+import { useState, useEffect } from "preact/hooks";
+import { isInventoryOpen, activePlantId, inventoryVersion, plantName, refreshInventory } from "../../store/resourceStore";
+import { syncPlantState, setEvolutionRequirementsFromSpecies, plantSpeciesId } from "../../store/plantStore";
+import { fetchMyInventory, setActivePlant, deletePlant, createPlant } from "../../store/apiClient";
+import { PLANT_SPRITE_REGISTRY, FALLBACK_SPECIES, type SpriteConfig } from "../../config/plantSpriteRegistry";
+import type { PlantPhase } from "../../store/plantStore";
+
 import fondoInventario from "../../assets/Recursos inventario/Fondo_Inventario.png";
 import panelHudInventario from "../../assets/Recursos inventario/Panel_HUDInventario.png";
 import panelPlantaEspacio from "../../assets/Recursos inventario/Panel_PlantaEspacio.png";
 
-// Import HUD Assets
-// left: btn_Estado
-import btnEstado01 from "../../assets/Recursos inventario/btn_Estado_01.png";
-import btnEstado02 from "../../assets/Recursos inventario/btn_Estado_02.png";
-import btnEstado03 from "../../assets/Recursos inventario/btn_Estado_03.png";
-import btnEstado04 from "../../assets/Recursos inventario/btn_Estado_04.png";
+// ── Tipos ──────────────────────────────────────────────────────────────────
+interface BackendPlant {
+  id: string;
+  name: string;
+  species_id: string;
+  stage: string;
+  health: number;
+  water: number;
+  sun: number;
+  fertilizer: number;
+  is_dead: boolean;
+  species_data?: any;
+}
 
-// Center: btn_Urgencia
-import btnUrgencia01 from "../../assets/Recursos inventario/btn_Urgencia_01.png";
-import btnUrgencia02 from "../../assets/Recursos inventario/btn_Urgencia_02.png";
-import btnUrgencia03 from "../../assets/Recursos inventario/btn_Urgencia_03.png";
+// ── Helpers ────────────────────────────────────────────────────────────────
+const PHASE_LABELS: Record<string, string> = {
+  seed: "Semilla",
+  small_bush: "Arbusto",
+  large_bush: "Planta",
+  ent: "Ent",
+};
 
-// Right: btn_Categoría
-import btnCategoria01 from "../../assets/Recursos inventario/btn_Categoría_01.png";
-import btnCategoria02 from "../../assets/Recursos inventario/btn_Categoría_02.png";
-import btnCategoria03 from "../../assets/Recursos inventario/btn_Categoría_03.png";
-import btnCategoria04 from "../../assets/Recursos inventario/btn_Categoría_04.png";
-import btnCategoria05 from "../../assets/Recursos inventario/btn_Categoría_05.png";
+const SPECIES_LABELS: Record<string, string> = {
+  pasto: "Pasto",
+  nogal: "Nogal",
+  cedro: "Cedro",
+};
 
+function getConfig(speciesId: string, stage: string): SpriteConfig {
+  const key = PLANT_SPRITE_REGISTRY[speciesId] ? speciesId : FALLBACK_SPECIES;
+  const phase: PlantPhase = (stage as PlantPhase) in PLANT_SPRITE_REGISTRY[key]
+    ? (stage as PlantPhase)
+    : "seed";
+  return PLANT_SPRITE_REGISTRY[key][phase];
+}
+
+function getPlantReqs(plant: BackendPlant) {
+  const defaultReqs = { water: 10, sun: 10 };
+  if (!plant.species_data) return defaultReqs;
+  const reqs = plant.species_data.evolution_requirements?.[plant.stage.toUpperCase()];
+  if (!reqs) return defaultReqs; // Ent o sin requerimientos
+  return {
+    water: reqs.water ?? 10,
+    sun: reqs.sun ?? 10,
+  };
+}
+
+
+
+// ── Sub-componente: Preview estático del primer frame ─────────────────────
+// Usa SpriteAnimator (probado y funcional) dentro de un wrapper que controla
+// el tamaño y aplica overflow:hidden para cortar a exactamente 1 frame.
+// El scale=1 evita que aplique la escala del juego (diseñada para w-80).
+import { SpriteAnimator } from "./SpriteAnimator";
+
+function PlantFirstFrame({ config, size = 56 }: { config: SpriteConfig; size?: number }) {
+  const aspect = config.frameWidth / config.frameHeight;
+  const w = Math.round(size * aspect);
+
+  return (
+    <div style={{ width: w, height: size, overflow: "hidden", flexShrink: 0 }}>
+      <SpriteAnimator
+        src={config.src}
+        frameWidth={config.frameWidth}
+        frameHeight={config.frameHeight}
+        frameCount={config.frameCount}
+        scale={1}
+        fps={10}
+        className="w-full h-full"
+      />
+    </div>
+  );
+}
+
+// ── Componente principal ───────────────────────────────────────────────────
 export default function Inventory() {
-  const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [plants, setPlants] = useState<BackendPlant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [switching, setSwitching] = useState<string | null>(null);
+  const [selectedPlant, setSelectedPlant] = useState<BackendPlant | null>(null);
 
   if (!isInventoryOpen.value) return null;
 
-  const estadoIcons = [btnEstado01, btnEstado02, btnEstado03, btnEstado04];
-  const urgenciaIcons = [btnUrgencia01, btnUrgencia02, btnUrgencia03];
-  const categoriaIcons = [btnCategoria01, btnCategoria02, btnCategoria03, btnCategoria04, btnCategoria05];
+  const loadInventory = () => {
+    setLoading(true);
+    fetchMyInventory()
+      .then((data: BackendPlant[]) => setPlants(data ?? []))
+      .catch(() => setPlants([]))
+      .finally(() => setLoading(false));
+  };
+
+  // Cargar cuando el modal se abre y refrescar periódicamente
+  useEffect(() => {
+    if (isInventoryOpen.value) {
+      loadInventory();
+      setSelectedPlant(null); // Siempre limpiar el panel al abrir
+
+      // Refresco en segundo plano para ver el decaimiento de recursos sin cerrar el modal
+      const interval = setInterval(() => {
+        fetchMyInventory()
+          .then((data: BackendPlant[]) => {
+            setPlants(data ?? []);
+            // Actualizar la planta seleccionada si está abierta
+            setSelectedPlant(prev => {
+              if (!prev) return null;
+              return data.find(p => p.id === prev.id) || null;
+            });
+          })
+          .catch(() => {});
+      }, 5000); // Cada 5 segundos para ver los cambios rápidamente si los hay
+      return () => clearInterval(interval);
+    }
+  }, [isInventoryOpen.value]);
+
+  // Refrescar cuando otra parte de la app incremente inventoryVersion
+  useEffect(() => {
+    if (isInventoryOpen.value) loadInventory();
+  }, [inventoryVersion.value]);
+
+  const handleSelectActive = async (plant: BackendPlant) => {
+    if (plant.id === activePlantId.value || plant.is_dead) return;
+    setSwitching(plant.id);
+    try {
+      await setActivePlant(plant.id);
+      activePlantId.value = plant.id;
+      plantName.value = plant.name;          // ← actualizar nombre en HUD
+      syncPlantState(plant);
+      if (plant.species_data) setEvolutionRequirementsFromSpecies(plant.species_data);
+      plantSpeciesId.value = plant.species_id;
+      setSelectedPlant(null);               // ← cerrar subpanel antes de cerrar modal
+      isInventoryOpen.value = false;
+    } catch (e: any) {
+      alert(e.message ?? "Error al cambiar la planta activa.");
+    } finally {
+      setSwitching(null);
+    }
+  };
+
+  const handleDeletePlant = async (plantId: string) => {
+    if (!confirm("¿Estás seguro de que deseas eliminar esta planta muerta?")) return;
+    try {
+      await deletePlant(plantId);
+      
+      // Si eliminamos la planta activa, intentamos cambiar a otra automáticamente
+      if (activePlantId.value === plantId) {
+        const otherPlants = plants.filter(p => p.id !== plantId);
+        const alivePlant = otherPlants.find(p => !p.is_dead);
+        const nextPlant = alivePlant || otherPlants[0]; // Prefiere una viva, o cualquiera si todas están muertas
+
+        if (nextPlant) {
+          await setActivePlant(nextPlant.id);
+          activePlantId.value = nextPlant.id;
+          plantName.value = nextPlant.name;
+          syncPlantState(nextPlant);
+          if (nextPlant.species_data) setEvolutionRequirementsFromSpecies(nextPlant.species_data);
+          plantSpeciesId.value = nextPlant.species_id;
+        } else {
+          // No quedan más plantas, le generamos un pasto por defecto
+          await createPlant("pasto");
+          // Obtenemos el inventario actualizado (que tendrá el nuevo pasto)
+          const newInv = await fetchMyInventory();
+          const newPasto = newInv.find((p: BackendPlant) => !p.is_dead);
+          if (newPasto) {
+            activePlantId.value = newPasto.id;
+            plantName.value = newPasto.name;
+            syncPlantState(newPasto);
+            if (newPasto.species_data) setEvolutionRequirementsFromSpecies(newPasto.species_data);
+            plantSpeciesId.value = newPasto.species_id;
+          } else {
+            activePlantId.value = null; // Fallback por si acaso
+          }
+        }
+      }
+      
+      setSelectedPlant(null);
+      refreshInventory(); // Recarga las plantas
+    } catch (e: any) {
+      alert(e.message ?? "Error al eliminar la planta.");
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 pointer-events-auto backdrop-blur-sm">
-      {/* Main Inventory Container */}
-      <div className="relative w-[90%] max-w-4xl aspect-[16/9] flex flex-col items-center justify-start p-6 rounded-lg shadow-2xl overflow-hidden border-8 border-[#6b4226]">
+      <div className="relative w-[92%] max-w-4xl aspect-[16/9] flex flex-col items-center justify-start rounded-lg shadow-2xl overflow-hidden border-8 border-[#6b4226]">
 
-        {/* Fondo_Inventario */}
+        {/* Fondo */}
         <div className="absolute inset-0 z-0">
           <img src={fondoInventario.src} alt="Fondo Inventario" className="w-full h-full object-fill opacity-90" />
         </div>
 
-        {/* Panel_HUDInventario */}
-        <div className="relative z-10 w-full mb-4 flex items-center justify-between px-8 py-2">
+        {/* Header */}
+        <div className="relative z-10 w-full mb-2 flex items-center justify-between px-8 py-1">
           <div className="absolute inset-x-0 top-0 bottom-0 z-0">
             <img src={panelHudInventario.src} alt="HUD Inventario" className="w-full h-full object-contain" />
           </div>
-
-          {/* HUD Content - Positioned over the resource */}
           <div className="relative z-10 w-full flex items-center justify-between h-14 lg:h-16 px-4">
-            {/* Left: btn_Estado */}
-            <div className="flex gap-3 items-center h-full ml-4">
-              {estadoIcons.map((icon, i) => (
-                <div key={i} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
-                  <img src={icon.src} alt={`Estado ${i + 1}`} className="w-full h-full object-contain" />
-                </div>
-              ))}
-            </div>
-
-            {/* Center: btn_Urgencia */}
-            <div className="flex gap-3 items-center h-full">
-              {urgenciaIcons.map((icon, i) => (
-                <div key={i} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
-                  <img src={icon.src} alt={`Urgencia ${i + 1}`} className="w-full h-full object-contain" />
-                </div>
-              ))}
-            </div>
-
-            {/* Right: btn_Categoria */}
-            <div className="flex gap-3 items-center h-full mr-4">
-              {categoriaIcons.map((icon, i) => (
-                <div key={i} className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center">
-                  <img src={icon.src} alt={`Categoria ${i + 1}`} className="w-full h-full object-contain" />
-                </div>
-              ))}
+            <span className="text-white font-black text-lg drop-shadow-md">🌿 Mis Plantas</span>
+            <div className="flex items-center gap-3">
+              <span className="text-white/70 text-sm font-medium">{plants.length} planta{plants.length !== 1 ? "s" : ""}</span>
+              <button
+                onClick={loadInventory}
+                className="text-white/60 hover:text-white text-lg transition-colors"
+                title="Actualizar inventario"
+              >
+                🔄
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Inventory Grid Slots - Scrollable Area */}
-        <div className="relative z-10 w-full flex-1 overflow-y-auto px-4 pb-12 mt-2
-                        scrollbar-thin scrollbar-thumb-[#6b4226] scrollbar-track-[#8d6e63]">
-          <div className="grid grid-cols-4 gap-6 p-4">
-            {[...Array(24)].map((_, index) => (
-              <div
-                key={index}
-                onClick={() => setSelectedItem(index)}
-                className="relative aspect-square flex flex-col items-center justify-center overflow-hidden transition-transform hover:scale-105 cursor-pointer"
-              >
-                {/* Panel_PlantaEspacio background */}
-                <div className="absolute inset-0 z-0">
-                  <img src={panelPlantaEspacio.src} alt="Slot Background" className="w-full h-full object-fill" />
-                </div>
+        {/* Grid de plantas */}
+        <div className="relative z-10 w-full flex-1 overflow-y-auto px-6 pb-10 mt-1 scrollbar-thin scrollbar-thumb-[#6b4226] scrollbar-track-[#8d6e63]">
+          {loading ? (
+            <div className="flex items-center justify-center h-full text-white/70 text-lg font-bold animate-pulse">
+              Cargando plantas...
+            </div>
+          ) : plants.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-white/60 text-base font-medium">
+              No tienes plantas todavía.
+            </div>
+          ) : (
+            <div className="grid grid-cols-4 gap-5 p-2">
+              {plants.map((plant) => {
+                const isActive = plant.id === activePlantId.value;
+                const isSwitchingThis = switching === plant.id;
+                const spriteConfig = getConfig(plant.species_id, plant.stage);
 
-                {/* Content */}
-                <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-2 pt-6">
-                  {/* Plant Name Label */}
-                  <span className="font-pixel text-white text-[15px] lg:text-lg absolute top-7 left-0 right-0 text-center">Nombre</span>
+                return (
+                  <div
+                    key={plant.id}
+                    onClick={() => !isSwitchingThis && setSelectedPlant(plant)}
+                    className={`relative aspect-square flex flex-col items-center justify-center overflow-hidden transition-all duration-200 cursor-pointer rounded-sm
+                      ${isActive ? "ring-4 ring-yellow-400 scale-[1.03]" : "hover:scale-105"}
+                      ${plant.is_dead ? "grayscale opacity-60" : ""}
+                      ${isSwitchingThis ? "opacity-50 pointer-events-none" : ""}
+                    `}
+                  >
+                    {/* Fondo de slot */}
+                    <div className="absolute inset-0 z-0">
+                      <img src={panelPlantaEspacio.src} alt="Slot" className="w-full h-full object-fill" />
+                    </div>
 
-                  {/* If first two slots, show mock plants */}
-                  {index < 2 ? (
-                    <div className="w-full h-full flex flex-col items-center justify-center relative p-2">
-                      <span className="text-4xl lg:text-6xl mb-auto">🌿</span>
-                      {/* Mock Stats/Badges */}
-                      <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center bg-black/20 rounded px-1 py-0.5">
-                        <div className="flex gap-1">
-                          <span className="text-[10px]">☀️</span>
-                          <span className="text-[10px]">🪴</span>
+                    {/* Contenido */}
+                    <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-2 pt-5">
+                      {/* Nombre */}
+                      <span className="text-white text-[13px] font-black drop-shadow-md text-center leading-tight truncate w-full">
+                        {plant.name}
+                      </span>
+
+                      {/* Sprite de la fase actual */}
+                      <div className={`relative flex items-center justify-center overflow-hidden w-16 h-16 ${plant.is_dead ? "grayscale opacity-40 brightness-50" : ""}`}>
+                        <PlantFirstFrame config={spriteConfig} size={56} />
+                        {plant.is_dead && (
+                          <div className="absolute inset-0 flex items-center justify-center text-3xl drop-shadow-lg">
+                            ☠️
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info inferior */}
+                      <div className="w-full space-y-1 mt-1">
+                        <div className="flex justify-between text-[10px] text-white/80 font-medium px-1 leading-none">
+                          <span>{SPECIES_LABELS[plant.species_id] ?? plant.species_id}</span>
+                          <span>{PHASE_LABELS[plant.stage] ?? plant.stage}</span>
                         </div>
-                        <div className="flex gap-1 bg-white/20 rounded-full px-1">
-                          <span className="text-[10px]">💧</span>
-                          <span className="text-[10px]">🔥</span>
+                        
+                        {/* Barras de progreso Agua y Sol */}
+                        <div className="w-full flex flex-col gap-[2px] mt-1">
+                          <div className="flex gap-1 w-full">
+                            {/* Barra de agua */}
+                            <div className="w-1/2 h-2.5 bg-black/40 rounded-full overflow-hidden border border-black/20" title="Agua">
+                              <div
+                                className={`h-full rounded-full bg-blue-500 transition-all duration-500 ${plant.is_dead ? "grayscale opacity-50" : ""}`}
+                                style={{ width: `${Math.min(100, (plant.water / getPlantReqs(plant).water) * 100)}%` }}
+                              />
+                            </div>
+                            {/* Barra de sol */}
+                            <div className="w-1/2 h-2.5 bg-black/40 rounded-full overflow-hidden border border-black/20" title="Sol">
+                              <div
+                                className={`h-full rounded-full bg-yellow-400 transition-all duration-500 ${plant.is_dead ? "grayscale opacity-50" : ""}`}
+                                style={{ width: `${Math.min(100, (plant.sun / getPlantReqs(plant).sun) * 100)}%` }}
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  ) : (
-                    <span className="text-4xl lg:text-7xl text-green-800/40 font-bold mt-auto mb-auto">+</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+
+                    {/* Badge ACTIVA */}
+                    {isActive && (
+                      <div className="absolute top-1 right-1 bg-yellow-400 text-black text-[9px] font-black px-1.5 py-0.5 rounded-full shadow z-20">
+                        ACTIVA
+                      </div>
+                    )}
+                    {/* Badge MUERTA */}
+                    {plant.is_dead && (
+                      <div className="absolute top-1 left-1 bg-red-700 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow z-20">
+                        MUERTA
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* Selected Item Popup Modal */}
-        {selectedItem !== null && (
-          <div className="absolute inset-0 z-30 bg-black/40 rounded-lg flex flex-col items-center justify-center">
-            {/* Pop-up Container */}
-            <div className="bg-[#e3e4e5] w-1/3 min-w-[300px] max-w-sm aspect-square rounded-[2rem] p-6 shadow-2xl flex flex-col items-center relative">
-              <h2 className="text-3xl font-pixel text-black mb-8 mt-2">Nombre</h2>
-
-              {/* Plant Image Mockup */}
-              <div className="relative w-32 h-32 flex items-center justify-center mb-12">
-                <div className="w-24 h-24 bg-[#7a3910] absolute top-0 left-0"></div>
-                <div className="w-24 h-24 bg-[#ab4e14] absolute bottom-0 right-0 flex items-center justify-center">
-                  <div className="w-10 h-10 bg-[#f7c5a8] absolute right-2 top-2"></div>
-                </div>
-              </div>
-
-              {/* Badges row inside popup */}
-              <div className="absolute bottom-20 left-6 right-6 flex justify-between items-center">
-                <div className="flex gap-2">
-                  <div className="w-10 h-10 bg-[#b4e600] border border-black flex items-center justify-center rounded">
-                    <span className="text-2xl leading-none font-bold text-black">🔥</span>
-                  </div>
-                  <div className="w-10 h-10 bg-[#c6e6c6] border border-black flex items-center justify-center rounded">
-                    <span className="text-2xl leading-none font-bold text-black">-</span>
-                  </div>
-                </div>
-                <div className="flex gap-2 bg-[#888888] rounded-full px-4 py-2 items-center">
-                  <span className="text-sm">🪴</span>
-                  <div className="w-px h-4 bg-black/40 mx-0.5"></div>
-                  <span className="text-sm">🪴</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="absolute -bottom-5 left-0 right-0 flex justify-center gap-6">
-                <button
-                  onClick={(e) => { e.stopPropagation(); setSelectedItem(null); }}
-                  className="bg-[#f0f0f0] px-6 py-2.5 rounded-full text-black font-pixel font-bold text-sm hover:bg-white w-32 text-center"
-                >
-                  Volver
-                </button>
-                <button
-                  className="bg-[#f0f0f0] px-6 py-2.5 rounded-full text-black font-pixel font-bold text-sm hover:bg-white w-32 text-center"
-                >
-                  Seleccionar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Close Button */}
+        {/* Botón cerrar */}
         <button
           onClick={() => isInventoryOpen.value = false}
           className="absolute top-2 right-2 w-10 h-10 bg-red-600 hover:bg-red-700 text-white font-bold rounded-full border-4 border-[#4e342e] shadow-lg transition-transform active:scale-95 z-20"
@@ -182,7 +324,86 @@ export default function Inventory() {
           X
         </button>
       </div>
+
+      {/* Modal de detalle / selección */}
+      {selectedPlant && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50"
+          onClick={() => setSelectedPlant(null)}
+        >
+          <div
+            className="bg-[#2d1f0e] border-4 border-[#6b4226] rounded-2xl p-6 w-72 flex flex-col items-center gap-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Sprite grande en el modal */}
+            <div className={`relative w-28 h-28 flex items-center justify-center overflow-hidden ${selectedPlant.is_dead ? "grayscale opacity-40 brightness-50" : ""}`}>
+              <PlantFirstFrame config={getConfig(selectedPlant.species_id, selectedPlant.stage)} size={96} />
+              {selectedPlant.is_dead && (
+                <div className="absolute inset-0 flex items-center justify-center text-6xl drop-shadow-xl">
+                  ☠️
+                </div>
+              )}
+            </div>
+            <div className="text-center">
+              <h2 className="text-white font-black text-xl">{selectedPlant.name}</h2>
+              <p className="text-white/60 text-sm">
+                {SPECIES_LABELS[selectedPlant.species_id] ?? selectedPlant.species_id} · {PHASE_LABELS[selectedPlant.stage] ?? selectedPlant.stage}
+              </p>
+            </div>
+
+            {/* Mini stats */}
+            <div className="w-full grid grid-cols-3 gap-2 text-xs text-center">
+              <div className="bg-blue-900/50 rounded-lg p-2">
+                <div className="text-blue-300 font-black text-base">{Math.ceil(selectedPlant.water)}</div>
+                <div className="text-white/60">Agua</div>
+              </div>
+              <div className="bg-yellow-900/50 rounded-lg p-2">
+                <div className="text-yellow-300 font-black text-base">{Math.ceil(selectedPlant.sun)}</div>
+                <div className="text-white/60">Sol</div>
+              </div>
+              <div className="bg-green-900/50 rounded-lg p-2">
+                <div className="text-green-300 font-black text-base">{Math.ceil(selectedPlant.fertilizer)}</div>
+                <div className="text-white/60">Abono</div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 w-full mt-1">
+              <button
+                onClick={() => setSelectedPlant(null)}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-2 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              
+              {/* Botón de eliminar si está muerta */}
+              {selectedPlant.is_dead && (
+                <button
+                  onClick={() => handleDeletePlant(selectedPlant.id)}
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-xl transition-colors shadow-lg"
+                >
+                  Eliminar
+                </button>
+              )}
+
+              {/* Botón de seleccionar si NO está muerta y no es la activa */}
+              {!selectedPlant.is_dead && selectedPlant.id !== activePlantId.value && (
+                <button
+                  onClick={() => handleSelectActive(selectedPlant)}
+                  disabled={!!switching}
+                  className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-black py-2 rounded-xl transition-colors disabled:opacity-50"
+                >
+                  {switching ? "..." : "Seleccionar"}
+                </button>
+              )}
+              {selectedPlant.id === activePlantId.value && (
+                <div className="flex-1 bg-yellow-400/20 text-yellow-300 font-bold py-2 rounded-xl text-center text-sm">
+                  Planta activa ✓
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-

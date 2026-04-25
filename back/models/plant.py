@@ -24,8 +24,8 @@ class Plant:
         self.species_id = species_id
         self.name = name
         self.stage = PlantStage.SEED
-        self.water = 0.0
-        self.sun = 0.0
+        self.water = 100.0
+        self.sun = 100.0
         self.fertilizer = 0.0
         self.health = 100.0
         now = datetime.now(timezone.utc)

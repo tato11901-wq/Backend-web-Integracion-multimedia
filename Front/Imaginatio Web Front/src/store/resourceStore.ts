@@ -63,6 +63,12 @@ export const isPlantInfoOpen = signal(false);
 export const isInventoryOpen = signal(false);
 export const isHelpModalOpen = signal(false);
 
+/** Incrementar este signal fuerza al inventario a refrescarse */
+export const inventoryVersion = signal(0);
+export function refreshInventory() {
+  inventoryVersion.value += 1;
+}
+
 /**
  * Sincroniza el estado global del cliente con los datos recibidos del servidor.
  * @param backendUser Objeto de usuario retornado por la API de FastAPI.

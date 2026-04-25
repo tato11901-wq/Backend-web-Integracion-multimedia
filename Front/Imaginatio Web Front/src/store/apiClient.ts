@@ -108,3 +108,24 @@ export async function renamePlant(plantId: string, name: string) {
     body: JSON.stringify({ name }),
   });
 }
+
+export async function createPlant(speciesId: string) {
+  return apiFetch("/plant/", {
+    method: "POST",
+    body: JSON.stringify({ species_id: speciesId }),
+  });
+}
+
+export async function setActivePlant(plantId: string) {
+  return apiFetch("/users/me/active-plant", {
+    method: "PATCH",
+    body: JSON.stringify({ plant_id: plantId }),
+  });
+}
+
+export async function deletePlant(plantId: string) {
+  return apiFetch(`/plant/${plantId}`, {
+    method: "DELETE",
+  });
+}
+

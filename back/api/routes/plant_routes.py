@@ -64,3 +64,11 @@ def rename_plant(plant_id: str, body: RenamePlantRequest, owner_id: str = Depend
     """
     plant = PlantService.rename_plant(plant_id, owner_id, body.name)
     return plant
+
+@router.delete("/{plant_id}")
+def delete_plant(plant_id: str, owner_id: str = Depends(get_current_user_id)):
+    """
+    Elimina permanentemente una planta muerta del inventario.
+    """
+    PlantService.delete_plant(plant_id, owner_id)
+    return {"message": "Planta eliminada exitosamente"}
