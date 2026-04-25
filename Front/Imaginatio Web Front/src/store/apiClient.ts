@@ -1,13 +1,29 @@
 /**
- * Cliente de API centralizado para la comunicación con el backend FastAPI.
- * Maneja la persistencia del token JWT y la estructura de las peticiones.
+ * Cliente de API simulado.
+ * Originalmente interactuaba con FastAPI, ahora redirige todas las llamadas a localDb.ts
+ * manteniendo las firmas asíncronas para no romper los componentes UI.
  */
 
-const API_BASE = import.meta.env.PUBLIC_API_URL || "http://localhost:8000";
+import {
+  getOrCreateUser,
+  getUser,
+  saveUser,
+  createPlantForUser,
+  getPlant,
+  getUserPlants,
+  applyAction,
+  evolvePlantLocal,
+  deletePlantLocal,
+  setActivePlantLocal,
+  renamePlantLocal,
+  addDebugResources,
+  fastForwardTimeLocal,
+  loadDb,
+  saveDb
+} from "./localDb";
 
 let _token: string | null = null;
 
-// Intentar recuperar token de localStorage al iniciar (opcional para persistencia)
 if (typeof window !== "undefined") {
   _token = localStorage.getItem("imaginatio_token");
 }
@@ -30,122 +46,208 @@ export function clearToken() {
   }
 }
 
-async function apiFetch(path: string, options: RequestInit = {}) {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(options.headers as Record<string, string> || {}),
-  };
-
-  if (_token) {
-    headers["Authorization"] = `Bearer ${_token}`;
-  }
-
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: "Error de red imprevisto" }));
-    const detailStr = typeof err.detail === "object" ? JSON.stringify(err.detail) : err.detail;
-    throw new Error(detailStr || `Error del servidor: ${res.status}`);
-  }
-
-  return res.json();
-}
+const requireUser = () => {
+  if (!_token) throw new Error("No autenticado");
+  return _token;
+};
 
 // ── Auth ──
 export async function login(username: string) {
-  const data = await apiFetch("/auth/login", {
-    method: "POST",
-    body: JSON.stringify({ username }),
-  });
-  setToken(data.token);
-  return data;
+  const user = getOrCreateUser(username);
+  setToken(username);
+  const state = await fetchMyState();
+  return { token: username, user: state };
 }
 
 // ── Minigames ──
 export async function startMinigame(gameType: string) {
-  return apiFetch("/minigame/start", {
-    method: "POST",
-    body: JSON.stringify({ game_type: gameType }),
-  });
+  const username = requireUser();
+  const user = getUser(username);
+  if (!user) throw new Error("Usuario no encontrado");
+
+  const now = Date.now();
+  const cooldown = user.cooldowns[gameType as keyof typeof user.cooldowns];
+  
+  if (cooldown && cooldown > now) {
+    const remaining = Math.ceil((cooldown - now) / 1000);
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    const timeStr = `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    throw new Error(`Debes esperar ${timeStr}`);
+  }
+
+  let result: any = { session_token: gameType };
+
+  if (gameType === "water") {
+    result.duration_seconds = 5;
+  } else if (gameType === "compost") {
+    result.duration_seconds = 3;
+    // Provide a mocked list of items
+    result.items = [
+      { id: 1, name: "Cáscara de plátano", emoji: "🍌", is_organic: true },
+      { id: 2, name: "Corazón de manzana", emoji: "🍎", is_organic: true },
+      { id: 3, name: "Cáscara de huevo", emoji: "🥚", is_organic: true },
+      { id: 4, name: "Vaso de plástico", emoji: "🥤", is_organic: false },
+      { id: 5, name: "Pila", emoji: "🔋", is_organic: false },
+      { id: 6, name: "Clip metálico", emoji: "📎", is_organic: false },
+      { id: 7, name: "Bolsa de plástico", emoji: "🛍️", is_organic: false },
+      { id: 8, name: "Lata", emoji: "🥫", is_organic: false },
+    ].sort(() => Math.random() - 0.5); // shuffle
+  }
+
+  return result;
 }
 
 export async function endMinigame(sessionToken: string, payload: Record<string, any>) {
-  return apiFetch("/minigame/end", {
-    method: "POST",
-    body: JSON.stringify({ session_token: sessionToken, ...payload }),
-  });
+  const username = requireUser();
+  const user = getUser(username);
+  if (!user) throw new Error("Usuario no encontrado");
+
+  let reward = 0;
+  
+  if (sessionToken === "water") {
+    const clicks = payload.clicks || 0;
+    // Logica simple: 1 agua por cada 10 clicks, max 6
+    reward = Math.min(6, Math.floor(clicks / 10));
+    user.water_inventory += reward;
+    user.cooldowns.water = Date.now() + 10 * 60 * 1000; // 10 min
+  } 
+  else if (sessionToken === "compost") {
+    const selected = payload.selected_items || [];
+    // IDs de los orgánicos: 1, 2, 3
+    const correct = selected.filter((id: number) => [1, 2, 3].includes(id)).length;
+    const incorrect = selected.filter((id: number) => ![1, 2, 3].includes(id)).length;
+    // Lógica simple: 1 compost por orgánico, -1 por inorgánico
+    reward = Math.max(0, correct - incorrect);
+    user.compost_inventory = (user.compost_inventory || 0) + reward;
+
+    while (user.compost_inventory >= 4) {
+      user.compost_inventory -= 4;
+      user.fertilizer_inventory = (user.fertilizer_inventory || 0) + 1;
+    }
+
+    user.cooldowns.compost = Date.now() + 10 * 60 * 1000; // 10 min
+  }
+
+  saveUser(user);
+
+  return { 
+    message: `Minijuego completado. Ganaste ${reward} recursos.`,
+    reward,
+    user
+  };
 }
 
 export async function sunClick(sessionToken: string) {
-  return apiFetch("/minigame/sun/click", {
-    method: "POST",
-    body: JSON.stringify({ session_token: sessionToken }),
-  });
+  const username = requireUser();
+  const user = getUser(username);
+  if (!user) throw new Error("Usuario no encontrado");
+
+  // El backend daba un chance de subir de tier. Para simplificar local:
+  // Simulamos 4 clicks. En cada click sube un tier falso.
+  // Como no tenemos el estado de clicks guardado aquí, lo simularemos con random para UI o confiaremos en el front.
+  // El frontend envía clicks y espera estos campos:
+  
+  // Vamos a incrementar el sun inventory al final
+  const isFinished = Math.random() > 0.5; // Hacemos trampa, el frontend maneja finished pero el backend dictaba cuando terminaba.
+  
+  // En la implementación real, el frontend espera `finished` desde el backend.
+  // Asumiremos que el frontend llama esto 4 veces.
+  const clicksDone = (user as any)._temp_sun_clicks || 0;
+  const newClicks = clicksDone + 1;
+  const finished = newClicks >= 4;
+  (user as any)._temp_sun_clicks = finished ? 0 : newClicks;
+
+  const currentTier = Math.min(5, newClicks + 1);
+  const reward = finished ? currentTier : null;
+
+  if (finished) {
+    user.sun_inventory += currentTier;
+    user.cooldowns.sun = Date.now() + 10 * 60 * 1000;
+  }
+  
+  saveUser(user);
+
+  return {
+    tier_after: currentTier,
+    clicks_remaining: 4 - newClicks,
+    click_number: newClicks,
+    tier_up: true,
+    finished,
+    reward,
+    user: finished ? user : undefined,
+    cooldown_ends_at: finished ? new Date(user.cooldowns.sun).toISOString() : undefined
+  };
 }
 
 // ── User State ──
 export async function fetchMyState() {
-  return apiFetch("/users/me");
+  const username = requireUser();
+  const user = getUser(username);
+  if (!user) throw new Error("Usuario no encontrado");
+
+  let active_plant = null;
+  if (user.active_plant_id) {
+    active_plant = getPlant(user.active_plant_id, true);
+  }
+
+  // Devolver el formato esperado por syncUserState
+  return { ...user, active_plant };
 }
 
 export async function fetchMyInventory() {
-  return apiFetch("/users/me/inventory");
+  const username = requireUser();
+  return getUserPlants(username);
 }
 
 export async function fetchMyActivePlant() {
-  return apiFetch("/users/me/active-plant");
+  const username = requireUser();
+  const user = getUser(username);
+  if (!user?.active_plant_id) throw new Error("No hay planta activa");
+  return getPlant(user.active_plant_id, true);
 }
 
 export async function fastForwardBackendTime(hours: number) {
-  return apiFetch("/users/me/debug/fast-forward", {
-    method: "POST",
-    body: JSON.stringify({ hours }),
-  });
+  const username = requireUser();
+  fastForwardTimeLocal(username, hours);
+  return fetchMyState();
 }
 
 export async function addDebugResourcesBackend(water: number, sun: number, fertilizer: number) {
-  return apiFetch("/users/me/debug/add-resources", {
-    method: "POST",
-    body: JSON.stringify({ water, sun, fertilizer }),
-  });
+  const username = requireUser();
+  addDebugResources(username, water, sun, fertilizer);
+  return fetchMyState();
 }
 
 export async function renamePlant(plantId: string, name: string) {
-  return apiFetch(`/plant/${plantId}/rename`, {
-    method: "PATCH",
-    body: JSON.stringify({ name }),
-  });
+  const username = requireUser();
+  return renamePlantLocal(plantId, username, name);
 }
 
 export async function createPlant(speciesId: string) {
-  return apiFetch("/plant/", {
-    method: "POST",
-    body: JSON.stringify({ species_id: speciesId }),
-  });
+  const username = requireUser();
+  return createPlantForUser(username, speciesId);
 }
 
 export async function setActivePlant(plantId: string) {
-  return apiFetch("/users/me/active-plant", {
-    method: "PATCH",
-    body: JSON.stringify({ plant_id: plantId }),
-  });
+  const username = requireUser();
+  setActivePlantLocal(plantId, username);
+  return fetchMyState();
 }
 
 export async function deletePlant(plantId: string) {
-  return apiFetch(`/plant/${plantId}`, {
-    method: "DELETE",
-  });
+  const username = requireUser();
+  deletePlantLocal(plantId, username);
+  return { success: true };
 }
 
 export async function applyPlantAction(plantId: string, action: "water" | "sun" | "prune") {
-  return apiFetch(`/plant/${plantId}/${action}`, {
-    method: "POST",
-  });
+  const username = requireUser();
+  const result = applyAction(plantId, username, action);
+  return result.plant;
 }
 
 export async function evolvePlantApi(plantId: string) {
-  return apiFetch(`/plant/${plantId}/evolve`, {
-    method: "POST",
-  });
+  const username = requireUser();
+  return evolvePlantLocal(plantId, username);
 }
-
