@@ -209,9 +209,9 @@ export function checkEvolution() {
   if (!reqs) return; // Ya es Ent
 
   if (
-    plantWaterProgress.value >= reqs.water &&
-    plantSunProgress.value >= reqs.sun &&
-    plantFertilizerProgress.value >= reqs.fertilizer
+    Math.ceil(plantWaterProgress.value) >= reqs.water &&
+    Math.ceil(plantSunProgress.value) >= reqs.sun &&
+    Math.ceil(plantFertilizerProgress.value) >= reqs.fertilizer
   ) {
     evolvePlant();
   }
@@ -351,18 +351,8 @@ export function applyFertilizer() {
 
   // El abono da +1 unidad de progreso
   if (reqs) {
-    // También restaura 1 unidad de agua/sol como bonus
-    plantWaterProgress.value = Math.min(reqs.water, plantWaterProgress.value + 1);
-    plantSunProgress.value = Math.min(reqs.sun, plantSunProgress.value + 1);
-    
-    const displayW = Math.ceil(plantWaterProgress.value);
-    const displayS = Math.ceil(plantSunProgress.value);
-    const wPct = (displayW / reqs.water) * 100;
-    const sPct = (displayS / reqs.sun) * 100;
-    plantHealth.value = Math.min(100, Math.min(wPct, sPct));
+    plantFertilizerProgress.value = Math.min(reqs.fertilizer, plantFertilizerProgress.value + 1);
   }
-
-  plantFertilizerProgress.value = Math.min(reqs.fertilizer, plantFertilizerProgress.value + 1);
 
   checkEvolution();
 }

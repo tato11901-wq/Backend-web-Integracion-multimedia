@@ -86,7 +86,8 @@ export const PLANT_SPRITE_REGISTRY: Record<string, Record<PlantPhase, SpriteConf
     { seed: cedro_seed.src, small_bush: cedro_small_bush.src, large_bush: cedro_large_bush.src, ent: cedro_ent.src }
   ),
   duraznillo: createPlantConfig(
-    { seed: prueba_seed.src, small_bush: prueba_small_bush.src, large_bush: prueba_large_bush.src, ent: prueba_ent.src }
+    { seed: prueba_seed.src, small_bush: prueba_small_bush.src, large_bush: prueba_large_bush.src, ent: prueba_ent.src },
+    0.3
   ),
 
   // ── Para añadir una nueva especie: ──

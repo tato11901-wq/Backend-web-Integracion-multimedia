@@ -84,12 +84,9 @@ def collect_sun(plant: Plant):
     update_plant_state(plant, datetime.now(plant.last_update.tzinfo))
 
 def apply_pruning(plant: Plant):
-    """Añade fertilizante y restaura un poco de ambos recursos vitales"""
+    """Añade fertilizante (abono)"""
     if plant.is_dead or plant.stage == PlantStage.ENT: return
     plant.fertilizer += 1.0
-    req_w, req_s, _ = get_requirements(plant)
-    plant.water = min(req_w, plant.water + 1.0)
-    plant.sun = min(req_s, plant.sun + 1.0)
     update_plant_state(plant, datetime.now(plant.last_update.tzinfo))
 
 def _heal_plant(plant: Plant, amount: float):
@@ -115,7 +112,8 @@ def check_growth(plant: Plant) -> bool:
     req_sun = reqs.get("sun", 0)
     req_fert = reqs.get("fertilizer", 0)
 
-    if plant.water >= req_water and plant.sun >= req_sun and plant.fertilizer >= req_fert:
+    import math
+    if math.ceil(plant.water) >= req_water and math.ceil(plant.sun) >= req_sun and math.ceil(plant.fertilizer) >= req_fert:
         # Definir la progresión explícitamente
         next_stage_map = {
             PlantStage.SEED: PlantStage.SMALL_BUSH,
