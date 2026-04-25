@@ -22,26 +22,34 @@ export interface SpriteConfig {
 // ─────────────────────────────────────────────
 // PASTO  (Spritesheets animados)
 // ─────────────────────────────────────────────
-import pasto_seed        from '../assets/Recursos planta/Sprites Pasto/semilla_idle_spritesheet.png';
-import pasto_small_bush  from '../assets/Recursos planta/Sprites Pasto/fase2_idle_spritesheet.png';
-import pasto_large_bush  from '../assets/Recursos planta/Sprites Pasto/fase3_idle_spritesheet.png';
-import pasto_ent         from '../assets/Recursos planta/Sprites Pasto/end_idle_spritesheet.png';
+import pasto_seed from '../assets/Recursos planta/Sprites Pasto/semilla_idle_spritesheet.png';
+import pasto_small_bush from '../assets/Recursos planta/Sprites Pasto/fase2_idle_spritesheet.png';
+import pasto_large_bush from '../assets/Recursos planta/Sprites Pasto/fase3_idle_spritesheet.png';
+import pasto_ent from '../assets/Recursos planta/Sprites Pasto/end_idle_spritesheet.png';
 
 // ─────────────────────────────────────────────
 // NOGAL  (Imágenes estáticas)
 // ─────────────────────────────────────────────
-import nogal_seed        from '../assets/Recursos planta/Sprites Nogal/Azul.png';
-import nogal_small_bush  from '../assets/Recursos planta/Sprites Nogal/Azul - copia.png';
-import nogal_large_bush  from '../assets/Recursos planta/Sprites Nogal/Azul - copia (2).png';
-import nogal_ent         from '../assets/Recursos planta/Sprites Nogal/Azul - copia (3).png';
+import nogal_seed from '../assets/Recursos planta/Sprites Nogal/Azul.png';
+import nogal_small_bush from '../assets/Recursos planta/Sprites Nogal/Azul - copia.png';
+import nogal_large_bush from '../assets/Recursos planta/Sprites Nogal/Azul - copia (2).png';
+import nogal_ent from '../assets/Recursos planta/Sprites Nogal/Azul - copia (3).png';
 
 // ─────────────────────────────────────────────
 // CEDRO  (Imágenes estáticas)
 // ─────────────────────────────────────────────
-import cedro_seed        from '../assets/Recursos planta/Sprites Cedro/Verde.png';
-import cedro_small_bush  from '../assets/Recursos planta/Sprites Cedro/Verde - copia.png';
-import cedro_large_bush  from '../assets/Recursos planta/Sprites Cedro/Verde - copia (2).png';
-import cedro_ent         from '../assets/Recursos planta/Sprites Cedro/Verde - copia (3).png';
+import cedro_seed from '../assets/Recursos planta/Sprites Cedro/Verde.png';
+import cedro_small_bush from '../assets/Recursos planta/Sprites Cedro/Verde - copia.png';
+import cedro_large_bush from '../assets/Recursos planta/Sprites Cedro/Verde - copia (2).png';
+import cedro_ent from '../assets/Recursos planta/Sprites Cedro/Verde - copia (3).png';
+
+// ─────────────────────────────────────────────
+// PRUEBA (duraznillo)  (Spritesheets animados)
+// ─────────────────────────────────────────────
+import prueba_seed from '../assets/Recursos planta/Sprites prueba/prueba_asemilla_idle.png';
+import prueba_small_bush from '../assets/Recursos planta/Sprites prueba/prueba_fase1_idle.png';
+import prueba_large_bush from '../assets/Recursos planta/Sprites prueba/prueba_fase1_idle.png';
+import prueba_ent from '../assets/Recursos planta/Sprites prueba/prueba_ent_idle.png';
 
 // ─────────────────────────────────────────────
 // Helper para crear configuraciones fácilmente
@@ -76,6 +84,9 @@ export const PLANT_SPRITE_REGISTRY: Record<string, Record<PlantPhase, SpriteConf
   ),
   cedro: createPlantConfig(
     { seed: cedro_seed.src, small_bush: cedro_small_bush.src, large_bush: cedro_large_bush.src, ent: cedro_ent.src }
+  ),
+  duraznillo: createPlantConfig(
+    { seed: prueba_seed.src, small_bush: prueba_small_bush.src, large_bush: prueba_large_bush.src, ent: prueba_ent.src }
   ),
 
   // ── Para añadir una nueva especie: ──
