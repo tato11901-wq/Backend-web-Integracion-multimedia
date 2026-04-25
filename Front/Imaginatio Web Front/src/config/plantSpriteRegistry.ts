@@ -22,48 +22,62 @@ export interface SpriteConfig {
 // ─────────────────────────────────────────────
 // PASTO  (Spritesheets animados)
 // ─────────────────────────────────────────────
-import pasto_seed        from '../assets/Recursos planta/Sprites Pasto/semilla_idle_spritesheet.png';
-import pasto_small_bush  from '../assets/Recursos planta/Sprites Pasto/fase2_idle_spritesheet.png';
-import pasto_large_bush  from '../assets/Recursos planta/Sprites Pasto/fase3_idle_spritesheet.png';
-import pasto_ent         from '../assets/Recursos planta/Sprites Pasto/end_idle_spritesheet.png';
+import pasto_seed from '../assets/Recursos planta/Sprites Pasto/semilla_idle_spritesheet.png';
+import pasto_small_bush from '../assets/Recursos planta/Sprites Pasto/fase2_idle_spritesheet.png';
+import pasto_large_bush from '../assets/Recursos planta/Sprites Pasto/fase3_idle_spritesheet.png';
+import pasto_ent from '../assets/Recursos planta/Sprites Pasto/end_idle_spritesheet.png';
 
 // ─────────────────────────────────────────────
 // NOGAL  (Imágenes estáticas)
 // ─────────────────────────────────────────────
-import nogal_seed        from '../assets/Recursos planta/Sprites Nogal/Azul.png';
-import nogal_small_bush  from '../assets/Recursos planta/Sprites Nogal/Azul - copia.png';
-import nogal_large_bush  from '../assets/Recursos planta/Sprites Nogal/Azul - copia (2).png';
-import nogal_ent         from '../assets/Recursos planta/Sprites Nogal/Azul - copia (3).png';
+import nogal_seed from '../assets/Recursos planta/Sprites Nogal/Azul.png';
+import nogal_small_bush from '../assets/Recursos planta/Sprites Nogal/Azul - copia.png';
+import nogal_large_bush from '../assets/Recursos planta/Sprites Nogal/Azul - copia (2).png';
+import nogal_ent from '../assets/Recursos planta/Sprites Nogal/Azul - copia (3).png';
 
 // ─────────────────────────────────────────────
 // CEDRO  (Imágenes estáticas)
 // ─────────────────────────────────────────────
-import cedro_seed        from '../assets/Recursos planta/Sprites Cedro/Verde.png';
-import cedro_small_bush  from '../assets/Recursos planta/Sprites Cedro/Verde - copia.png';
-import cedro_large_bush  from '../assets/Recursos planta/Sprites Cedro/Verde - copia (2).png';
-import cedro_ent         from '../assets/Recursos planta/Sprites Cedro/Verde - copia (3).png';
+import cedro_seed from '../assets/Recursos planta/Sprites Cedro/Verde.png';
+import cedro_small_bush from '../assets/Recursos planta/Sprites Cedro/Verde - copia.png';
+import cedro_large_bush from '../assets/Recursos planta/Sprites Cedro/Verde - copia (2).png';
+import cedro_ent from '../assets/Recursos planta/Sprites Cedro/Verde - copia (3).png';
+
+// ─────────────────────────────────────────────
+// PRUEBA (duraznillo)  (Spritesheets animados)
+// ─────────────────────────────────────────────
+import prueba_seed from '../assets/Recursos planta/Sprites prueba/prueba_asemilla_idle.png';
+import prueba_small_bush from '../assets/Recursos planta/Sprites prueba/prueba_fase1_idle.png';
+import prueba_large_bush from '../assets/Recursos planta/Sprites prueba/prueba_fase1_idle.png';
+import prueba_ent from '../assets/Recursos planta/Sprites prueba/prueba_ent_idle.png';
 
 // ─────────────────────────────────────────────
 // Registro completo: speciesId → fase → SpriteConfig
 // ─────────────────────────────────────────────
 export const PLANT_SPRITE_REGISTRY: Record<string, Record<PlantPhase, SpriteConfig>> = {
   pasto: {
-    seed:       { src: pasto_seed.src,       frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2.5, hitbox: "w-32 h-32" },
+    seed: { src: pasto_seed.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2.5, hitbox: "w-32 h-32" },
     small_bush: { src: pasto_small_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2.3, hitbox: "w-48 h-48" },
-    large_bush: { src: pasto_large_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2,   hitbox: "w-56 h-64" },
-    ent:        { src: pasto_ent.src,        frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.2, hitbox: "w-64 h-80" },
+    large_bush: { src: pasto_large_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2, hitbox: "w-56 h-64" },
+    ent: { src: pasto_ent.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.2, hitbox: "w-64 h-80" },
   },
   nogal: {
-    seed:       { src: nogal_seed.src,       frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-32 h-32" },
+    seed: { src: nogal_seed.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-32 h-32" },
     small_bush: { src: nogal_small_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-48 h-48" },
     large_bush: { src: nogal_large_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-56 h-64" },
-    ent:        { src: nogal_ent.src,        frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-64 h-80" },
+    ent: { src: nogal_ent.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-64 h-80" },
   },
   cedro: {
-    seed:       { src: cedro_seed.src,       frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-32 h-32" },
+    seed: { src: cedro_seed.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-32 h-32" },
     small_bush: { src: cedro_small_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-48 h-48" },
     large_bush: { src: cedro_large_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-56 h-64" },
-    ent:        { src: cedro_ent.src,        frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-64 h-80" },
+    ent: { src: cedro_ent.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-64 h-80" },
+  },
+  duraznillo: {
+    seed: { src: prueba_seed.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-32 h-32" },
+    small_bush: { src: prueba_small_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-48 h-48" },
+    large_bush: { src: prueba_large_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-56 h-64" },
+    ent: { src: prueba_ent.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-64 h-80" },
   },
 
   // ── Para añadir una nueva especie, duplica el bloque de arriba ──
