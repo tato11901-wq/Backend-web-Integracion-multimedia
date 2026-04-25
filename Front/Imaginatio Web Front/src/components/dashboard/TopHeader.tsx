@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "preact/hooks";
 import { isInventoryOpen, isHelpModalOpen, plantName, activePlantId } from '../../store/resourceStore';
 import { fetchMyActivePlant, renamePlant } from '../../store/apiClient';
-import { syncPlantState } from '../../store/plantStore';
+import { syncPlantState, plantHealth, plantWaterProgress, plantSunProgress } from '../../store/plantStore';
 import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
 import panelNombrePlanta from '../../assets/Recursos web media/Panel_NombrePlanta.png';
 import panelAvisoPlanta from '../../assets/Recursos web media/Panel_AvisoPlanta.png';
@@ -73,6 +73,51 @@ export default function TopHeader() {
     }
   };
 
+  // ── Lógica de Mensajes Dinámicos ──
+  const getStatusMessage = () => {
+    const health = plantHealth.value;
+    const water = plantWaterProgress.value;
+    const sun = plantSunProgress.value;
+
+    // 1. Estado Crítico (1 o menos de algún recurso)
+    if (water <= 1 || sun <= 1) {
+      let needs = [];
+      if (water <= 1) needs.push("AGUA");
+      if (sun <= 1) needs.push("SOL");
+      return {
+        text: `⚠️ ¡SOCORRO! NECESITO ${needs.join(" Y ")} AHORA MISMO ⚠️`,
+        isCritical: true
+      };
+    }
+
+    // 2. Necesidad Ligera (poca agua o sol)
+    if (water <= 3 || sun <= 3) {
+      let needs = [];
+      if (water <= 3) needs.push("un traguito de agua");
+      if (sun <= 3) needs.push("sentir los rayos del sol");
+      return {
+        text: `Hola... ¿me darías ${needs.join(" y ")}? Me vendría muy bien.`,
+        isCritical: false
+      };
+    }
+
+    // 3. Estado Saludable
+    const healthyMessages = [
+      "¡Me siento genial! Gracias por cuidarme tanto.",
+      "Qué lindo día... ¡mira cómo brillan mis hojas!",
+      "Me encanta este invernadero, ¡estoy creciendo muy feliz!",
+      "¡Hola! Gracias por estar pendiente de mí, me siento radiante."
+    ];
+    // Usamos el ID de la planta para que el mensaje sea estable para esa planta
+    const index = activePlantId.value ? activePlantId.value.length % healthyMessages.length : 0;
+    return {
+      text: healthyMessages[index],
+      isCritical: false
+    };
+  };
+
+  const status = getStatusMessage();
+
   return (
     <div className="flex flex-row justify-between items-start w-full px-6 pt-0 z-30 relative pointer-events-none">
 
@@ -112,8 +157,12 @@ export default function TopHeader() {
         {/* Aviso de planta - Center */}
         <div className="relative w-full h-16 flex items-center justify-center mx-4">
           <img src={panelAvisoPlanta.src} alt="Aviso Planta" className="w-full h-full object-contain" />
-          <span className="absolute inset-0 flex items-center justify-center text-white font-medium text-sm pt-1">
-            ¡Bienvenido al invernadero Imaginatio!
+          <span 
+            className={`absolute inset-0 flex items-center justify-center text-center px-12 font-bold text-sm pt-1 transition-all duration-300
+              ${status.isCritical ? "animate-alert-text" : "text-white font-medium"}
+            `}
+          >
+            {status.text}
           </span>
         </div>
 

@@ -5,8 +5,8 @@ Este documento sirve como guía técnica y de diseño para el desarrollo del sim
 ## 🛠 Arquitectura Tecnológica
 - **Backend**: FastAPI (Python 3.10+)
 - **Frontend**: Astro + Preact + TailwindCSS
-- **Estado Global**: NanoStores (`plantStore.ts`, `resourceStore.ts`)
-- **Comunicación**: REST API con sincronización periódica de estado.
+- **Estado Global**: NanoStores / Preact Signals (`plantStore.ts`, `resourceStore.ts`)
+- **Comunicación**: REST API con sincronización bidireccional inmediata de acciones.
 
 ## 🌿 Sistema de Ciclo de Vida de la Planta
 
@@ -22,36 +22,41 @@ Las fases están sincronizadas entre Backend y Frontend usando los siguientes id
     - Decaimiento: **1 unidad cada 10 minutos** (6 unidades por hora).
     - Límite: Determinado por la fase actual en `species.json`.
 - **Abono (Fertilizer)**:
-    - No decae con el tiempo.
-    - Se acumula y se consume al evolucionar la planta.
-    - Al usarlo, otorga un bonus de +1 en agua y sol.
+    - No decae con el tiempo. Consumido al evolucionar.
+    - Se obtiene en minijuego de composta (4 composta = 1 abono).
 - **Salud (Health)**:
-    - Es un valor derivado (0-100%).
-    - Se calcula como el porcentaje de cumplimiento del recurso más crítico.
-    - **Regla de Visualización**: La salud se basa en unidades redondeadas hacia arriba (`Math.ceil`). Si visualmente la planta tiene 3/3 de agua, su salud será 100%, aunque internamente el valor sea 2.5.
+    - Valor derivado del cumplimiento del recurso más crítico.
+    - Sincronizado tras cada acción (`water`, `sun`, `prune`) mediante llamadas a la API.
 
-### 3. Fase Especial: Ent
-- Al alcanzar la fase `ent`, la planta se vuelve **autosuficiente**.
-- Los recursos (Agua, Sol, Abono) y la Salud se fijan al **máximo permanentemente**.
-- Es inmune al decaimiento temporal.
+### 3. Persistencia y Sincronización
+- **Acciones**: Cada interacción (regar, abonar, evolucionar) dispara una petición asíncrona al backend para persistir el estado.
+- **Evolución**: La ruta `/plant/{id}/evolve` en el backend valida requisitos y actualiza la fase permanentemente.
+- **Batching**: Se utiliza `batch()` de `@preact/signals` para evitar flickering visual al cambiar de planta activa o sincronizar estados masivos.
 
 ## 🎨 Diseño y UI
-- **Estética**: Diseño premium con micro-animaciones, texturas naturales y bordes definidos.
-- **Barras de Progreso**:
-    - Muestran números planos (enteros) usando `Math.ceil`.
-    - El ancho visual de la barra está sincronizado con el número entero mostrado.
-    - Texto: Blanco con borde negro (`-webkit-text-stroke`) para máxima legibilidad.
+
+### 1. Interfaz Dinámica
+- **Mensajería HUD**: El panel superior (`TopHeader.tsx`) muestra mensajes en primera persona de la planta.
+    - **Saludable**: Frases positivas y cariñosas.
+    - **Necesidad Ligera**: Peticiones suaves de agua o sol (threshold <= 3).
+    - **Alerta Crítica**: Texto con borde negro y relleno animado (pulso Rojo-Blanco) para urgencias (threshold <= 1).
+
+### 2. Estética Visual
+- **Sprites**: Registro centralizado en `plantSpriteRegistry.ts` que gestiona escalados y desplazamientos individuales por especie/fase.
+- **Flicker-Free**: El componente `Plant.tsx` sincroniza instantáneamente el cambio de especie/fase al cambiar de planta activa, reservando el retraso de 1.5s únicamente para la animación de evolución natural.
 
 ## ⚙️ Desarrollo y Depuración
-- **Admin Panel**: Accesible mediante `Alt + Click` o `Shift + Click` en el saco de abono en `GameArea.tsx`.
-- **Modo Debug**: Permite ver decimales exactos (4 decimales), avanzar el tiempo y resetear la planta.
-- **Sincronización**: La función `syncPlantState` en el frontend es crítica para mantener la paridad con el backend tras el login o reconexión.
+- **Admin Debug Panel**:
+    - Permite añadir recursos directamente a la base de datos mediante el endpoint `/debug/add-resources`.
+    - Adelantar el tiempo de cooldowns y simular decaimiento.
+- **Rutas FastAPI**: El orden de las rutas es crítico. La ruta específica `/evolve` debe preceder a la ruta dinámica `/{action}` para evitar conflictos de validación de enums.
 
 ## 📁 Archivos Clave
-- `back/core/plant_logic.py`: Motor de decaimiento y cálculo de salud.
-- `back/core/species.json`: Catálogo maestro de requisitos por fase.
-- `Front/.../src/store/plantStore.ts`: Lógica de cliente y predicción de estado.
-- `Front/.../src/components/dashboard/ProgressBar.tsx`: Componente visual de barras.
+- `back/api/routes/plant_routes.py`: Gestión de endpoints de interacción y evolución (Orden de rutas crítico).
+- `back/services/minigame_service.py`: Configuración de recompensas y cooldowns (10 min estándar).
+- `Front/src/store/plantStore.ts`: Núcleo de sincronización y lógica de cliente.
+- `Front/src/components/dashboard/TopHeader.tsx`: Sistema de mensajería y alertas dinámicas.
+- `Front/src/components/dashboard/Plant.tsx`: Renderizado principal con lógica de delay condicional.
 
 ---
-*Última actualización: Refactorización de decaimiento fijo y sincronización de salud visual.*
+*Última actualización: Implementación de mensajería HUD en primera persona, sistema de alertas críticas y optimización de sincronización atómica (batching).*
