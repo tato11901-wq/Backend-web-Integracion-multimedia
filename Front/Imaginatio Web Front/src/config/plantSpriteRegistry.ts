@@ -44,35 +44,46 @@ import cedro_large_bush  from '../assets/Recursos planta/Sprites Cedro/Verde - c
 import cedro_ent         from '../assets/Recursos planta/Sprites Cedro/Verde - copia (3).png';
 
 // ─────────────────────────────────────────────
+// Helper para crear configuraciones fácilmente
+// ─────────────────────────────────────────────
+function createPlantConfig(
+  sources: { seed: string; small_bush: string; large_bush: string; ent: string },
+  scales: number | { seed: number; small_bush: number; large_bush: number; ent: number } = 1.0,
+  frameCount: number = 18,
+  frameWidth: number = 477,
+  frameHeight: number = 510
+): Record<PlantPhase, SpriteConfig> {
+  const s = typeof scales === "number" ? { seed: scales, small_bush: scales, large_bush: scales, ent: scales } : scales;
+  const base = { frameWidth, frameHeight, frameCount };
+  return {
+    seed:       { ...base, src: sources.seed,       scale: s.seed,       hitbox: "w-32 h-32" },
+    small_bush: { ...base, src: sources.small_bush, scale: s.small_bush, hitbox: "w-48 h-48" },
+    large_bush: { ...base, src: sources.large_bush, scale: s.large_bush, hitbox: "w-56 h-64" },
+    ent:        { ...base, src: sources.ent,        scale: s.ent,        hitbox: "w-64 h-80" },
+  };
+}
+
+// ─────────────────────────────────────────────
 // Registro completo: speciesId → fase → SpriteConfig
 // ─────────────────────────────────────────────
 export const PLANT_SPRITE_REGISTRY: Record<string, Record<PlantPhase, SpriteConfig>> = {
-  pasto: {
-    seed:       { src: pasto_seed.src,       frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2.5, hitbox: "w-32 h-32" },
-    small_bush: { src: pasto_small_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2.3, hitbox: "w-48 h-48" },
-    large_bush: { src: pasto_large_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2,   hitbox: "w-56 h-64" },
-    ent:        { src: pasto_ent.src,        frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.2, hitbox: "w-64 h-80" },
-  },
-  nogal: {
-    seed:       { src: nogal_seed.src,       frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-32 h-32" },
-    small_bush: { src: nogal_small_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-48 h-48" },
-    large_bush: { src: nogal_large_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-56 h-64" },
-    ent:        { src: nogal_ent.src,        frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-64 h-80" },
-  },
-  cedro: {
-    seed:       { src: cedro_seed.src,       frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-32 h-32" },
-    small_bush: { src: cedro_small_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-48 h-48" },
-    large_bush: { src: cedro_large_bush.src, frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-56 h-64" },
-    ent:        { src: cedro_ent.src,        frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 1.0, hitbox: "w-64 h-80" },
-  },
+  pasto: createPlantConfig(
+    { seed: pasto_seed.src, small_bush: pasto_small_bush.src, large_bush: pasto_large_bush.src, ent: pasto_ent.src },
+    { seed: 2.5, small_bush: 2.3, large_bush: 2.0, ent: 1.2 }
+  ),
+  nogal: createPlantConfig(
+    { seed: nogal_seed.src, small_bush: nogal_small_bush.src, large_bush: nogal_large_bush.src, ent: nogal_ent.src }
+  ),
+  cedro: createPlantConfig(
+    { seed: cedro_seed.src, small_bush: cedro_small_bush.src, large_bush: cedro_large_bush.src, ent: cedro_ent.src }
+  ),
 
-  // ── Para añadir una nueva especie, duplica el bloque de arriba ──
-  // nueva_especie: {
-  //   seed:       { src: nueva_seed.src,       frameWidth: 477, frameHeight: 510, frameCount: 18, scale: 2.5, hitbox: "w-32 h-32" },
-  //   small_bush: { src: nueva_small_bush.src, ... },
-  //   large_bush: { src: nueva_large_bush.src, ... },
-  //   ent:        { src: nueva_ent.src,        ... },
-  // },
+  // ── Para añadir una nueva especie: ──
+  // nueva_especie: createPlantConfig(
+  //   { seed: nueva_seed.src, small_bush: nueva_small_bush.src, large_bush: nueva_large_bush.src, ent: nueva_ent.src },
+  //   1.0, // Escala (opcional, por defecto 1.0)
+  //   1    // Número de frames (opcional, por defecto 18)
+  // ),
 };
 
 /** Especie de fallback si la activa no tiene sprites registrados */
