@@ -161,6 +161,12 @@ export function checkGrowth(plant: LocalPlant): boolean {
         plant.sun = 10;
         plant.fertilizer = 10;
         plant.health = 100;
+      } else {
+        // Maxear agua y sol a los nuevos requisitos de la fase superior
+        const nextReqs = getRequirements(plant.species_id, nextStage);
+        plant.water = nextReqs.water;
+        plant.sun = nextReqs.sun;
+        plant.health = 100;
       }
       plant.fertilizer = 0;
       return true;
