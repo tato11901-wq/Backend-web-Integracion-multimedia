@@ -9,7 +9,7 @@ export default function HelpModal() {
       onClick={() => isHelpModalOpen.value = false}
     >
       <div
-        className="bg-[#e3e4e5] w-[90%] max-w-3xl lg:max-w-4xl h-[85vh] max-h-[800px] rounded-[2rem] p-6 lg:p-8 shadow-2xl flex flex-col relative"
+        className="bg-[#e3e4e5] w-[90%] max-w-3xl lg:max-w-4xl h-[85%] max-h-[800px] rounded-[2rem] p-6 lg:p-8 shadow-2xl flex flex-col relative"
         onClick={(e) => e.stopPropagation()}
       >
         <button

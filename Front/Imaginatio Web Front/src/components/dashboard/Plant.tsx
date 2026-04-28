@@ -7,21 +7,25 @@ import {
   isWatering,
   isFertilizing,
   isSunning,
-  isEvolving
+  isEvolving,
+  plantHealth
 } from "../../store/plantStore";
 import { SpriteAnimator } from './SpriteAnimator';
 import { getSpriteConfig } from '../../config/plantSpriteRegistry';
 
+// Lápida
+import tombStoneSprite from '../../assets/Recursos planta/TombStone.png';
+
 // Efectos de estado compartidos por todas las especies
 import evolucionSpriteSheet from '../../assets/Recursos estadosPlanta/Evolucion.png';
-import watherSpriteSheet    from '../../assets/Recursos estadosPlanta/Wather.png';
-import abonoSpriteSheet     from '../../assets/Recursos estadosPlanta/Abono.png';
-import solSpriteSheet       from '../../assets/Recursos estadosPlanta/Sol.png';
+import watherSpriteSheet from '../../assets/Recursos estadosPlanta/Wather.png';
+import abonoSpriteSheet from '../../assets/Recursos estadosPlanta/Abono.png';
+import solSpriteSheet from '../../assets/Recursos estadosPlanta/Sol.png';
 
 export const Plant = () => {
   const [displayPhase, setDisplayPhase] = useState<PlantPhase>(plantPhase.value);
   const [displaySpecies, setDisplaySpecies] = useState<string>(plantSpeciesId.value);
-  
+
   const prevPhaseRef = useRef(plantPhase.value);
   const prevPlantIdRef = useRef(activePlantId.value);
 
@@ -39,7 +43,7 @@ export const Plant = () => {
   useEffect(() => {
     if (prevPhaseRef.current !== plantPhase.value) {
       const newPhase = plantPhase.value;
-      
+
       // Si estamos en proceso de evolución, esperamos a que la animación avance
       if (isEvolving.value) {
         const timer = setTimeout(() => {
@@ -64,13 +68,25 @@ export const Plant = () => {
 
   const config = getSpriteConfig(displaySpecies, displayPhase);
   const isAnimated = config.frameCount > 1;
+  const isDead = plantHealth.value <= 0;
 
   return (
     <div className="relative mb-24 flex flex-col items-center pointer-events-none group">
       <div className="w-80 h-auto flex items-center justify-center z-20 relative transition-transform duration-300 group-hover:scale-105">
 
-        {/* Sprite principal: animado o estático según la especie */}
-        {isAnimated ? (
+        {/* Sprite principal: Lápida si está muerta, de lo contrario animado o estático */}
+        {isDead ? (
+          <SpriteAnimator
+            key="tombstone"
+            src={tombStoneSprite.src}
+            frameWidth={32}
+            frameHeight={32}
+            frameCount={40}
+            scale={1}
+            fps={12}
+            className="w-full h-full object-contain drop-shadow-2xl [image-rendering:pixelated]"
+          />
+        ) : isAnimated ? (
           <SpriteAnimator
             key={`${displaySpecies}-${displayPhase}`}
             src={config.src}

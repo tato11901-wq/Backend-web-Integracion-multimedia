@@ -1,10 +1,10 @@
 import { useState } from "preact/hooks";
-import { 
-  plantPhase, 
-  plantHealth, 
-  plantWaterProgress, 
-  plantSunProgress, 
-  plantFertilizerProgress, 
+import {
+  plantPhase,
+  plantHealth,
+  plantWaterProgress,
+  plantSunProgress,
+  plantFertilizerProgress,
   plantSpeciesId,
   isDebugOpen,
   evolvePlant,
@@ -87,7 +87,7 @@ export default function DebugPanel() {
       {/* ── Panel principal ── */}
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto">
         <div className="bg-slate-900 border-4 border-red-600 text-white p-8 rounded-2xl w-[520px] max-h-[90vh] overflow-y-auto shadow-2xl relative scrollbar-thin scrollbar-thumb-red-900 scrollbar-track-slate-800">
-          <button 
+          <button
             onClick={() => isDebugOpen.value = false}
             className="absolute top-2 right-4 text-red-500 font-bold text-2xl hover:text-red-400"
           >
@@ -116,13 +116,13 @@ export default function DebugPanel() {
               </div>
 
               <div className="mt-4 flex gap-3">
-                <button 
+                <button
                   onClick={() => plantHealth.value = Math.max(0, plantHealth.value - 10)}
                   className="flex-1 bg-red-900/50 hover:bg-red-800 text-sm font-bold py-2 rounded transition-colors"
                 >
                   Daño (-10)
                 </button>
-                <button 
+                <button
                   onClick={() => plantHealth.value = Math.min(100, plantHealth.value + 10)}
                   className="flex-1 bg-green-900/50 hover:bg-green-800 text-sm font-bold py-2 rounded transition-colors"
                 >
@@ -131,13 +131,13 @@ export default function DebugPanel() {
               </div>
 
               <div className="mt-3 flex gap-3">
-                <button 
+                <button
                   onClick={() => evolvePlant()}
                   className="flex-1 bg-purple-700 hover:bg-purple-600 font-bold py-2 rounded shadow-lg transition-transform active:scale-95"
                 >
                   Forzar Evolución
                 </button>
-                <button 
+                <button
                   onClick={() => resetPlant()}
                   className="flex-1 bg-orange-700 hover:bg-orange-600 font-bold py-2 rounded shadow-lg transition-transform active:scale-95"
                 >
@@ -180,19 +180,19 @@ export default function DebugPanel() {
             <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
               <h3 className="text-base text-slate-400 uppercase font-bold mb-3">Trampas y Simuladores</h3>
               <div className="flex gap-3 mb-3">
-                <button 
+                <button
                   onClick={() => handleAddResource('water')}
                   className="flex-1 bg-blue-700 hover:bg-blue-600 text-sm py-2 rounded font-bold transition-transform active:scale-95"
                 >
                   +5 Agua
                 </button>
-                <button 
+                <button
                   onClick={() => handleAddResource('sun')}
                   className="flex-1 bg-yellow-600 hover:bg-yellow-500 text-sm py-2 rounded font-bold transition-transform active:scale-95"
                 >
                   +5 Sol
                 </button>
-                <button 
+                <button
                   onClick={() => handleAddResource('fertilizer')}
                   className="flex-1 bg-emerald-700 hover:bg-emerald-600 text-sm py-2 rounded font-bold transition-transform active:scale-95"
                 >
@@ -200,25 +200,25 @@ export default function DebugPanel() {
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-2 mt-4">
-                <button 
+                <button
                   onClick={() => handleFastForward(5 / 60)}
                   className="bg-cyan-800 hover:bg-cyan-700 text-white text-xs font-bold py-2 rounded shadow transition-transform active:scale-95"
                 >
                   ⏩ +5 Minutos
                 </button>
-                <button 
+                <button
                   onClick={() => handleFastForward(10 / 60)}
                   className="bg-cyan-800 hover:bg-cyan-700 text-white text-xs font-bold py-2 rounded shadow transition-transform active:scale-95"
                 >
                   ⏩ +10 Minutos
                 </button>
-                <button 
+                <button
                   onClick={() => handleFastForward(1)}
                   className="bg-cyan-800 hover:bg-cyan-700 text-white text-xs font-bold py-2 rounded shadow transition-transform active:scale-95"
                 >
                   ⏩ +1 Hora
                 </button>
-                <button 
+                <button
                   onClick={() => handleFastForward(24)}
                   className="bg-cyan-800 hover:bg-cyan-700 text-white text-xs font-bold py-2 rounded shadow transition-transform active:scale-95"
                 >
@@ -251,7 +251,7 @@ export default function DebugPanel() {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = `unity_payload_${new Date().toISOString().slice(0,19).replace(/:/g,"-")}.json`;
+                    a.download = `unity_payload_${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.json`;
                     a.click();
                     URL.revokeObjectURL(url);
                   }}

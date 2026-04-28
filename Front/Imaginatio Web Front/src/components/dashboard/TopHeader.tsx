@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "preact/hooks";
 import { isInventoryOpen, isHelpModalOpen, plantName, activePlantId } from '../../store/resourceStore';
 import { fetchMyActivePlant, renamePlant } from '../../store/apiClient';
-import { syncPlantState, plantHealth, plantWaterProgress, plantSunProgress } from '../../store/plantStore';
+import { syncPlantState, plantHealth, plantWaterProgress, plantSunProgress, plantPhase, EVOLUTION_REQUIREMENTS } from '../../store/plantStore';
 import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
 import panelNombrePlanta from '../../assets/Recursos web media/Panel_NombrePlanta.png';
 import panelAvisoPlanta from '../../assets/Recursos web media/Panel_AvisoPlanta.png';
@@ -73,13 +73,37 @@ export default function TopHeader() {
     }
   };
 
+  const deadMessageRandomIndex = useRef<Record<string, number>>({});
+
   // ── Lógica de Mensajes Dinámicos ──
   const getStatusMessage = () => {
     const health = plantHealth.value;
     const water = plantWaterProgress.value;
     const sun = plantSunProgress.value;
 
-    // 1. Estado Crítico (1 o menos de algún recurso)
+    // 1. Estado Muerta
+    if (health <= 0) {
+      const deadMessages = [
+        "Pudiste haberme cuidado mejor… ojalá en otra vida alguien sí lo haga 🪦",
+        "Ahora descanso en paz… espero no ser el abono de una planta mejor cuidada 🪦",
+        "Me quedé sin fuerzas... recuerdame como una plantita que intentó ser grande 🪦",
+        "Pudiste haberme cuidado mejor… tal vez en otra vida florezca en manos que sí sepan quererme 🪦"
+      ];
+      
+      // Selección totalmente aleatoria pero estable por planta para evitar parpadeos
+      const id = activePlantId.value || "default";
+      if (deadMessageRandomIndex.current[id] === undefined) {
+        deadMessageRandomIndex.current[id] = Math.floor(Math.random() * deadMessages.length);
+      }
+      const index = deadMessageRandomIndex.current[id];
+
+      return {
+        text: deadMessages[index],
+        isCritical: true
+      };
+    }
+
+    // 2. Estado Crítico (1 o menos de algún recurso)
     if (water <= 1 || sun <= 1) {
       let needs = [];
       if (water <= 1) needs.push("AGUA");
@@ -90,11 +114,15 @@ export default function TopHeader() {
       };
     }
 
-    // 2. Necesidad Ligera (poca agua o sol)
-    if (water <= 3 || sun <= 3) {
+    const reqs = EVOLUTION_REQUIREMENTS[plantPhase.value] || { water: 10, sun: 10 };
+    const waterPct = (water / reqs.water) * 100;
+    const sunPct = (sun / reqs.sun) * 100;
+
+    // 3. Necesidad Ligera / Alerta (50% o menos)
+    if (waterPct <= 50 || sunPct <= 50) {
       let needs = [];
-      if (water <= 3) needs.push("un traguito de agua");
-      if (sun <= 3) needs.push("sentir los rayos del sol");
+      if (waterPct <= 50) needs.push("un traguito de agua");
+      if (sunPct <= 50) needs.push("sentir los rayos del sol");
       return {
         text: `Hola... ¿me darías ${needs.join(" y ")}? Me vendría muy bien.`,
         isCritical: false
@@ -157,7 +185,7 @@ export default function TopHeader() {
         {/* Aviso de planta - Center */}
         <div className="relative w-full h-16 flex items-center justify-center mx-4">
           <img src={panelAvisoPlanta.src} alt="Aviso Planta" className="w-full h-full object-contain" />
-          <span 
+          <span
             className={`absolute inset-0 flex items-center justify-center text-center px-12 font-bold text-sm pt-1 transition-all duration-300
               ${status.isCritical ? "animate-alert-text" : "text-white font-medium"}
             `}

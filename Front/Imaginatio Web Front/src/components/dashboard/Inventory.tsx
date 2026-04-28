@@ -6,10 +6,29 @@ import { fetchMyInventory, setActivePlant, deletePlant, createPlant } from "../.
 import { PLANT_SPRITE_REGISTRY, FALLBACK_SPECIES, type SpriteConfig } from "../../config/plantSpriteRegistry";
 import type { PlantPhase } from "../../store/plantStore";
 import { syncInventoryToUnityData, initUnityBridge } from "../../store/unityBridge";
+import SPECIES_JSON from "../../config/species.json";
 
 import fondoInventario from "../../assets/Recursos inventario/Fondo_Inventario.png";
 import panelHudInventario from "../../assets/Recursos inventario/Panel_HUDInventario.png";
 import panelPlantaEspacio from "../../assets/Recursos inventario/Panel_PlantaEspacio.png";
+
+// Botones de filtro – Estado (fases de crecimiento)
+import btnEstado01 from "../../assets/Recursos inventario/btn_Estado_01.png";
+import btnEstado02 from "../../assets/Recursos inventario/btn_Estado_02.png";
+import btnEstado03 from "../../assets/Recursos inventario/btn_Estado_03.png";
+import btnEstado04 from "../../assets/Recursos inventario/btn_Estado_04.png";
+
+// Botones de filtro – Urgencia (campanas)
+import btnUrgencia01 from "../../assets/Recursos inventario/btn_Urgencia_01.png";
+import btnUrgencia02 from "../../assets/Recursos inventario/btn_Urgencia_02.png";
+import btnUrgencia03 from "../../assets/Recursos inventario/btn_Urgencia_03.png";
+
+// Botones de filtro – Categoría (biomas)
+import btnCategoria01 from "../../assets/Recursos inventario/btn_Categoría_01.png";
+import btnCategoria02 from "../../assets/Recursos inventario/btn_Categoría_02.png";
+import btnCategoria03 from "../../assets/Recursos inventario/btn_Categoría_03.png";
+import btnCategoria04 from "../../assets/Recursos inventario/btn_Categoría_04.png";
+import btnCategoria05 from "../../assets/Recursos inventario/btn_Categoría_05.png";
 
 // ── Tipos ──────────────────────────────────────────────────────────────────
 interface BackendPlant {
@@ -58,6 +77,28 @@ function getPlantReqs(plant: BackendPlant) {
   };
 }
 
+function getPlantUrgency(plant: BackendPlant): "estable" | "alerta" | "critico" {
+  if (plant.is_dead) return "critico";
+  
+  const reqs = getPlantReqs(plant);
+  
+  // Usar porcentajes en lugar de valores absolutos para alerta/estable
+  const waterPct = (plant.water / reqs.water) * 100;
+  const sunPct = (plant.sun / reqs.sun) * 100;
+  const minPct = Math.min(waterPct, sunPct);
+
+  // Crítico si cualquiera de sus recursos está en 1 o menos (0 es muerta)
+  if (plant.water <= 1 || plant.sun <= 1) return "critico"; 
+  
+  // Alerta si es menor o igual a 50%, Estable si es mayor a 50%
+  if (minPct <= 50) return "alerta";
+  return "estable";
+}
+
+function getPlantCategory(plant: BackendPlant): string {
+  const sp = (SPECIES_JSON as Record<string, any>)[plant.species_id];
+  return sp?.classification || "Base";
+}
 
 
 // ── Sub-componente: Preview estático del primer frame ─────────────────────
@@ -91,6 +132,9 @@ export default function Inventory() {
   const [loading, setLoading] = useState(true);
   const [switching, setSwitching] = useState<string | null>(null);
   const [selectedPlant, setSelectedPlant] = useState<BackendPlant | null>(null);
+  const [filterState, setFilterState] = useState<string | null>(null);
+  const [filterUrgency, setFilterUrgency] = useState<string | null>(null);
+  const [filterCategory, setFilterCategory] = useState<string | null>(null);
 
   if (!isInventoryOpen.value) return null;
 
@@ -123,7 +167,7 @@ export default function Inventory() {
               return data.find(p => p.id === prev.id) || null;
             });
           })
-          .catch(() => {});
+          .catch(() => { });
       }, 5000); // Cada 5 segundos para ver los cambios rápidamente si los hay
       return () => clearInterval(interval);
     }
@@ -139,7 +183,7 @@ export default function Inventory() {
     setSwitching(plant.id);
     try {
       await setActivePlant(plant.id);
-      
+
       batch(() => {
         activePlantId.value = plant.id;
         plantName.value = plant.name;          // ← actualizar nombre en HUD
@@ -160,7 +204,7 @@ export default function Inventory() {
     if (!confirm("¿Estás seguro de que deseas eliminar esta planta muerta?")) return;
     try {
       await deletePlant(plantId);
-      
+
       // Si eliminamos la planta activa, intentamos cambiar a otra automáticamente
       if (activePlantId.value === plantId) {
         const otherPlants = plants.filter(p => p.id !== plantId);
@@ -191,7 +235,7 @@ export default function Inventory() {
           }
         }
       }
-      
+
       setSelectedPlant(null);
       refreshInventory(); // Recarga las plantas
     } catch (e: any) {
@@ -199,21 +243,31 @@ export default function Inventory() {
     }
   };
 
+  const filteredPlants = plants.filter(plant => {
+    if (filterState && plant.stage !== filterState) return false;
+    if (filterUrgency && getPlantUrgency(plant) !== filterUrgency) return false;
+    if (filterCategory && getPlantCategory(plant) !== filterCategory) return false;
+    return true;
+  });
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 pointer-events-auto backdrop-blur-sm">
-      <div className="relative w-[92%] max-w-4xl aspect-[16/9] flex flex-col items-center justify-start rounded-lg shadow-2xl overflow-hidden border-8 border-[#6b4226]">
+      <div className="relative w-[95%] max-w-6xl h-[85%] flex flex-col items-center justify-start rounded-lg shadow-2xl overflow-hidden border-8 border-[#6b4226]">
 
         {/* Fondo */}
         <div className="absolute inset-0 z-0">
           <img src={fondoInventario.src} alt="Fondo Inventario" className="w-full h-full object-fill opacity-90" />
         </div>
 
-        {/* Header */}
-        <div className="relative z-10 w-full mb-2 flex items-center justify-between px-8 py-1">
+        {/* Header con filtros integrados */}
+        <div className="relative z-10 w-full mb-2 flex flex-col items-center px-8 py-1">
+          {/* Fondo del HUD */}
           <div className="absolute inset-x-0 top-0 bottom-0 z-0">
-            <img src={panelHudInventario.src} alt="HUD Inventario" className="w-full h-full object-contain" />
+            <img src={panelHudInventario.src} alt="HUD Inventario" className="w-full h-full object-fill" />
           </div>
-          <div className="relative z-10 w-full flex items-center justify-between h-14 lg:h-16 px-4">
+
+          {/* Fila superior: Título + contador */}
+          <div className="relative z-10 w-full flex items-center justify-between h-10 lg:h-12 px-4">
             <span className="text-white font-black text-lg drop-shadow-md">🌿 Mis Plantas</span>
             <div className="flex items-center gap-3">
               <span className="text-white/70 text-sm font-medium">{plants.length} planta{plants.length !== 1 ? "s" : ""}</span>
@@ -224,6 +278,102 @@ export default function Inventory() {
               >
                 🔄
               </button>
+            </div>
+          </div>
+
+          {/* Fila inferior: Botones de filtro */}
+          <div className="relative z-10 w-full flex items-center justify-center pb-3 pt-1 gap-6">
+            {/* Grupo: Estado (fases de crecimiento) */}
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-white/80 text-xs font-bold uppercase tracking-wider drop-shadow-sm">Estado</span>
+              <div className="flex items-start gap-2">
+                {[
+                  { img: btnEstado01, label: "Semilla", value: "seed" },
+                  { img: btnEstado02, label: "Brote", value: "small_bush" },
+                  { img: btnEstado03, label: "Arbusto", value: "large_bush" },
+                  { img: btnEstado04, label: "Ent", value: "ent" },
+                ].map((btn, i) => {
+                  const isSelected = filterState === btn.value;
+                  const isFaded = filterState !== null && filterState !== btn.value;
+                  return (
+                    <button
+                      key={`estado-${i}`}
+                      onClick={() => setFilterState(prev => prev === btn.value ? null : btn.value)}
+                      className={`flex flex-col items-center gap-1 group transition-all duration-200 ${isFaded ? "opacity-40 grayscale" : "opacity-100"}`}
+                      title={btn.label}
+                    >
+                      <div className={`w-12 h-12 lg:w-14 lg:h-14 rounded-md overflow-hidden transition-all duration-150 group-active:scale-95 ${isSelected ? "ring-2 ring-yellow-400 scale-110 brightness-125" : "group-hover:scale-110 group-hover:brightness-125"}`}>
+                        <img src={btn.img.src} alt={btn.label} className="w-full h-full object-contain" draggable={false} />
+                      </div>
+                      <span className={`text-[10px] font-semibold leading-none drop-shadow-sm ${isSelected ? "text-yellow-400" : "text-white/70"}`}>{btn.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Separador */}
+            <div className="w-px h-16 bg-white/20" />
+
+            {/* Grupo: Urgencia (campanas) */}
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-white/80 text-xs font-bold uppercase tracking-wider drop-shadow-sm">Urgencia</span>
+              <div className="flex items-start gap-2">
+                {[
+                  { img: btnUrgencia01, label: "Estable", value: "estable" },
+                  { img: btnUrgencia02, label: "Alerta", value: "alerta" },
+                  { img: btnUrgencia03, label: "Crítico", value: "critico" },
+                ].map((btn, i) => {
+                  const isSelected = filterUrgency === btn.value;
+                  const isFaded = filterUrgency !== null && filterUrgency !== btn.value;
+                  return (
+                    <button
+                      key={`urgencia-${i}`}
+                      onClick={() => setFilterUrgency(prev => prev === btn.value ? null : btn.value)}
+                      className={`flex flex-col items-center gap-1 group transition-all duration-200 ${isFaded ? "opacity-40 grayscale" : "opacity-100"}`}
+                      title={btn.label}
+                    >
+                      <div className={`w-12 h-12 lg:w-14 lg:h-14 rounded-md overflow-hidden transition-all duration-150 group-active:scale-95 ${isSelected ? "ring-2 ring-yellow-400 scale-110 brightness-125" : "group-hover:scale-110 group-hover:brightness-125"}`}>
+                        <img src={btn.img.src} alt={btn.label} className="w-full h-full object-contain" draggable={false} />
+                      </div>
+                      <span className={`text-[10px] font-semibold leading-none drop-shadow-sm ${isSelected ? "text-yellow-400" : "text-white/70"}`}>{btn.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Separador */}
+            <div className="w-px h-16 bg-white/20" />
+
+            {/* Grupo: Categoría (biomas) */}
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-white/80 text-xs font-bold uppercase tracking-wider drop-shadow-sm">Categoría</span>
+              <div className="flex items-start gap-2">
+                {[
+                  { img: btnCategoria01, label: "Solar", value: "Solar" },
+                  { img: btnCategoria02, label: "Xerofito", value: "Xerofito" },
+                  { img: btnCategoria03, label: "Templado", value: "Templado" },
+                  { img: btnCategoria04, label: "Montaña", value: "Montaña" },
+                  { img: btnCategoria05, label: "Hidro", value: "Hidro" },
+                ].map((btn, i) => {
+                  const isSelected = filterCategory === btn.value;
+                  const isFaded = filterCategory !== null && filterCategory !== btn.value;
+                  return (
+                    <button
+                      key={`categoria-${i}`}
+                      onClick={() => setFilterCategory(prev => prev === btn.value ? null : btn.value)}
+                      className={`flex flex-col items-center gap-1 group transition-all duration-200 ${isFaded ? "opacity-40 grayscale" : "opacity-100"}`}
+                      title={btn.label}
+                    >
+                      <div className={`w-12 h-12 lg:w-14 lg:h-14 rounded-md overflow-hidden transition-all duration-150 group-active:scale-95 ${isSelected ? "ring-2 ring-yellow-400 scale-110 brightness-125" : "group-hover:scale-110 group-hover:brightness-125"}`}>
+                        <img src={btn.img.src} alt={btn.label} className="w-full h-full object-contain" draggable={false} />
+                      </div>
+                      <span className={`text-[10px] font-semibold leading-none drop-shadow-sm ${isSelected ? "text-yellow-400" : "text-white/70"}`}>{btn.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -238,9 +388,13 @@ export default function Inventory() {
             <div className="flex items-center justify-center h-full text-white/60 text-base font-medium">
               No tienes plantas todavía.
             </div>
+          ) : filteredPlants.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-white/60 text-base font-medium">
+              No se encontraron plantas con estos filtros.
+            </div>
           ) : (
             <div className="grid grid-cols-4 gap-5 p-2">
-              {plants.map((plant) => {
+              {filteredPlants.map((plant) => {
                 const isActive = plant.id === activePlantId.value;
                 const isSwitchingThis = switching === plant.id;
                 const spriteConfig = getConfig(plant.species_id, plant.stage);
@@ -283,7 +437,7 @@ export default function Inventory() {
                           <span>{SPECIES_LABELS[plant.species_id] ?? plant.species_id}</span>
                           <span>{PHASE_LABELS[plant.stage] ?? plant.stage}</span>
                         </div>
-                        
+
                         {/* Barras de progreso Agua y Sol */}
                         <div className="w-full flex flex-col gap-[2px] mt-1">
                           <div className="flex gap-1 w-full">
@@ -383,7 +537,7 @@ export default function Inventory() {
               >
                 Cancelar
               </button>
-              
+
               {/* Botón de eliminar si está muerta */}
               {selectedPlant.is_dead && (
                 <button
