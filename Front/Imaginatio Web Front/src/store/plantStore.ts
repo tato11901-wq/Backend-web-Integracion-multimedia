@@ -1,4 +1,4 @@
-import { signal, effect, batch } from "@preact/signals";
+import { signal, computed, effect, batch } from "@preact/signals";
 import { waterInventory, sunInventory, fertilizerInventory, activePlantId } from "./resourceStore";
 import { applyPlantAction, evolvePlantApi } from "./apiClient";
 
@@ -64,6 +64,8 @@ export const CRITICAL_HEALTH_THRESHOLD = 20;
 
 // Estado de la planta
 export const plantPhase = signal<PlantPhase>("seed");
+/** True cuando la planta activa es un Ent. Bloquea minijuegos y barras de progreso. */
+export const isEntActive = computed(() => plantPhase.value === "ent");
 export const plantHealth = signal<number>(100);
 export const plantWaterProgress = signal<number>(4); // Default pasto seed
 export const plantSunProgress = signal<number>(4);   // Default pasto seed

@@ -17,6 +17,11 @@ export interface LocalUser {
     sun: number;
     compost: number;
   };
+  /** Timestamp (ms) desde el que el Ent se convirtio en planta activa.
+   *  Se usa para congelar los cooldowns mientras el Ent esta activo:
+   *  al cambiar a otra planta, todos los cooldowns activos se extienden
+   *  por el tiempo que el Ent estuvo seleccionado. */
+  ent_active_since: number | null;
 }
 
 export interface LocalPlant {
@@ -191,7 +196,8 @@ export function getOrCreateUser(username: string): LocalUser {
     fertilizer_inventory: 0,
     compost_inventory: 0,
     active_plant_id: null,
-    cooldowns: { water: 0, sun: 0, compost: 0 }
+    cooldowns: { water: 0, sun: 0, compost: 0 },
+    ent_active_since: null
   };
   
   db.users[username] = newUser;
@@ -326,6 +332,12 @@ export function evolvePlantLocal(plantId: string, username: string) {
   
   if (checkGrowth(plant)) {
     plant.last_interaction = Date.now();
+    
+    // Si la planta que acaba de evolucionar a Ent es la activa, iniciar congelamiento
+    if (plant.stage === "ent" && plant.id === user.active_plant_id && !user.ent_active_since) {
+      user.ent_active_since = Date.now();
+    }
+    
     saveDb(db);
     return plant;
   }
@@ -349,10 +361,42 @@ export function deletePlantLocal(plantId: string, username: string) {
   }
 }
 
+/**
+ * Descongela los cooldowns extendiendo su duracion por el tiempo
+ * que el Ent estuvo activo como planta seleccionada.
+ * Solo afecta cooldowns que estaban corriendo cuando el Ent se activo.
+ */
+export function thawCooldowns(user: LocalUser) {
+  if (!user.ent_active_since) return;
+  const frozenMs = Date.now() - user.ent_active_since;
+  if (frozenMs > 0) {
+    const since = user.ent_active_since;
+    if (user.cooldowns.water  > since) user.cooldowns.water  += frozenMs;
+    if (user.cooldowns.sun    > since) user.cooldowns.sun    += frozenMs;
+    if (user.cooldowns.compost > since) user.cooldowns.compost += frozenMs;
+  }
+  user.ent_active_since = null;
+}
+
 export function setActivePlantLocal(plantId: string, username: string) {
   const db = loadDb();
   const user = db.users[username];
   if (user && db.plants[plantId] && db.plants[plantId].owner_id === username) {
+    const prevPlant = user.active_plant_id ? db.plants[user.active_plant_id] : null;
+    const nextPlant = db.plants[plantId];
+
+    // Salir de un Ent → descongelar cooldowns
+    if (prevPlant?.stage === "ent" && nextPlant.stage !== "ent") {
+      thawCooldowns(user);
+    }
+
+    // Entrar a un Ent → iniciar congelamiento
+    if (nextPlant.stage === "ent" && !user.ent_active_since) {
+      user.ent_active_since = Date.now();
+    }
+
+    // Si cambia de un Ent a otro Ent (raro pero posible) → sin cambio
+
     user.active_plant_id = plantId;
     saveDb(db);
     return user;

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "preact/hooks";
-import { isInventoryOpen, isHelpModalOpen, plantName, activePlantId } from '../../store/resourceStore';
+import { isInventoryOpen, isHelpModalOpen, plantName, activePlantId, username } from '../../store/resourceStore';
 import { fetchMyActivePlant, renamePlant } from '../../store/apiClient';
 import { syncPlantState, plantHealth, plantWaterProgress, plantSunProgress, plantPhase, EVOLUTION_REQUIREMENTS } from '../../store/plantStore';
 import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
@@ -8,7 +8,7 @@ import panelAvisoPlanta from '../../assets/Recursos web media/Panel_AvisoPlanta.
 import btnInventario from '../../assets/Recursos web media/btn_Inventario.png';
 import btnAyuda from '../../assets/Recursos web media/btn_ayuda.png';
 
-export default function TopHeader() {
+export default function TopHeader({ onLogout }: { onLogout?: () => void }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -194,8 +194,8 @@ export default function TopHeader() {
           </span>
         </div>
 
-        {/* Right buttons: Inventario y Ayuda */}
-        <div className="flex gap-5 shrink-0 mr-10">
+        {/* Right buttons: Inventario, Ayuda y Cerrar Sesión */}
+        <div className="flex gap-5 shrink-0 mr-10 items-center">
           <div
             onClick={() => isInventoryOpen.value = true}
             className="w-16 h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90"
@@ -208,6 +208,32 @@ export default function TopHeader() {
           >
             <img src={btnAyuda.src} alt="Ayuda" className="w-full h-full object-contain" />
           </div>
+
+          {/* Botón Cerrar Sesión */}
+          {onLogout && (
+            <div className="flex flex-col items-center gap-1">
+              <button
+                id="btn-logout"
+                onClick={onLogout}
+                title={`Cerrar sesión de ${username.value}`}
+                className="w-12 h-12 rounded-full bg-red-900/80 border-2 border-red-400/60 flex items-center justify-center
+                           shadow-lg hover:bg-red-700 hover:border-red-300 hover:scale-110 active:scale-90
+                           transition-all duration-150 ease-in-out"
+              >
+                {/* Ícono: puerta de salida */}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                  className="w-6 h-6 text-red-200">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </button>
+              <span className="text-[9px] text-red-200/70 font-bold uppercase tracking-wide max-w-[56px] truncate text-center">
+                {username.value}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>

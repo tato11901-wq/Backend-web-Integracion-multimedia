@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { batch } from "@preact/signals";
-import { isInventoryOpen, activePlantId, inventoryVersion, plantName, refreshInventory } from "../../store/resourceStore";
+import { isInventoryOpen, activePlantId, inventoryVersion, plantName, refreshInventory, syncUserState } from "../../store/resourceStore";
 import { syncPlantState, setEvolutionRequirementsFromSpecies, plantSpeciesId } from "../../store/plantStore";
 import { fetchMyInventory, setActivePlant, deletePlant, createPlant } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY, FALLBACK_SPECIES, type SpriteConfig } from "../../config/plantSpriteRegistry";
@@ -182,9 +182,16 @@ export default function Inventory() {
     if (plant.id === activePlantId.value || plant.is_dead) return;
     setSwitching(plant.id);
     try {
-      await setActivePlant(plant.id);
+      // setActivePlant retorna fetchMyState() que incluye:
+      //   - cooldowns descongelados (si se salió de un Ent)
+      //   - ent_active_since actualizado (si se entró a un Ent)
+      const updatedUser = await setActivePlant(plant.id);
 
       batch(() => {
+        // Sincronizar el estado completo del usuario para actualizar
+        // entActiveSince y los cooldowns en el store reactivo
+        syncUserState(updatedUser);
+
         activePlantId.value = plant.id;
         plantName.value = plant.name;          // ← actualizar nombre en HUD
         syncPlantState(plant);
@@ -212,12 +219,15 @@ export default function Inventory() {
         const nextPlant = alivePlant || otherPlants[0]; // Prefiere una viva, o cualquiera si todas están muertas
 
         if (nextPlant) {
-          await setActivePlant(nextPlant.id);
-          activePlantId.value = nextPlant.id;
-          plantName.value = nextPlant.name;
-          syncPlantState(nextPlant);
-          if (nextPlant.species_data) setEvolutionRequirementsFromSpecies(nextPlant.species_data);
-          plantSpeciesId.value = nextPlant.species_id;
+          const updatedUser = await setActivePlant(nextPlant.id);
+          batch(() => {
+            syncUserState(updatedUser);
+            activePlantId.value = nextPlant.id;
+            plantName.value = nextPlant.name;
+            syncPlantState(nextPlant);
+            if (nextPlant.species_data) setEvolutionRequirementsFromSpecies(nextPlant.species_data);
+            plantSpeciesId.value = nextPlant.species_id;
+          });
         } else {
           // No quedan más plantas, le generamos un pasto por defecto
           await createPlant("pasto");

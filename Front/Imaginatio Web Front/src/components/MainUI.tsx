@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
-import { userId, syncUserState, username } from "../store/resourceStore";
-import { login, fetchMyState, getToken } from "../store/apiClient";
+import { userId, username, syncUserState, waterInventory, sunInventory, compostInventory, fertilizerInventory, activePlantId } from "../store/resourceStore";
+import { login, fetchMyState, getToken, logout } from "../store/apiClient";
 import { initUnityBridge } from "../store/unityBridge";
 
 import TopHeader from "./dashboard/TopHeader";
@@ -10,6 +10,7 @@ import GameArea from "./dashboard/GameArea";
 import BottomActions from "./dashboard/BottomActions";
 import Inventory from "./dashboard/Inventory";
 import HelpModal from "./dashboard/HelpModal";
+import EntWelcomeModal from "./dashboard/EntWelcomeModal";
 import { useScale } from "../hooks/useScale";
 import Water from "./MiniGames/water";
 import Compost from "./MiniGames/compost";
@@ -56,6 +57,20 @@ export default function MainUI() {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    // Resetear signals globales para evitar que datos del usuario anterior
+    // aparezcan momentáneamente si otro usuario inicia sesión en el mismo tab.
+    userId.value = null;
+    username.value = "";
+    waterInventory.value = 0;
+    sunInventory.value = 0;
+    compostInventory.value = 0;
+    fertilizerInventory.value = 0;
+    activePlantId.value = null;
+    setAuthState("guest");
+  };
+
   // Mientras verifica el token: pantalla en negro sin parpadeo
   if (authState === "checking") {
     return <div className="flex h-screen w-full bg-[#1a2e0e]" />;
@@ -83,8 +98,10 @@ export default function MainUI() {
               {loading ? "CARGANDO..." : "ENTRAR AL JARDÍN"}
             </button>
           </form>
-          <p className="text-[10px] text-[#4e341b]/60 text-center uppercase tracking-tight">
-            La sesión se guardará localmente en este navegador.
+          <p className="text-[11px] text-[#4e341b]/70 text-center leading-relaxed">
+            Tu progreso se guarda en este navegador.<br />
+            <span className="font-bold">¿Ya tienes cuenta? Ingresa el mismo nombre</span>
+            {" "}para retomar tu jardín donde lo dejaste. 🌱
           </p>
         </div>
       </div>
@@ -116,7 +133,7 @@ export default function MainUI() {
         </div>
 
         <div className="relative z-10 flex flex-col w-full h-full">
-          <TopHeader />
+          <TopHeader onLogout={handleLogout} />
 
           <div className="flex flex-row flex-grow w-full h-full relative z-10 mx-auto">
             <LeftSigns />
@@ -134,6 +151,9 @@ export default function MainUI() {
       <Water />
       <Compost />
       <Sun />
+
+      {/* 🌳 Modal informativo del Ent (solo primera vez) */}
+      <EntWelcomeModal />
 
     </div>
   );

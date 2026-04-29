@@ -19,8 +19,11 @@ import {
   addDebugResources,
   fastForwardTimeLocal,
   loadDb,
-  saveDb
+  saveDb,
+  thawCooldowns
 } from "./localDb";
+
+import { plantPhase } from "./plantStore";
 
 let _token: string | null = null;
 
@@ -46,6 +49,13 @@ export function clearToken() {
   }
 }
 
+/** Cierra la sesión del usuario actual limpiando el token de autenticación.
+ *  Los datos del usuario (plantas, inventario) se mantienen en localStorage
+ *  para poder retomar la sesión ingresando el mismo nombre de usuario. */
+export function logout() {
+  clearToken();
+}
+
 const requireUser = () => {
   if (!_token) throw new Error("No autenticado");
   return _token;
@@ -65,11 +75,17 @@ export async function startMinigame(gameType: string) {
   const user = getUser(username);
   if (!user) throw new Error("Usuario no encontrado");
 
+  // Bloquear minijuegos cuando la planta activa es un Ent
+  if (plantPhase.value === "ent") {
+    throw new Error("🌳 ¡Tu Ent ya es inmortal! No necesita recursos extra.");
+  }
+
   const now = Date.now();
+  const refTime = (user.ent_active_since && user.ent_active_since > 0) ? user.ent_active_since : now;
   const cooldown = user.cooldowns[gameType as keyof typeof user.cooldowns];
   
-  if (cooldown && cooldown > now) {
-    const remaining = Math.ceil((cooldown - now) / 1000);
+  if (cooldown && cooldown > refTime) {
+    const remaining = Math.ceil((cooldown - refTime) / 1000);
     const m = Math.floor(remaining / 60);
     const s = remaining % 60;
     const timeStr = `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
@@ -185,6 +201,25 @@ export async function fetchMyState() {
   const username = requireUser();
   const user = getUser(username);
   if (!user) throw new Error("Usuario no encontrado");
+
+  // ── Reconciliar estado ENT al cargar sesión ──
+  const db = loadDb();
+  const activePlantStage = user.active_plant_id ? db.plants[user.active_plant_id]?.stage : null;
+  let userDirty = false;
+
+  if (activePlantStage === "ent") {
+    // Planta activa es Ent → asegurar que ent_active_since esté registrado
+    if (!user.ent_active_since) {
+      user.ent_active_since = Date.now();
+      userDirty = true;
+    }
+  } else if (user.ent_active_since) {
+    // Planta activa no es Ent pero ent_active_since está seteado → descongelar
+    thawCooldowns(user);
+    userDirty = true;
+  }
+
+  if (userDirty) saveUser(user);
 
   let active_plant = null;
   if (user.active_plant_id) {

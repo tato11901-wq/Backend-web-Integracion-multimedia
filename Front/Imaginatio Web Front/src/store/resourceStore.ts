@@ -1,5 +1,13 @@
 import { signal, computed } from "@preact/signals";
 
+// ── Tick Global para Tiempo Real ──
+export const currentTime = signal(Date.now());
+if (typeof window !== "undefined") {
+  setInterval(() => {
+    currentTime.value = Date.now();
+  }, 1000);
+}
+
 // ── Identidad del Usuario ──
 export const userId = signal<string | null>(null);
 export const username = signal<string>("");
@@ -22,20 +30,57 @@ export const compostLevel = compostInventory;
 export const waterCooldownEnds = signal<string | null>(null);
 export const compostCooldownEnds = signal<string | null>(null);
 export const sunCooldownEnds = signal<string | null>(null);
+export const entActiveSince = signal<number | null>(null);
 
 export const isWaterOnCooldown = computed(() => {
   if (!waterCooldownEnds.value) return false;
-  return new Date(waterCooldownEnds.value) > new Date();
+  const now = (entActiveSince.value && entActiveSince.value > 0) 
+    ? entActiveSince.value 
+    : currentTime.value;
+  return new Date(waterCooldownEnds.value).getTime() > now;
 });
 
 export const isCompostOnCooldown = computed(() => {
   if (!compostCooldownEnds.value) return false;
-  return new Date(compostCooldownEnds.value) > new Date();
+  const now = (entActiveSince.value && entActiveSince.value > 0) 
+    ? entActiveSince.value 
+    : currentTime.value;
+  return new Date(compostCooldownEnds.value).getTime() > now;
 });
 
 export const isSunOnCooldown = computed(() => {
   if (!sunCooldownEnds.value) return false;
-  return new Date(sunCooldownEnds.value) > new Date();
+  const now = (entActiveSince.value && entActiveSince.value > 0) 
+    ? entActiveSince.value 
+    : currentTime.value;
+  return new Date(sunCooldownEnds.value).getTime() > now;
+});
+
+export const waterRemainingTime = computed(() => {
+  if (!waterCooldownEnds.value) return "";
+  const now = (entActiveSince.value && entActiveSince.value > 0) ? entActiveSince.value : currentTime.value;
+  const diff = new Date(waterCooldownEnds.value).getTime() - now;
+  if (diff <= 0) return "";
+  const s = Math.ceil(diff / 1000);
+  return `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
+});
+
+export const compostRemainingTime = computed(() => {
+  if (!compostCooldownEnds.value) return "";
+  const now = (entActiveSince.value && entActiveSince.value > 0) ? entActiveSince.value : currentTime.value;
+  const diff = new Date(compostCooldownEnds.value).getTime() - now;
+  if (diff <= 0) return "";
+  const s = Math.ceil(diff / 1000);
+  return `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
+});
+
+export const sunRemainingTime = computed(() => {
+  if (!sunCooldownEnds.value) return "";
+  const now = (entActiveSince.value && entActiveSince.value > 0) ? entActiveSince.value : currentTime.value;
+  const diff = new Date(sunCooldownEnds.value).getTime() - now;
+  if (diff <= 0) return "";
+  const s = Math.ceil(diff / 1000);
+  return `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 });
 
 export function fastForwardCooldowns(hours: number) {
@@ -86,22 +131,46 @@ export function syncUserState(backendUser: any) {
     activePlantId.value = backendUser.active_plant_id;
   }
 
-  // Sincronizar cooldowns si vienen en la respuesta
-  if (backendUser.last_water_minigame) {
-    const lastPlayed = new Date(backendUser.last_water_minigame);
-    const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
-    waterCooldownEnds.value = ends.toISOString();
+  // Sincronizar cooldowns si vienen en la respuesta (priorizar el objeto cooldowns de localDb)
+  // IMPORTANTE: solo actualizar cada cooldown si el nuevo valor es >= al que ya tenemos,
+  // para evitar que un minijuego pise el cooldown activo de otro.
+  if (backendUser.cooldowns) {
+    const newWater = backendUser.cooldowns.water > 0 ? backendUser.cooldowns.water : 0;
+    const curWater = waterCooldownEnds.value ? new Date(waterCooldownEnds.value).getTime() : 0;
+    waterCooldownEnds.value = newWater >= curWater
+      ? (newWater > 0 ? new Date(newWater).toISOString() : null)
+      : waterCooldownEnds.value;
+
+    const newCompost = backendUser.cooldowns.compost > 0 ? backendUser.cooldowns.compost : 0;
+    const curCompost = compostCooldownEnds.value ? new Date(compostCooldownEnds.value).getTime() : 0;
+    compostCooldownEnds.value = newCompost >= curCompost
+      ? (newCompost > 0 ? new Date(newCompost).toISOString() : null)
+      : compostCooldownEnds.value;
+
+    const newSun = backendUser.cooldowns.sun > 0 ? backendUser.cooldowns.sun : 0;
+    const curSun = sunCooldownEnds.value ? new Date(sunCooldownEnds.value).getTime() : 0;
+    sunCooldownEnds.value = newSun >= curSun
+      ? (newSun > 0 ? new Date(newSun).toISOString() : null)
+      : sunCooldownEnds.value;
+  } else {
+    // Fallback para compatibilidad con backend real si volviera a usarse
+    if (backendUser.last_water_minigame) {
+      const lastPlayed = new Date(backendUser.last_water_minigame);
+      const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
+      waterCooldownEnds.value = ends.toISOString();
+    }
+    if (backendUser.last_compost_minigame) {
+      const lastPlayed = new Date(backendUser.last_compost_minigame);
+      const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
+      compostCooldownEnds.value = ends.toISOString();
+    }
+    if (backendUser.last_sun_minigame) {
+      const lastPlayed = new Date(backendUser.last_sun_minigame);
+      const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
+      sunCooldownEnds.value = ends.toISOString();
+    }
   }
 
-  if (backendUser.last_compost_minigame) {
-    const lastPlayed = new Date(backendUser.last_compost_minigame);
-    const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
-    compostCooldownEnds.value = ends.toISOString();
-  }
-
-  if (backendUser.last_sun_minigame) {
-    const lastPlayed = new Date(backendUser.last_sun_minigame);
-    const ends = new Date(lastPlayed.getTime() + (10 * 60 + 5) * 1000);
-    sunCooldownEnds.value = ends.toISOString();
-  }
+  // Sincronizar ent_active_since
+  entActiveSince.value = backendUser.ent_active_since || null;
 }

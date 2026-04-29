@@ -5,9 +5,12 @@ import {
    isSunGameOpen,
    isWaterOnCooldown,
    isCompostOnCooldown,
-   isSunOnCooldown
+   isSunOnCooldown,
+   waterRemainingTime,
+   compostRemainingTime,
+   sunRemainingTime
 } from "../../store/resourceStore";
-import { isDebugOpen } from "../../store/plantStore";
+import { isDebugOpen, isEntActive } from "../../store/plantStore";
 import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
@@ -16,11 +19,10 @@ import Plant from './Plant';
 import DebugPanel from './DebugPanel';
 
 export default function GameArea() {
+   const entLocked = isEntActive.value;
+
    const handleOpenWater = () => {
-      if (isWaterOnCooldown.value) {
-         alert("La regadera está vacía. Debes esperar a que se recupere el agua.");
-         return;
-      }
+      if (entLocked || isWaterOnCooldown.value) return; 
       isWaterGameOpen.value = true;
    };
 
@@ -31,14 +33,12 @@ export default function GameArea() {
          return;
       }
 
-      if (isCompostOnCooldown.value) {
-         alert("No hay suficientes residuos orgánicos listos. Espera un poco más.");
-         return;
-      }
+      if (entLocked || isCompostOnCooldown.value) return;
       isCompostGameOpen.value = true;
    };
 
    const handleOpenSun = () => {
+      if (entLocked || isSunOnCooldown.value) return; 
       isSunGameOpen.value = true;
    };
 
@@ -46,12 +46,28 @@ export default function GameArea() {
       <>
          <div className="absolute inset-0 z-10 flex flex-col justify-end items-center pointer-events-none p-8">
 
-            {/* Sun / Background Element - clickeable, sin cambio visual por cooldown */}
+            {/* Sol - bloqueado visualmente cuando hay Ent o Cooldown */}
             <div
                onClick={handleOpenSun}
-               className="absolute top-16 right-1/2 mr-35 w-48 h-48 flex items-center justify-center drop-shadow-[0_0_15px_rgba(255,255,150,0.5)] cursor-pointer pointer-events-auto transition-all duration-200 hover:scale-110 active:scale-95"
+               title={entLocked ? "🌳 Ent activo — minijuego bloqueado" : isSunOnCooldown.value ? `Esperando sol: ${sunRemainingTime.value}` : "Minijuego del Sol"}
+               className={`absolute top-16 right-1/2 mr-35 w-48 h-48 flex items-center justify-center
+                           drop-shadow-[0_0_15px_rgba(255,255,150,0.5)] pointer-events-auto
+                           transition-all duration-200
+                           ${(entLocked || isSunOnCooldown.value)
+                              ? "opacity-40 grayscale cursor-not-allowed"
+                              : "cursor-pointer hover:scale-110 active:scale-95"
+                           }`}
             >
                <img src={solEscenario.src} alt="Sol - Minijuego de Soles" className="w-full h-full object-contain" />
+               {entLocked ? (
+                  <span className="absolute inset-0 flex items-center justify-center text-4xl select-none pointer-events-none">
+                     🔒
+                  </span>
+               ) : isSunOnCooldown.value && (
+                  <div className="absolute bottom-4 bg-black/70 text-white text-xs font-black px-2 py-1 rounded-md border border-white/20">
+                    {sunRemainingTime.value}
+                  </div>
+               )}
             </div>
 
             {/* Main Center Plant Container */}
@@ -60,20 +76,48 @@ export default function GameArea() {
             {/* Interactable Items (Compost & Watering can) */}
             <div className="absolute bottom-32 left-1/2 ml-56 flex items-end gap-6 pointer-events-auto">
 
-               {/* Compost Bag - Triggers minigame */}
+               {/* Compost Bag */}
                <button
                   onClick={handleOpenCompost}
-                  className={`w-20 h-auto flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-80 active:scale-90 ${isCompostOnCooldown.value ? "grayscale opacity-50 cursor-not-allowed" : ""}`}
+                  title={entLocked ? "🌳 Ent activo — minijuego bloqueado" : isCompostOnCooldown.value ? `Esperando residuos: ${compostRemainingTime.value}` : "Minijuego de Composta"}
+                  className={`relative w-20 h-auto flex items-center justify-center transition-all duration-150 ease-in-out
+                              ${(entLocked || isCompostOnCooldown.value)
+                                 ? "opacity-40 grayscale cursor-not-allowed"
+                                 : "cursor-pointer hover:opacity-80 active:scale-90"
+                              }`}
                >
                   <img src={btnMinijuegoComposta.src} alt="Bolsa Composta" className="w-full h-full object-contain" />
+                  {entLocked ? (
+                     <span className="absolute inset-0 flex items-center justify-center text-3xl select-none pointer-events-none">
+                        🔒
+                     </span>
+                  ) : isCompostOnCooldown.value && (
+                    <div className="absolute -bottom-2 bg-black/80 text-white text-[10px] font-black px-1.5 py-0.5 rounded border border-white/20 whitespace-nowrap">
+                      {compostRemainingTime.value}
+                    </div>
+                  )}
                </button>
 
-               {/* Watering Can - Triggers minigame */}
+               {/* Watering Can */}
                <button
                   onClick={handleOpenWater}
-                  className={`w-25 h-auto flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-80 active:scale-90 ${isWaterOnCooldown.value ? "grayscale opacity-50 cursor-not-allowed" : ""}`}
+                  title={entLocked ? "🌳 Ent activo — minijuego bloqueado" : isWaterOnCooldown.value ? `Recuperando agua: ${waterRemainingTime.value}` : "Minijuego del Agua"}
+                  className={`relative w-25 h-auto flex items-center justify-center transition-all duration-150 ease-in-out
+                              ${(entLocked || isWaterOnCooldown.value)
+                                 ? "opacity-40 grayscale cursor-not-allowed"
+                                 : "cursor-pointer hover:opacity-80 active:scale-90"
+                              }`}
                >
                   <img src={btnMinijuegoAgua.src} alt="Regadera" className="w-full h-full object-contain" />
+                  {entLocked ? (
+                     <span className="absolute inset-0 flex items-center justify-center text-3xl select-none pointer-events-none">
+                        🔒
+                     </span>
+                  ) : isWaterOnCooldown.value && (
+                    <div className="absolute -bottom-2 bg-black/80 text-white text-[10px] font-black px-1.5 py-0.5 rounded border border-white/20 whitespace-nowrap">
+                      {waterRemainingTime.value}
+                    </div>
+                  )}
                </button>
 
             </div>
@@ -119,4 +163,3 @@ export default function GameArea() {
       </>
    );
 }
-

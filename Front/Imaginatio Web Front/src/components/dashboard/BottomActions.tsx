@@ -16,7 +16,8 @@ import {
   isWatering,
   isFertilizing,
   isSunning,
-  isEvolving
+  isEvolving,
+  isEntActive
 } from "../../store/plantStore";
 
 const btnImages: Record<string, ImageMetadata> = {
@@ -27,7 +28,7 @@ const btnImages: Record<string, ImageMetadata> = {
 
 export default function BottomActions() {
   const isAnyAnimating = isWatering.value || isFertilizing.value || isSunning.value || isEvolving.value;
-  
+
   const actions = [
     { label: 'Iluminar', badge: sunInventory.value, action: applySun },
     { label: 'Regar', badge: waterInventory.value, action: applyWater },
@@ -82,6 +83,13 @@ export default function BottomActions() {
         ))}
       </div>
 
+      {/* Banner ENT activo */}
+      {isEntActive.value && (
+        <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-40 bg-emerald-900/90 border-2 border-emerald-400/60 text-emerald-200 text-xs font-bold px-4 py-2 rounded-xl shadow-lg text-center pointer-events-none whitespace-nowrap">
+          🌳 ¡Ent activo! Los minijuegos están pausados.
+        </div>
+      )}
+
       {/* User label bottom left fixed */}
       <div className="absolute left-8 bottom-4 text-slate-700 text-xs lg:text-sm font-bold z-30 pointer-events-auto bg-white/50 px-2 py-1 rounded">
         Bienvenido: {username.value}
@@ -89,4 +97,3 @@ export default function BottomActions() {
     </>
   );
 }
-
