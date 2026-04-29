@@ -1,0 +1,153 @@
+MODELO CANÓNICO — Archivo puente Web ↔ Unity (.tree)
+═══════════════════════════════════════════════════════
+Extensión: .tree  |  Formato interno: JSON
+Se regenera automáticamente con cada acción del usuario en Web.
+Se importa desde 3D usando el botón "Sincronizar desde 3D".
+
+RESPONSABILIDADES POR CAMPO:
+  [WEB]  = Lo define y modifica la capa Web
+  [3D]   = Lo define y modifica Unity/3D
+  [AMBOS]= Se lee en ambos lados, cada uno escribe su parte
+
+─────────────────────────────────────────────────────
+USUARIO
+  id          [WEB]  Identificador único. 3D nunca lo modifica.
+  nombre      [WEB]  Username del jugador.
+  nivel       [3D]   Nivel global del jugador en el juego.
+  xp          [3D]   Experiencia global acumulada.
+
+RECURSOS (inventario de la Web)
+  agua.cantidad      [WEB]  Stock disponible para regar.
+  sol.cantidad       [WEB]  Stock disponible de energía solar.
+  composta.cantidad  [WEB]  Stock disponible de composta.
+
+PLANTAS (array con TODAS las plantas del usuario, sin filtro)
+  id               [WEB]   ID interno, debe coincidir con Unity.
+  subid            [WEB]   Nombre de instancia en Unity (ej: "willy_aliso").
+  desbloqueada     [WEB]   Si está disponible para usar en 3D.
+
+  estado:
+    fase           [WEB]   Fase de crecimiento: semilla/arbusto/planta/ent.
+    salud          [3D]    Estado cualitativo: saludable/dañado/critico/muerto.
+    hp_actual      [3D]    HP numérico (solo lo maneja 3D).
+
+  progreso:        (solo se muestra en la UI para plants en fase "ent")
+    nivel          [3D]    Nivel de la planta en 3D.
+    xp             [3D]    XP de la planta en 3D.
+
+  visual_estado:
+    skin           [WEB]   Skin activa de la planta.
+    variacion      [WEB]   Variación visual (normal, estacional, etc).
+
+  uso:             (todo lo administra 3D)
+    seleccionada   [3D]    Si esta planta es la activa en 3D.
+    en_combate     [3D]    Si está en un combate activo.
+
+  recursos_aplicados: (reflejo de lo que la Web ha aplicado)
+    agua           [WEB]
+    sol            [WEB]
+    composta       [WEB]
+
+SEMILLAS: (array con semillas creadas desde 3D)
+  seed_id          [3D]    ID opaco de la semilla.
+  species_id       [3D]    Especie a la que corresponde.
+  categoria        [3D]    Categoría de la semilla.
+  recibida_en      [3D]    Timestamp de cuando se recibió.
+
+═══════════════════════════════════════════════════════
+EJEMPLO DE ARCHIVO .tree
+═══════════════════════════════════════════════════════
+
+{
+  "version": 2,
+
+  "usuario": {
+    "id": "olivares_001",
+    "nombre": "olivares_001",
+    "nivel": 5,
+    "xp": 1200
+  },
+
+  "recursos": {
+    "agua":     { "cantidad": 12 },
+    "sol":      { "cantidad": 5  },
+    "composta": { "cantidad": 3  }
+  },
+
+  "plantas": [
+    {
+      "id": "aliso",
+      "subid": "willy_aliso",
+      "desbloqueada": true,
+
+      "estado": {
+        "fase": "semilla",
+        "salud": "saludable",
+        "hp_actual": 1200
+      },
+
+      "progreso": {
+        "nivel": 2,
+        "xp": 150
+      },
+
+      "visual_estado": {
+        "skin": "default",
+        "variacion": "normal"
+      },
+
+      "uso": {
+        "seleccionada": true,
+        "en_combate": false
+      },
+
+      "recursos_aplicados": {
+        "agua": 1,
+        "sol": 1,
+        "composta": 1
+      }
+    },
+
+    {
+      "id": "espino",
+      "subid": "espino_001",
+      "desbloqueada": true,
+
+      "estado": {
+        "fase": "adulto",
+        "salud": "dañado",
+        "hp_actual": 900
+      },
+
+      "progreso": {
+        "nivel": 3,
+        "xp": 400
+      },
+
+      "visual_estado": {
+        "skin": "default",
+        "variacion": "normal"
+      },
+
+      "uso": {
+        "seleccionada": false,
+        "en_combate": true
+      },
+
+      "recursos_aplicados": {
+        "agua": 2,
+        "sol": 2,
+        "composta": 1
+      }
+    }
+  ],
+
+  "semillas": [
+    {
+      "seed_id": "seed_xyz_001",
+      "species_id": "pasto",
+      "categoria": "Base",
+      "recibida_en": 1714000000000
+    }
+  ]
+}

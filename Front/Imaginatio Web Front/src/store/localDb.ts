@@ -1,7 +1,32 @@
 import speciesDataRaw from "../config/species.json";
 
-// Type assertion because we know the structure of species.json
-export const SPECIES_CATALOG = speciesDataRaw as Record<string, any>;
+// ── Tipo del catálogo de especies ──
+export interface SpeciesEntry {
+  /** Identificador de especie (coincide con la clave del objeto) */
+  id:          string;
+  /** Variantes de modelo disponibles para esta especie.
+   *  Cada valor coincide con:
+   *    - La clave en PLANT_SPRITE_REGISTRY (Web, spritesheets)
+   *    - El nombre del prefab/carpeta en Unity (3D, mismo modelo)
+   *  Ejemplo: ["cajeto", "cajeto_dorado"] → dos variantes visuales del cajeto */
+  subids:      string[];
+  common_name:      string;
+  scientific_name:  string;
+  classification:   string;
+  evolution_requirements: Record<string, { water: number; sun: number; fertilizer: number }>;
+}
+
+export const SPECIES_CATALOG = speciesDataRaw as Record<string, SpeciesEntry>;
+
+/** Devuelve un subid aleatorio de los disponibles para la especie.
+ *  Si la especie no existe o no tiene subids definidos, retorna el speciesId. */
+export function pickSubId(speciesId: string): string {
+  const species = SPECIES_CATALOG[speciesId];
+  const available = species?.subids;
+  if (!available || available.length === 0) return speciesId;
+  return available[Math.floor(Math.random() * available.length)];
+}
+
 
 // ── Tipos ──
 export interface LocalUser {
@@ -37,6 +62,24 @@ export interface LocalPlant {
   is_dead: boolean;
   last_update: number; // timestamp in ms
   last_interaction: number; // timestamp in ms
+
+  // ── Campos administrados por 3D (solo lectura en lógica web) ──
+  /** Identificador del modelo/variante visual asignado a esta planta.
+   *  Coincide con la clave en PLANT_SPRITE_REGISTRY (Web) y el nombre del prefab en Unity (3D).
+   *  Se asigna al crear la planta eligiendo entre los subids disponibles en species.json. */
+  unity_subid?:        string;
+  /** Estado cualitativo recibido de 3D: saludable | dañado | critico | muerto */
+  unity_salud?:        "saludable" | "dañado" | "critico" | "muerto";
+  /** HP numérico administrado por 3D */
+  unity_hp?:           number;
+  /** Nivel de la planta en 3D (solo se muestra en Ents) */
+  unity_nivel?:        number;
+  /** XP de la planta en 3D (solo se muestra en Ents) */
+  unity_xp?:           number;
+  /** Si la planta está en combate activo (administrado por 3D) */
+  unity_en_combate?:   boolean;
+  /** Si esta planta es la seleccionada en 3D (administrado por 3D) */
+  unity_seleccionada?: boolean;
 }
 
 export interface LocalDbState {
@@ -226,6 +269,11 @@ export function createPlantForUser(username: string, speciesId: string): LocalPl
   if (!user) throw new Error("User not found");
 
   const reqs = getRequirements(speciesId, "seed");
+
+  // Elegir un subid aleatorio de los disponibles para la especie.
+  // El subid identifica la variante de modelo (spritesheets en Web, prefab en Unity).
+  const subid = pickSubId(speciesId);
+
   const plant: LocalPlant = {
     id: generateId(),
     owner_id: username,
@@ -239,14 +287,15 @@ export function createPlantForUser(username: string, speciesId: string): LocalPl
     is_dead: false,
     last_update: Date.now(),
     last_interaction: Date.now(),
+    unity_subid: subid,
   };
 
   db.plants[plant.id] = plant;
-  
+
   if (!user.active_plant_id) {
     user.active_plant_id = plant.id;
   }
-  
+
   saveDb(db);
   return plant;
 }

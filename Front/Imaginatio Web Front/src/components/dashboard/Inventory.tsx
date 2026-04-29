@@ -5,7 +5,7 @@ import { syncPlantState, setEvolutionRequirementsFromSpecies, plantSpeciesId } f
 import { fetchMyInventory, setActivePlant, deletePlant, createPlant } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY, FALLBACK_SPECIES, type SpriteConfig } from "../../config/plantSpriteRegistry";
 import type { PlantPhase } from "../../store/plantStore";
-import { syncInventoryToUnityData, initUnityBridge } from "../../store/unityBridge";
+import { syncInventoryToTree } from "../../store/unityBridge";
 import SPECIES_JSON from "../../config/species.json";
 
 import fondoInventario from "../../assets/Recursos inventario/Fondo_Inventario.png";
@@ -42,6 +42,14 @@ interface BackendPlant {
   fertilizer: number;
   is_dead: boolean;
   species_data?: any;
+  // Campos escritos por 3D (solo lectura en Web)
+  unity_subid?:        string;
+  unity_salud?:        string;
+  unity_hp?:           number;
+  unity_nivel?:        number;
+  unity_xp?:           number;
+  unity_en_combate?:   boolean;
+  unity_seleccionada?: boolean;
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -143,8 +151,8 @@ export default function Inventory() {
     fetchMyInventory()
       .then((data: BackendPlant[]) => {
         setPlants(data ?? []);
-        // Sincronizar con el JSON canónico de Unity (solo escritura en localStorage, no muta signals)
-        syncInventoryToUnityData(data ?? []);
+        // Sincronizar el .tree con el inventario actualizado
+        syncInventoryToTree(data ?? []);
       })
       .catch(() => setPlants([]))
       .finally(() => setLoading(false));
@@ -524,7 +532,7 @@ export default function Inventory() {
               </p>
             </div>
 
-            {/* Mini stats */}
+            {/* Mini stats — recursos web */}
             <div className="w-full grid grid-cols-3 gap-2 text-xs text-center">
               <div className="bg-blue-900/50 rounded-lg p-2">
                 <div className="text-blue-300 font-black text-base">{Math.ceil(selectedPlant.water)}</div>
@@ -539,6 +547,67 @@ export default function Inventory() {
                 <div className="text-white/60">Abono</div>
               </div>
             </div>
+
+            {/* Datos de 3D — salud/HP (siempre si existen) */}
+            {(selectedPlant.unity_salud || selectedPlant.unity_hp !== undefined) && (
+              <div className="w-full flex gap-2 text-xs">
+                {selectedPlant.unity_salud && (
+                  <div className={`flex-1 rounded-lg p-2 text-center font-bold
+                    ${
+                      selectedPlant.unity_salud === "muerto"  ? "bg-red-900/60 text-red-300" :
+                      selectedPlant.unity_salud === "critico" ? "bg-orange-900/60 text-orange-300" :
+                      selectedPlant.unity_salud === "dañado"  ? "bg-yellow-900/60 text-yellow-300" :
+                                                                 "bg-emerald-900/60 text-emerald-300"
+                    }`}
+                  >
+                    <div className="text-base capitalize">
+                      {selectedPlant.unity_salud === "saludable" ? "🌿" :
+                       selectedPlant.unity_salud === "dañado"    ? "⚠️" :
+                       selectedPlant.unity_salud === "critico"   ? "🔥" : "💀"}
+                    </div>
+                    <div>{selectedPlant.unity_salud}</div>
+                    <div className="text-white/40 font-normal">Estado 3D</div>
+                  </div>
+                )}
+                {selectedPlant.unity_hp !== undefined && (
+                  <div className="flex-1 bg-red-900/40 rounded-lg p-2 text-center">
+                    <div className="text-red-300 font-black text-base">{selectedPlant.unity_hp}</div>
+                    <div className="text-white/60">HP</div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Nivel / XP — SOLO se muestra para Ents (administrado por 3D) */}
+            {selectedPlant.stage === "ent" && (
+              <div className="w-full rounded-xl bg-purple-900/40 border border-purple-500/30 p-3">
+                <div className="text-purple-300 text-[10px] font-bold uppercase tracking-wider mb-2 text-center">⚔️ Datos del Ent</div>
+                <div className="grid grid-cols-2 gap-2 text-xs text-center">
+                  <div className="bg-purple-900/50 rounded-lg p-2">
+                    <div className="text-purple-200 font-black text-base">
+                      {selectedPlant.unity_nivel ?? "—"}
+                    </div>
+                    <div className="text-white/60">Nivel</div>
+                  </div>
+                  <div className="bg-indigo-900/50 rounded-lg p-2">
+                    <div className="text-indigo-200 font-black text-base">
+                      {selectedPlant.unity_xp ?? "—"}
+                    </div>
+                    <div className="text-white/60">XP</div>
+                  </div>
+                </div>
+                {(selectedPlant.unity_en_combate || selectedPlant.unity_seleccionada) && (
+                  <div className="flex gap-1 mt-2 justify-center">
+                    {selectedPlant.unity_seleccionada && (
+                      <span className="bg-yellow-500 text-black text-[9px] font-black px-2 py-0.5 rounded-full">ACTIVO 3D</span>
+                    )}
+                    {selectedPlant.unity_en_combate && (
+                      <span className="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full">EN COMBATE</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="flex gap-3 w-full mt-1">
               <button
