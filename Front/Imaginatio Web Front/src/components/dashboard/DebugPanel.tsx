@@ -27,7 +27,7 @@ import {
 
 import { fastForwardBackendTime, createPlant, fetchMyActivePlant, addDebugResourcesBackend } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY } from "../../config/plantSpriteRegistry";
-import { loadUnityData, buildUnityPayload } from "../../store/unityBridge";
+import { loadTreeData, downloadTreeFile } from "../../store/unityBridge";
 
 // Especies con sprites disponibles en el registro
 const AVAILABLE_SPECIES = Object.keys(PLANT_SPRITE_REGISTRY);
@@ -230,38 +230,29 @@ export default function DebugPanel() {
 
             {/* ── Unity Bridge Inspector ── */}
             <div className="bg-slate-800 p-4 rounded-lg border border-violet-800">
-              <h3 className="text-base text-violet-400 uppercase font-bold mb-3">🎮 Unity Bridge</h3>
+              <h3 className="text-base text-violet-400 uppercase font-bold mb-3">🎮 Unity Bridge (.tree)</h3>
               <p className="text-[10px] text-slate-400 mb-3 italic">
-                Muestra el payload filtrado que recibiría Unity (solo ents saludables en fase final).
+                Muestra el archivo .tree v2 completo (todas las plantas sin filtro) que se intercambia con Unity.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => {
-                    const payload = buildUnityPayload(loadUnityData());
-                    setUnityPreview(JSON.stringify(payload, null, 2));
+                    const tree = loadTreeData();
+                    setUnityPreview(JSON.stringify(tree, null, 2));
                   }}
                   className="flex-1 bg-violet-700 hover:bg-violet-600 text-sm font-bold py-2 rounded transition-transform active:scale-95"
                 >
-                  👁 Ver JSON
+                  👁 Ver .tree
                 </button>
                 <button
-                  onClick={() => {
-                    const payload = buildUnityPayload(loadUnityData());
-                    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `unity_payload_${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.json`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                  }}
+                  onClick={() => downloadTreeFile()}
                   className="flex-1 bg-violet-900 hover:bg-violet-800 text-sm font-bold py-2 rounded transition-transform active:scale-95"
                 >
-                  ⬇️ Descargar JSON
+                  ⬇️ Descargar .tree
                 </button>
               </div>
               <p className="text-[10px] text-slate-500 text-center mt-2">
-                {loadUnityData().ents.length} ent(s) en localStorage — {buildUnityPayload(loadUnityData()).ents.length} califica(n) para Unity
+                {loadTreeData().plantas.length} planta(s) en .tree — {loadTreeData().semillas.length} semilla(s) de 3D
               </p>
             </div>
 
@@ -280,7 +271,7 @@ export default function DebugPanel() {
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-violet-400 font-black text-lg uppercase tracking-wider">🎮 Payload Unity</h3>
+              <h3 className="text-violet-400 font-black text-lg uppercase tracking-wider">🎮 Archivo .tree (v2)</h3>
               <button
                 onClick={() => setUnityPreview(null)}
                 className="text-slate-400 hover:text-white text-xl font-bold leading-none"

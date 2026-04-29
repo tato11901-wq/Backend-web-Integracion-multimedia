@@ -35,7 +35,8 @@ Reemplaza el sistema anterior que separaba `ents` y `seeds` en estructuras disti
   "plantas": [
     {
       "id": "aliso",
-      "subid": "willy_aliso",
+      "instance_id": "k3m9x2p",
+      "subid": "aliso",
       "desbloqueada": true,
 
       "estado": {
@@ -91,8 +92,9 @@ Cada campo del `.tree` tiene un propietario claro. **Ningún lado debe sobrescri
 | `usuario.id` | Identificador único del usuario |
 | `usuario.nombre` | Username del jugador |
 | `recursos.agua/sol/composta.cantidad` | Stock del inventario web |
-| `planta.id` | ID interno de la planta (debe coincidir con Unity) |
-| `planta.subid` | Nombre de instancia en Unity (ej: `"willy_aliso"`) |
+| `planta.id` | **ID de especie** — coincide con la clave en `species.json` y el prefab en Unity (ej: `"aliso"`) |
+| `planta.instance_id` | **ID único de instancia** — permite distinguir dos plantas de la misma especie (ej: `"k3m9x2p"`) |
+| `planta.subid` | Variante de modelo en Unity (ej: `"aliso"`) |
 | `planta.desbloqueada` | Si la planta está disponible para usar en 3D |
 | `planta.estado.fase` | Fase de crecimiento: `semilla`, `arbusto`, `planta`, `ent` |
 | `planta.visual_estado` | Skin y variación visual |
@@ -112,7 +114,9 @@ Cada campo del `.tree` tiene un propietario claro. **Ningún lado debe sobrescri
 | `planta.uso.en_combate` | Si está en un combate activo |
 | `semillas[]` | Semillas creadas desde 3D (se suman al inventario web) |
 
-> ⚠️ **Regla crítica**: Unity **nunca debe modificar** `planta.estado.fase`, `planta.desbloqueada`, ni ningún campo de `recursos`. Solo escribe los campos listados en la columna 🔴.
+> ⚠️ **Regla crítica**: Unity **nunca debe modificar** `planta.id`, `planta.instance_id`, `planta.estado.fase`, `planta.desbloqueada`, ni ningún campo de `recursos`. Solo escribe los campos listados en la columna 🔴.
+
+> ℹ️ **Matching de plantas**: al re-importar el `.tree` desde Unity, la web hace matching por `instance_id` (prioritario, nunca ambiguo). Si Unity no incluye `instance_id` en su respuesta, se hace fallback por `id` (especie) siempre que el usuario tenga una sola planta de esa especie.
 
 ---
 
@@ -190,7 +194,8 @@ public class TreeBridge : MonoBehaviour
     [System.Serializable]
     public class TreePlant
     {
-        public string       id;
+        public string       id;           // ID de especie ("aliso", "cajeto"...) — usar para cargar el prefab
+        public string       instance_id;  // ID único de instancia — preservar al re-exportar el .tree
         public string       subid;
         public bool         desbloqueada;
         public TreeEstado   estado;
