@@ -1,416 +1,218 @@
 {
   "aliso": {
     "id": "aliso",
+    "subids": ["aliso"],
     "common_name": "Aliso",
     "scientific_name": "Alnus acuminata",
     "classification": "Hidro",
     "evolution_requirements": {
-      "SEED": {
-        "water": 6,
-        "sun": 2,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 8,
-        "sun": 4,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 10,
-        "sun": 6,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 6,  "sun": 2, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 8,  "sun": 4, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 10, "sun": 6, "fertilizer": 8 }
     }
   },
   "cajeto": {
     "id": "cajeto",
+    "subids": ["cajeto"],
     "common_name": "Cajeto",
     "scientific_name": "Citharexylum subflavescens",
     "classification": "Solar",
     "evolution_requirements": {
-      "SEED": {
-        "water": 2,
-        "sun": 6,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 4,
-        "sun": 8,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 6,
-        "sun": 10,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 2, "sun": 6,  "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 4, "sun": 8,  "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 6, "sun": 10, "fertilizer": 8 }
     }
   },
   "espino": {
     "id": "espino",
+    "subids": ["espino"],
     "common_name": "Espino",
     "scientific_name": "Duranta mutisii",
     "classification": "Solar",
     "evolution_requirements": {
-      "SEED": {
-        "water": 2,
-        "sun": 6,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 4,
-        "sun": 8,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 6,
-        "sun": 10,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 2, "sun": 6,  "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 4, "sun": 8,  "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 6, "sun": 10, "fertilizer": 8 }
     }
   },
   "alcaparro_grande": {
     "id": "alcaparro_grande",
+    "subids": ["alcaparro_grande"],
     "common_name": "Alcaparro grande",
     "scientific_name": "Senna viarum",
     "classification": "Solar",
     "evolution_requirements": {
-      "SEED": {
-        "water": 2,
-        "sun": 6,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 4,
-        "sun": 8,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 6,
-        "sun": 10,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 2, "sun": 6,  "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 4, "sun": 8,  "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 6, "sun": 10, "fertilizer": 8 }
     }
   },
   "roble": {
     "id": "roble",
+    "subids": ["roble"],
     "common_name": "Roble",
     "scientific_name": "Quercus humboldtii",
     "classification": "Montaña",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 2,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 4,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 6,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 2, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 4, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 6, "fertilizer": 8 }
     }
   },
   "manzano": {
     "id": "manzano",
+    "subids": ["manzano"],
     "common_name": "Manzano",
     "scientific_name": "Billia rosea",
     "classification": "Templado",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 4,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 6,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 8,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 4, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 6, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 8, "fertilizer": 8 }
     }
   },
   "alcaparro_enano": {
     "id": "alcaparro_enano",
+    "subids": ["alcaparro_enano"],
     "common_name": "Alcaparro enano",
     "scientific_name": "Senna multiglandulosa",
     "classification": "Xerofito",
     "evolution_requirements": {
-      "SEED": {
-        "water": 2,
-        "sun": 4,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 4,
-        "sun": 6,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 6,
-        "sun": 8,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 2, "sun": 4, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 4, "sun": 6, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 6, "sun": 8, "fertilizer": 8 }
     }
   },
   "dividivi": {
     "id": "dividivi",
+    "subids": ["dividivi"],
     "common_name": "Dividivi",
     "scientific_name": "Caesalpinia spinosa",
     "classification": "Xerofito",
     "evolution_requirements": {
-      "SEED": {
-        "water": 2,
-        "sun": 4,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 4,
-        "sun": 6,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 6,
-        "sun": 8,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 2, "sun": 4, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 4, "sun": 6, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 6, "sun": 8, "fertilizer": 8 }
     }
   },
   "cedrillo": {
     "id": "cedrillo",
+    "subids": ["cedrillo"],
     "common_name": "Cedrillo",
     "scientific_name": "Smallanthus pyramidalis",
     "classification": "Hidro",
     "evolution_requirements": {
-      "SEED": {
-        "water": 6,
-        "sun": 2,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 8,
-        "sun": 4,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 10,
-        "sun": 6,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 6,  "sun": 2, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 8,  "sun": 4, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 10, "sun": 6, "fertilizer": 8 }
     }
   },
   "mangle": {
     "id": "mangle",
+    "subids": ["mangle"],
     "common_name": "Mangle",
     "scientific_name": "Escallonia pendula",
     "classification": "Templado",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 4,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 6,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 8,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 4, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 6, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 8, "fertilizer": 8 }
     }
   },
   "drago": {
     "id": "drago",
+    "subids": ["drago"],
     "common_name": "Drago",
     "scientific_name": "Croton coriaceus",
     "classification": "Solar",
     "evolution_requirements": {
-      "SEED": {
-        "water": 2,
-        "sun": 6,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 4,
-        "sun": 8,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 6,
-        "sun": 10,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 2, "sun": 6,  "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 4, "sun": 8,  "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 6, "sun": 10, "fertilizer": 8 }
     }
   },
   "pino_romerón": {
     "id": "pino_romerón",
+    "subids": ["pino_romeron"],
     "common_name": "Pino romerón",
     "scientific_name": "Retrophyllum rospigliosii",
     "classification": "Montaña",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 2,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 4,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 6,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 2, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 4, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 6, "fertilizer": 8 }
     }
   },
   "cucharo_negro": {
     "id": "cucharo_negro",
+    "subids": ["cucharo_negro"],
     "common_name": "Cucharo negro",
     "scientific_name": "Myrsine coriacea",
     "classification": "Hidro",
     "evolution_requirements": {
-      "SEED": {
-        "water": 6,
-        "sun": 2,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 8,
-        "sun": 4,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 10,
-        "sun": 6,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 6,  "sun": 2, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 8,  "sun": 4, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 10, "sun": 6, "fertilizer": 8 }
     }
   },
   "sietecueros": {
     "id": "sietecueros",
+    "subids": ["sietecueros"],
     "common_name": "Sietecueros",
     "scientific_name": "Tibouchina lepidota",
     "classification": "Templado",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 4,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 6,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 8,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 4, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 6, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 8, "fertilizer": 8 }
     }
   },
   "nogal": {
     "id": "nogal",
+    "subids": ["nogal"],
     "common_name": "Nogal",
     "scientific_name": "Juglans neotropica",
     "classification": "Montaña",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 2,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 4,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 6,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 2, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 4, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 6, "fertilizer": 8 }
     }
   },
   "cedro": {
     "id": "cedro",
+    "subids": ["cedro"],
     "common_name": "Cedro",
     "scientific_name": "Cedrela montana",
     "classification": "Templado",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 4,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 6,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 8,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 4, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 6, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 8, "fertilizer": 8 }
     }
   },
   "duraznillo": {
     "id": "duraznillo",
+    "subids": ["duraznillo"],
     "common_name": "Duraznillo",
     "scientific_name": "Abatia parviflora",
     "classification": "Montaña",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 2,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 4,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 6,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 2, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 4, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 6, "fertilizer": 8 }
     }
   },
   "pasto": {
     "id": "pasto",
+    "subids": ["pasto"],
     "common_name": "Pasto",
     "scientific_name": "Cynodon dactylon.",
     "classification": "Base",
     "evolution_requirements": {
-      "SEED": {
-        "water": 4,
-        "sun": 4,
-        "fertilizer": 4
-      },
-      "SMALL_BUSH": {
-        "water": 6,
-        "sun": 6,
-        "fertilizer": 6
-      },
-      "LARGE_BUSH": {
-        "water": 8,
-        "sun": 8,
-        "fertilizer": 8
-      }
+      "SEED":       { "water": 4, "sun": 4, "fertilizer": 4 },
+      "SMALL_BUSH": { "water": 6, "sun": 6, "fertilizer": 6 },
+      "LARGE_BUSH": { "water": 8, "sun": 8, "fertilizer": 8 }
     }
   }
 }

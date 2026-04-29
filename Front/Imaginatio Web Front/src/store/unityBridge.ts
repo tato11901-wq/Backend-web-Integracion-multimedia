@@ -4,68 +4,107 @@
  * Capa de intercambio de datos entre la aplicación Astro/Preact y Unity WebGL.
  *
  * RESPONSABILIDADES:
- *  - Mantener un JSON canónico en localStorage (imaginatio_unity_data).
- *  - Transformar datos del inventario web al modelo canónico (solo lectura).
- *  - Construir payloads filtrados listos para consumo por Unity.
- *  - Exponer stubs para la comunicación bidireccional (implementación futura).
+ *  - Mantener un archivo canónico .tree (JSON) en localStorage (imaginatio_tree_data).
+ *  - Transformar datos del inventario web al modelo canónico.
+ *  - Exportar el .tree con TODAS las plantas del usuario (sin filtro).
+ *  - Auto-sincronizar el .tree con cada acción web (agua, sol, evolución, etc.).
+ *  - Importar un .tree recibido desde 3D y aplicar solo los campos que 3D administra.
+ *  - Permitir agregar semillas creadas en 3D al localStorage del usuario.
+ *
+ * DIVISIÓN DE RESPONSABILIDADES:
+ *  [WEB]  → fase, desbloqueada, visual_estado, recursos_aplicados, recursos inventario
+ *  [3D]   → salud, hp_actual, nivel (planta y usuario), xp, uso (seleccionada/en_combate)
  *
  * NO MODIFICA:
- *  - Lógica de plantas, evolución, recursos ni debug panel.
- *  - Ningún signal de plantStore ni resourceStore.
+ *  - Lógica de decaimiento, evolución ni minijuegos.
+ *  - Ningún signal de plantStore ni resourceStore directamente (usa callbacks).
  * ──────────────────────────────────────────────────────────────
  */
 
 import { userId, username } from "./resourceStore";
+import { SPECIES_CATALOG, pickSubId } from "./localDb";
 
 // ═══════════════════════════════════════════════════════
-// TIPOS — JSON Canónico
+// TIPOS — Modelo canónico .tree v2
 // ═══════════════════════════════════════════════════════
 
-export interface UnityUser {
-  user_id: string;
-  user_name: string;
+/** Datos del usuario — nivel y xp los administra 3D */
+export interface TreeUsuario {
+  id: string;          // [WEB] Identificador único del usuario
+  nombre: string;      // [WEB] Username
+  nivel: number;       // [3D]  Nivel global en el juego
+  xp: number;          // [3D]  Experiencia global acumulada
 }
 
-export interface UnityEnt {
-  ent_id: string;          // = plant.id
-  user_id: string;         // = plant.owner_id
-  name: string;            // = plant.name
-  category: string;        // = species_data.classification (ej: "Solar", "Hidro")
-  model: string;           // = plant.species_id (ej: "aliso", "pasto")
-  scientific_name: string; // = species_data.scientific_name
-  state: "healthy" | "critical" | "dead";
-  phase: string;           // = plant.stage tal cual viene del backend
+/** Recursos del inventario web */
+export interface TreeRecursos {
+  agua:     { cantidad: number }; // [WEB]
+  sol:      { cantidad: number }; // [WEB]
+  composta: { cantidad: number }; // [WEB]
 }
 
-/**
- * Representación mínima de una semilla para sincronización con Unity.
- * Los campos son un REFLEJO de los datos recibidos — NO se recalculan ni construyen.
- * La lógica completa de seeds reside en el sistema existente de la aplicación.
- */
-export interface UnitySeed {
-  seed_id: string;   // ID opaco, proviene de Unity
-  user_id: string;   // Asignado automáticamente desde el store al recibir
-  category: string;  // Reflejo del dato recibido
-  model: string;     // Reflejo del dato recibido
+/** Estado de la planta — fase la define Web, salud/hp las define 3D */
+export interface TreeEstadoPlanta {
+  fase:      string;   // [WEB] semilla | small_bush | large_bush | ent
+  salud:     string;   // [3D]  saludable | dañado | critico | muerto
+  hp_actual: number;   // [3D]  HP numérico
 }
 
-/** Estructura canónica almacenada en localStorage. */
-export interface ImaginatioUnityData {
-  version: number;   // Versionado para migraciones (actual: 1)
-  user: UnityUser;
-  ents: UnityEnt[];
-  seeds: UnitySeed[];
+/** Progreso de la planta en 3D — solo se muestra en la UI para ents */
+export interface TreeProgreso {
+  nivel: number; // [3D]
+  xp:    number; // [3D]
 }
 
-/** Payload filtrado y listo para ser consumido por Unity. */
-export interface UnityPayload {
-  user_id: string;
-  user_name: string;
-  ents: UnityEnt[];  // Solo ents healthy en fase "ent"
+/** Estado visual — lo gestiona Web */
+export interface TreeVisualEstado {
+  skin:      string; // [WEB]
+  variacion: string; // [WEB]
 }
 
-// Tipo de los datos del backend tal como llegan del inventario.
-// Compatible con PlantResponse del backend sin importar el schema completo.
+/** Uso en combate — lo gestiona 3D */
+export interface TreeUso {
+  seleccionada: boolean; // [3D]
+  en_combate:   boolean; // [3D]
+}
+
+/** Recursos que la Web ha aplicado a la planta */
+export interface TreeRecursosAplicados {
+  agua:     number; // [WEB]
+  sol:      number; // [WEB]
+  composta: number; // [WEB]
+}
+
+/** Representación completa de una planta en el archivo .tree */
+export interface TreePlant {
+  id:            string;  // Especie base (ej: "cajeto") — define qué tipo de planta es
+  subid:         string;  // Variante de modelo (ej: "cajeto") — misma clave en PLANT_SPRITE_REGISTRY y en Unity
+  desbloqueada:  boolean;
+  estado:        TreeEstadoPlanta;
+  progreso:      TreeProgreso;
+  visual_estado: TreeVisualEstado;
+  uso:           TreeUso;
+  recursos_aplicados: TreeRecursosAplicados;
+}
+
+/** Semilla creada desde 3D y enviada a Web */
+export interface TreeSeed {
+  seed_id:     string;  // [3D] ID opaco
+  species_id:  string;  // [3D] Especie a la que corresponde
+  categoria:   string;  // [3D] Categoría
+  recibida_en: number;  // [3D] Timestamp ms
+}
+
+/** Estructura raíz del archivo .tree */
+export interface ImaginatioTreeData {
+  version:  number;         // Versionado para migraciones (actual: 2)
+  usuario:  TreeUsuario;
+  recursos: TreeRecursos;
+  plantas:  TreePlant[];    // TODAS las plantas del usuario, sin filtro
+  semillas: TreeSeed[];     // Semillas recibidas desde 3D
+}
+
+// Tipo compatible con los datos que llegan del inventario web/backend
 export interface BackendPlant {
   id: string;
   owner_id?: string | null;
@@ -77,6 +116,14 @@ export interface BackendPlant {
   fertilizer: number;
   health: number;
   is_dead: boolean;
+  // Campos opcionales escritos por 3D (guardados en localStorage)
+  unity_salud?:        string;
+  unity_hp?:           number;
+  unity_nivel?:        number;
+  unity_xp?:           number;
+  unity_en_combate?:   boolean;
+  unity_seleccionada?: boolean;
+  unity_subid?:        string;
   species_data?: {
     classification?: string;
     scientific_name?: string;
@@ -88,154 +135,307 @@ export interface BackendPlant {
 // CONSTANTES
 // ═══════════════════════════════════════════════════════
 
-const STORAGE_KEY = "imaginatio_unity_data";
-const CURRENT_VERSION = 1;
+const STORAGE_KEY      = "imaginatio_tree_data";
+const CURRENT_VERSION  = 2;
 
-const DEFAULT_DATA: ImaginatioUnityData = {
-  version: CURRENT_VERSION,
-  user: { user_id: "", user_name: "" },
-  ents: [],
-  seeds: [],
+const DEFAULT_TREE: ImaginatioTreeData = {
+  version:  CURRENT_VERSION,
+  usuario:  { id: "", nombre: "", nivel: 1, xp: 0 },
+  recursos: {
+    agua:     { cantidad: 0 },
+    sol:      { cantidad: 0 },
+    composta: { cantidad: 0 },
+  },
+  plantas:  [],
+  semillas: [],
 };
 
 // ═══════════════════════════════════════════════════════
-// PERSISTENCIA
+// PERSISTENCIA EN localStorage
 // ═══════════════════════════════════════════════════════
 
-/**
- * Carga el JSON canónico desde localStorage.
- * Aplica migración básica si la versión no existe o es anterior.
- * Retorna la estructura por defecto si no hay datos guardados.
- */
-export function loadUnityData(): ImaginatioUnityData {
-  if (typeof window === "undefined") return { ...DEFAULT_DATA };
+/** Carga el .tree desde localStorage. Migra automáticamente si es v1. */
+export function loadTreeData(): ImaginatioTreeData {
+  if (typeof window === "undefined") return { ...DEFAULT_TREE };
 
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...DEFAULT_DATA };
+    if (!raw) return { ...DEFAULT_TREE };
 
     const parsed = JSON.parse(raw);
 
-    // Migración básica: normalizar si falta el campo version
-    if (typeof parsed.version !== "number") {
-      parsed.version = CURRENT_VERSION;
+    // Migración v1 → v2: convertir ents/seeds al nuevo modelo
+    if (!parsed.version || parsed.version < 2) {
+      return migrateV1toV2(parsed);
     }
 
-    // Garantizar que todos los arrays existen (compatibilidad futura)
     return {
-      version: parsed.version ?? CURRENT_VERSION,
-      user: parsed.user ?? { user_id: "", user_name: "" },
-      ents: Array.isArray(parsed.ents) ? parsed.ents : [],
-      seeds: Array.isArray(parsed.seeds) ? parsed.seeds : [],
+      version:  parsed.version ?? CURRENT_VERSION,
+      usuario:  parsed.usuario  ?? DEFAULT_TREE.usuario,
+      recursos: parsed.recursos ?? DEFAULT_TREE.recursos,
+      plantas:  Array.isArray(parsed.plantas)  ? parsed.plantas  : [],
+      semillas: Array.isArray(parsed.semillas) ? parsed.semillas : [],
     };
   } catch (e) {
-    console.warn("[UnityBridge] Error cargando JSON canónico, usando estructura vacía.", e);
-    return { ...DEFAULT_DATA };
+    console.warn("[UnityBridge] Error cargando .tree, usando estructura vacía.", e);
+    return { ...DEFAULT_TREE };
   }
 }
 
-/**
- * Guarda el JSON canónico en localStorage.
- */
-export function saveUnityData(data: ImaginatioUnityData): void {
+/** Guarda el .tree en localStorage. */
+export function saveTreeData(data: ImaginatioTreeData): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (e) {
-    console.error("[UnityBridge] Error guardando JSON canónico.", e);
+    console.error("[UnityBridge] Error guardando .tree.", e);
   }
 }
 
-// ═══════════════════════════════════════════════════════
-// CAPA DE MAPEO — Store → Canónico
-// ═══════════════════════════════════════════════════════
-
-/**
- * Transforma un array de plantas del backend al modelo canónico de UnityEnt[].
- *
- * Reglas:
- *  - NO redefinir estructuras internas del store.
- *  - NO duplicar lógica de salud, decaimiento o evolución.
- *  - SOLO transformar campos al formato requerido.
- */
-export function mapStoreToCanonical(plants: BackendPlant[]): UnityEnt[] {
-  return plants.map((plant) => ({
-    ent_id: plant.id,
-    user_id: plant.owner_id ?? userId.value ?? "",
-    name: plant.name,
-    category: plant.species_data?.classification ?? "unknown",
-    model: plant.species_id,
-    scientific_name: plant.species_data?.scientific_name ?? "",
-    state: plant.is_dead
-      ? "dead"
-      : plant.health <= 20
-        ? "critical"
-        : "healthy",
-    phase: plant.stage,
+/** Migración básica del formato v1 (ents/seeds) al formato v2 (plantas/semillas). */
+function migrateV1toV2(old: any): ImaginatioTreeData {
+  const plantas: TreePlant[] = (old.ents ?? []).map((ent: any) => ({
+    id:           ent.ent_id ?? ent.id ?? "",
+    subid:        `${(ent.name ?? "").toLowerCase().replace(/\s+/g, "_")}_${ent.model ?? ""}`,
+    desbloqueada: true,
+    estado: {
+      fase:      ent.phase ?? "seed",
+      salud:     ent.state === "dead" ? "muerto" : ent.state === "critical" ? "critico" : "saludable",
+      hp_actual: 100,
+    },
+    progreso:      { nivel: 1, xp: 0 },
+    visual_estado: { skin: "default", variacion: "normal" },
+    uso:           { seleccionada: false, en_combate: false },
+    recursos_aplicados: { agua: 0, sol: 0, composta: 0 },
   }));
-}
 
-/**
- * (Opcional) Reflejo inverso del canónico — solo lectura.
- * No muta ningún signal del store.
- * Retorna los ents del JSON canónico tal cual, sin transformación adicional.
- */
-export function mapCanonicalToStore(data: ImaginatioUnityData): UnityEnt[] {
-  return data.ents;
-}
-
-// ═══════════════════════════════════════════════════════
-// SINCRONIZACIÓN
-// ═══════════════════════════════════════════════════════
-
-/**
- * Sincroniza el inventario actual de la web con el JSON canónico en localStorage.
- * Llama internamente a mapStoreToCanonical — no muta ningún signal.
- *
- * Estrategia: merge (los ents existentes se reemplazan por ID, se eliminan los
- * que ya no están en el inventario, se añaden los nuevos).
- */
-export function syncInventoryToUnityData(plants: BackendPlant[]): void {
-  const data = loadUnityData();
-
-  // Actualizar campo user desde el store
-  data.user = {
-    user_id: userId.value ?? data.user.user_id,
-    user_name: username.value || data.user.user_name,
-  };
-
-  // Mapear y reemplazar ents (merge por ID)
-  const mapped = mapStoreToCanonical(plants);
-  const existingIds = new Set(mapped.map((e) => e.ent_id));
-
-  // Conservar seeds (no se tocan en esta sincronización)
-  // Reemplazar ents con el estado actualizado del inventario
-  data.ents = mapped;
-
-  saveUnityData(data);
-}
-
-// ═══════════════════════════════════════════════════════
-// CONSTRUCCIÓN DE PAYLOAD PARA UNITY
-// ═══════════════════════════════════════════════════════
-
-/**
- * Construye el payload filtrado y listo para ser enviado a Unity.
- *
- * Filtros aplicados:
- *  - state === "healthy"
- *  - phase === "ent"
- */
-export function buildUnityPayload(data: ImaginatioUnityData): UnityPayload {
-  const validEnts = data.ents.filter(
-    (ent) => ent.state === "healthy" && ent.phase === "ent"
-  );
+  const semillas: TreeSeed[] = (old.seeds ?? []).map((s: any) => ({
+    seed_id:     s.seed_id ?? "",
+    species_id:  s.model ?? s.species_id ?? "",
+    categoria:   s.category ?? "Base",
+    recibida_en: Date.now(),
+  }));
 
   return {
-    user_id: data.user.user_id,
-    user_name: data.user.user_name,
-    ents: validEnts,
+    version: CURRENT_VERSION,
+    usuario: {
+      id:     old.user?.user_id  ?? "",
+      nombre: old.user?.user_name ?? "",
+      nivel:  1,
+      xp:     0,
+    },
+    recursos: DEFAULT_TREE.recursos,
+    plantas,
+    semillas,
   };
+}
+
+// ═══════════════════════════════════════════════════════
+// MAPEO — Store → .tree
+// ═══════════════════════════════════════════════════════
+
+/** Construye el subid de una planta usando el catálogo de especies.
+ * Si la planta ya tiene uno asignado se preserva; si no, se elige aleatoriamente
+ * entre los subids disponibles para la especie.
+ */
+function buildSubId(existingSubId: string | undefined, speciesId: string): string {
+  if (existingSubId) return existingSubId;
+  return pickSubId(speciesId);
+}
+
+/** Mapea fase interna del backend al formato del .tree. */
+function mapStageToFase(stage: string): string {
+  const map: Record<string, string> = {
+    seed:        "semilla",
+    small_bush:  "arbusto",
+    large_bush:  "planta",
+    ent:         "ent",
+  };
+  return map[stage] ?? stage;
+}
+
+/**
+ * Transforma un array de plantas del backend al modelo TreePlant[].
+ * Preserva los campos que 3D ha escrito (unity_*) si existen en la versión guardada.
+ */
+function mapBackendPlantsToTree(
+  plants: BackendPlant[],
+  existingPlants: TreePlant[]
+): TreePlant[] {
+  return plants.map((plant) => {
+    // Buscar planta existente para preservar campos escritos por 3D
+    const existing = existingPlants.find((p) => p.id === plant.id);
+
+    return {
+      id:           plant.id,
+      subid:        buildSubId(plant.unity_subid ?? existing?.subid, plant.species_id),
+      desbloqueada: !plant.is_dead,
+
+      estado: {
+        fase:      mapStageToFase(plant.stage),
+        // Preservar salud y hp de 3D si existen, sino valores por defecto
+        salud:     plant.unity_salud   ?? existing?.estado.salud     ?? "saludable",
+        hp_actual: plant.unity_hp      ?? existing?.estado.hp_actual  ?? 100,
+      },
+
+      progreso: {
+        // Preservar nivel/xp de 3D
+        nivel: plant.unity_nivel ?? existing?.progreso.nivel ?? 1,
+        xp:    plant.unity_xp    ?? existing?.progreso.xp    ?? 0,
+      },
+
+      visual_estado: existing?.visual_estado ?? { skin: "default", variacion: "normal" },
+
+      uso: {
+        seleccionada: plant.unity_seleccionada ?? existing?.uso.seleccionada ?? false,
+        en_combate:   plant.unity_en_combate   ?? existing?.uso.en_combate   ?? false,
+      },
+
+      recursos_aplicados: {
+        agua:     Math.ceil(plant.water),
+        sol:      Math.ceil(plant.sun),
+        composta: Math.ceil(plant.fertilizer),
+      },
+    };
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// SINCRONIZACIÓN — Web → .tree (auto-sync con cada acción)
+// ═══════════════════════════════════════════════════════
+
+/**
+ * Sincroniza el inventario actual de la web con el .tree en localStorage.
+ * Debe llamarse con cada acción del usuario (regar, sol, evolución, cambio de planta, etc.)
+ * Preserva los campos que 3D ha escrito.
+ */
+export function syncInventoryToTree(
+  plants: BackendPlant[],
+  options?: {
+    waterInventory?: number;
+    sunInventory?:   number;
+    compostInventory?: number;
+  }
+): void {
+  const data = loadTreeData();
+
+  // Actualizar usuario desde el store
+  data.usuario.id     = userId.value    ?? data.usuario.id;
+  data.usuario.nombre = username.value  || data.usuario.nombre;
+  // nivel y xp NO se tocan — los administra 3D
+
+  // Actualizar recursos si se proporcionan
+  if (options?.waterInventory   !== undefined) data.recursos.agua.cantidad     = options.waterInventory;
+  if (options?.sunInventory     !== undefined) data.recursos.sol.cantidad      = options.sunInventory;
+  if (options?.compostInventory !== undefined) data.recursos.composta.cantidad = options.compostInventory;
+
+  // Mapear y reemplazar plantas preservando datos de 3D
+  data.plantas = mapBackendPlantsToTree(plants, data.plantas);
+
+  saveTreeData(data);
+}
+
+/**
+ * @deprecated Alias de compatibilidad con el nombre anterior.
+ * Usar syncInventoryToTree() en código nuevo.
+ */
+export function syncInventoryToUnityData(plants: BackendPlant[]): void {
+  syncInventoryToTree(plants);
+}
+
+// ═══════════════════════════════════════════════════════
+// IMPORTACIÓN — .tree desde 3D → Web
+// ═══════════════════════════════════════════════════════
+
+/**
+ * Lee un archivo .tree seleccionado por el usuario y retorna los datos parseados.
+ * El archivo tiene extensión .tree pero contenido JSON.
+ */
+export function loadTreeFile(file: File): Promise<ImaginatioTreeData> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const raw = e.target?.result as string;
+        const parsed = JSON.parse(raw) as ImaginatioTreeData;
+        resolve(parsed);
+      } catch (err) {
+        reject(new Error("El archivo .tree no es un JSON válido."));
+      }
+    };
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo."));
+    reader.readAsText(file);
+  });
+}
+
+/**
+ * Aplica al .tree local solo los campos que 3D administra, sin pisar datos web.
+ * También agrega las semillas nuevas que 3D haya creado.
+ *
+ * Campos que se actualizan desde el .tree de 3D:
+ *  - usuario.nivel, usuario.xp
+ *  - por planta: estado.salud, estado.hp_actual, progreso.nivel, progreso.xp, uso.*
+ *  - semillas: se agregan las nuevas (sin duplicar por seed_id)
+ *
+ * @returns Objeto con las semillas nuevas detectadas (para agregarlas al inventario)
+ */
+export function applyTreeDataFrom3D(incoming: ImaginatioTreeData): {
+  nuevasSemillas: TreeSeed[];
+  plantasActualizadas: number;
+} {
+  const current = loadTreeData();
+
+  // Actualizar nivel/xp del usuario (solo 3D los modifica)
+  if (typeof incoming.usuario?.nivel === "number") current.usuario.nivel = incoming.usuario.nivel;
+  if (typeof incoming.usuario?.xp    === "number") current.usuario.xp    = incoming.usuario.xp;
+
+  // Actualizar campos 3D de cada planta existente
+  let plantasActualizadas = 0;
+  for (const incomingPlant of incoming.plantas ?? []) {
+    const idx = current.plantas.findIndex((p) => p.id === incomingPlant.id);
+    if (idx >= 0) {
+      const target = current.plantas[idx];
+      // Solo aplicar campos que 3D administra:
+      target.estado.salud      = incomingPlant.estado?.salud      ?? target.estado.salud;
+      target.estado.hp_actual  = incomingPlant.estado?.hp_actual  ?? target.estado.hp_actual;
+      target.progreso.nivel    = incomingPlant.progreso?.nivel     ?? target.progreso.nivel;
+      target.progreso.xp       = incomingPlant.progreso?.xp       ?? target.progreso.xp;
+      target.uso.seleccionada  = incomingPlant.uso?.seleccionada  ?? target.uso.seleccionada;
+      target.uso.en_combate    = incomingPlant.uso?.en_combate    ?? target.uso.en_combate;
+      plantasActualizadas++;
+    }
+  }
+
+  // Agregar semillas nuevas (evitar duplicados por seed_id)
+  const existingSeedIds = new Set(current.semillas.map((s) => s.seed_id));
+  const nuevasSemillas: TreeSeed[] = (incoming.semillas ?? []).filter(
+    (s) => !existingSeedIds.has(s.seed_id)
+  );
+  current.semillas.push(...nuevasSemillas);
+
+  saveTreeData(current);
+  return { nuevasSemillas, plantasActualizadas };
+}
+
+// ═══════════════════════════════════════════════════════
+// EXPORTACIÓN — Generar archivo .tree descargable
+// ═══════════════════════════════════════════════════════
+
+/**
+ * Descarga el .tree actual como archivo con extensión .tree.
+ * El contenido es JSON válido — Unity lo lee parseándolo como JSON.
+ */
+export function downloadTreeFile(filename?: string): void {
+  const data = loadTreeData();
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url  = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href     = url;
+  a.download = filename ?? `${data.usuario.nombre || "imaginatio"}_save.tree`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ═══════════════════════════════════════════════════════
@@ -243,60 +443,100 @@ export function buildUnityPayload(data: ImaginatioUnityData): UnityPayload {
 // ═══════════════════════════════════════════════════════
 
 /**
- * Inicializa el JSON canónico con los datos del usuario tras el login.
+ * Inicializa el .tree con los datos del usuario tras el login.
  * Llamar una vez al completarse la autenticación.
  */
 export function initUnityBridge(): void {
-  const data = loadUnityData();
+  const data = loadTreeData();
+  data.usuario.id     = userId.value    ?? data.usuario.id;
+  data.usuario.nombre = username.value  || data.usuario.nombre;
+  saveTreeData(data);
+}
 
-  data.user = {
-    user_id: userId.value ?? data.user.user_id,
-    user_name: username.value || data.user.user_name,
+// ═══════════════════════════════════════════════════════
+// COMPATIBILIDAD — Tipos y funciones del esquema anterior
+// ═══════════════════════════════════════════════════════
+
+/** @deprecated Usar TreePlant en código nuevo. */
+export interface UnityEnt {
+  ent_id: string;
+  user_id: string;
+  name: string;
+  category: string;
+  model: string;
+  scientific_name: string;
+  state: "healthy" | "critical" | "dead";
+  phase: string;
+}
+
+/** @deprecated Usar TreeSeed en código nuevo. */
+export interface UnitySeed {
+  seed_id: string;
+  user_id: string;
+  category: string;
+  model: string;
+}
+
+/** @deprecated Usar ImaginatioTreeData en código nuevo. */
+export interface ImaginatioUnityData {
+  version: number;
+  user: { user_id: string; user_name: string };
+  ents: UnityEnt[];
+  seeds: UnitySeed[];
+}
+
+/** @deprecated Usar loadTreeData() en código nuevo. */
+export function loadUnityData(): ImaginatioUnityData {
+  const tree = loadTreeData();
+  return {
+    version: 1,
+    user: { user_id: tree.usuario.id, user_name: tree.usuario.nombre },
+    ents: tree.plantas
+      .filter((p) => p.estado.fase === "ent")
+      .map((p) => ({
+        ent_id:          p.id,
+        user_id:         tree.usuario.id,
+        name:            p.subid,
+        category:        "unknown",
+        model:           p.id,
+        scientific_name: "",
+        state:           p.estado.salud === "muerto"
+                           ? "dead"
+                           : p.estado.salud === "critico"
+                             ? "critical"
+                             : "healthy",
+        phase: p.estado.fase,
+      })),
+    seeds: tree.semillas.map((s) => ({
+      seed_id:  s.seed_id,
+      user_id:  tree.usuario.id,
+      category: s.categoria,
+      model:    s.species_id,
+    })),
   };
-
-  saveUnityData(data);
 }
 
-// ═══════════════════════════════════════════════════════
-// STUBS — Comunicación con Unity (fase futura, NO implementados)
-// ═══════════════════════════════════════════════════════
+/** @deprecated Usar saveTreeData() en código nuevo. */
+export function saveUnityData(_data: ImaginatioUnityData): void {
+  // No-op: la persistencia ahora es exclusiva de saveTreeData
+}
 
-/**
- * STUB — Recepción de datos desde Unity.
- *
- * En la fase de integración real, esta función:
- *  1. Parseará el JSON recibido desde Unity.
- *  2. Validará su forma (new_seeds: string[]).
- *  3. Reflejará seeds recibidas en seeds[] sin duplicados.
- *  4. Asignará user_id automáticamente desde el store.
- *  5. Guardará en localStorage.
- *
- * Las seeds NO se construyen aquí — se delega al sistema existente de seeds.
- *
- * @example (Unity → JS)
- * // Unity llama: gameInstance.SendMessage no aplica en esta dirección.
- * // Unity expone la función global que JS registra:
- * // window.OnUnityResult = onUnityResult;  ← activar en fase siguiente
- */
+/** @deprecated Usar syncInventoryToTree() en código nuevo. */
+export function mapStoreToCanonical(_plants: BackendPlant[]): UnityEnt[] {
+  return [];
+}
+
+/** @deprecated */
+export function mapCanonicalToStore(_data: ImaginatioUnityData): UnityEnt[] {
+  return [];
+}
+
+/** @deprecated */
+export function buildUnityPayload(_data: ImaginatioUnityData): any {
+  return {};
+}
+
+/** @deprecated */
 export function onUnityResult(json: string): void {
-  // TODO (fase de integración): parsear json, validar shape { new_seeds: string[] },
-  // reflejar seeds recibidas en seeds[] sin duplicados, guardar en localStorage.
-  // Las seeds NO se construyen aquí — se delega al sistema existente de seeds.
-  console.warn("[UnityBridge] onUnityResult: pendiente de implementación.", json);
+  console.warn("[UnityBridge] onUnityResult: usar el botón de sincronización .tree en su lugar.", json);
 }
-
-/*
- * ─────────────────────────────────────────────────────
- * FASE SIGUIENTE — Activar para comunicación real:
- *
- * // JS → Unity (envío):
- * unityInstance.SendMessage(
- *   "GameManager",
- *   "LoadFromJson",
- *   JSON.stringify(buildUnityPayload(loadUnityData()))
- * );
- *
- * // Unity → JS (recepción, exponer función global):
- * window.OnUnityResult = onUnityResult;
- * ─────────────────────────────────────────────────────
- */
