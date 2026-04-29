@@ -96,6 +96,10 @@ export async function startMinigame(gameType: string) {
 
   if (gameType === "water") {
     result.duration_seconds = 5;
+  } else if (gameType === "sun") {
+    (user as any)._temp_sun_clicks = 0;
+    (user as any)._temp_sun_tier = 1;
+    saveUser(user);
   } else if (gameType === "compost") {
     result.duration_seconds = 3;
     // Provide a mocked list of items
@@ -159,22 +163,33 @@ export async function sunClick(sessionToken: string) {
   const user = getUser(username);
   if (!user) throw new Error("Usuario no encontrado");
 
-  // El backend daba un chance de subir de tier. Para simplificar local:
-  // Simulamos 4 clicks. En cada click sube un tier falso.
-  // Como no tenemos el estado de clicks guardado aquí, lo simularemos con random para UI o confiaremos en el front.
-  // El frontend envía clicks y espera estos campos:
-  
-  // Vamos a incrementar el sun inventory al final
-  const isFinished = Math.random() > 0.5; // Hacemos trampa, el frontend maneja finished pero el backend dictaba cuando terminaba.
-  
-  // En la implementación real, el frontend espera `finished` desde el backend.
-  // Asumiremos que el frontend llama esto 4 veces.
   const clicksDone = (user as any)._temp_sun_clicks || 0;
+  let currentTier = (user as any)._temp_sun_tier || 1;
+  
+  if (clicksDone === 0) {
+    currentTier = 1;
+  }
+
   const newClicks = clicksDone + 1;
   const finished = newClicks >= 4;
-  (user as any)._temp_sun_clicks = finished ? 0 : newClicks;
+  
+  let tierUp = false;
+  if (currentTier < 5) {
+    let probability = 0;
+    if (currentTier === 1) probability = 0.85;
+    else if (currentTier === 2) probability = 0.50;
+    else if (currentTier === 3) probability = 0.25;
+    else if (currentTier === 4) probability = 0.10;
 
-  const currentTier = Math.min(5, newClicks + 1);
+    if (Math.random() < probability) {
+      currentTier++;
+      tierUp = true;
+    }
+  }
+
+  (user as any)._temp_sun_clicks = finished ? 0 : newClicks;
+  (user as any)._temp_sun_tier = finished ? 1 : currentTier;
+
   const reward = finished ? currentTier : null;
 
   if (finished) {
@@ -188,7 +203,7 @@ export async function sunClick(sessionToken: string) {
     tier_after: currentTier,
     clicks_remaining: 4 - newClicks,
     click_number: newClicks,
-    tier_up: true,
+    tier_up: tierUp,
     finished,
     reward,
     user: finished ? user : undefined,

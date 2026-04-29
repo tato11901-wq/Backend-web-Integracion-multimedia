@@ -394,7 +394,7 @@
     "id": "pasto",
     "common_name": "Pasto",
     "scientific_name": "Cynodon dactylon.",
-    "classification": "Base",
+    "classification": "Solar",
     "evolution_requirements": {
       "SEED": {
         "water": 4,
