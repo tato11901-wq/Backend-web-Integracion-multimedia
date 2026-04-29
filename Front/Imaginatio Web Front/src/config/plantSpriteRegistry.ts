@@ -44,12 +44,12 @@ import cedro_large_bush from '../assets/Recursos planta/Sprites Cedro/Verde - co
 import cedro_ent from '../assets/Recursos planta/Sprites Cedro/Verde - copia (3).png';
 
 // ─────────────────────────────────────────────
-// PRUEBA (duraznillo)  (Spritesheets animados)
+// cajeto (Spritesheets animados)
 // ─────────────────────────────────────────────
-import prueba_seed from '../assets/Recursos planta/Sprites prueba/prueba_asemilla_idle.png';
-import prueba_small_bush from '../assets/Recursos planta/Sprites prueba/prueba_fase1_idle.png';
-import prueba_large_bush from '../assets/Recursos planta/Sprites prueba/prueba_fase1_idle.png';
-import prueba_ent from '../assets/Recursos planta/Sprites prueba/prueba_ent_idle.png';
+import cajeto_seed from '../assets/Recursos planta/willy-cajeto/semilla_idle_spritesheet.png';
+import cajeto_small_bush from '../assets/Recursos planta/willy-cajeto/fase2_idle_spritesheet.png';
+import cajeto_large_bush from '../assets/Recursos planta/willy-cajeto/fase3_idle_spritesheet.png';
+import cajeto_ent from '../assets/Recursos planta/willy-cajeto/ent_idle_spritesheet.png';
 
 // ─────────────────────────────────────────────
 // Helper para crear configuraciones fácilmente
@@ -64,10 +64,10 @@ function createPlantConfig(
   const s = typeof scales === "number" ? { seed: scales, small_bush: scales, large_bush: scales, ent: scales } : scales;
   const base = { frameWidth, frameHeight, frameCount };
   return {
-    seed:       { ...base, src: sources.seed,       scale: s.seed,       hitbox: "w-32 h-32" },
+    seed: { ...base, src: sources.seed, scale: s.seed, hitbox: "w-32 h-32" },
     small_bush: { ...base, src: sources.small_bush, scale: s.small_bush, hitbox: "w-48 h-48" },
     large_bush: { ...base, src: sources.large_bush, scale: s.large_bush, hitbox: "w-56 h-64" },
-    ent:        { ...base, src: sources.ent,        scale: s.ent,        hitbox: "w-64 h-80" },
+    ent: { ...base, src: sources.ent, scale: s.ent, hitbox: "w-64 h-80" },
   };
 }
 
@@ -85,9 +85,9 @@ export const PLANT_SPRITE_REGISTRY: Record<string, Record<PlantPhase, SpriteConf
   cedro: createPlantConfig(
     { seed: cedro_seed.src, small_bush: cedro_small_bush.src, large_bush: cedro_large_bush.src, ent: cedro_ent.src }
   ),
-  duraznillo: createPlantConfig(
-    { seed: prueba_seed.src, small_bush: prueba_small_bush.src, large_bush: prueba_large_bush.src, ent: prueba_ent.src },
-    0.3
+  cajeto: createPlantConfig(
+    { seed: cajeto_seed.src, small_bush: cajeto_small_bush.src, large_bush: cajeto_large_bush.src, ent: cajeto_ent.src },
+    { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
 
   // ── Para añadir una nueva especie: ──

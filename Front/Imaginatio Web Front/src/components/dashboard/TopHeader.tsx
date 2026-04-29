@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "preact/hooks";
-import { isInventoryOpen, isHelpModalOpen, plantName, activePlantId } from '../../store/resourceStore';
+import { isInventoryOpen, isHelpModalOpen, isCreditsModalOpen, plantName, activePlantId } from '../../store/resourceStore';
 import { fetchMyActivePlant, renamePlant } from '../../store/apiClient';
 import { syncPlantState, plantHealth, plantWaterProgress, plantSunProgress, plantPhase, EVOLUTION_REQUIREMENTS } from '../../store/plantStore';
 import panelHudSuperior from '../../assets/Recursos web media/Panel_HUD_superior.png';
@@ -194,8 +194,15 @@ export default function TopHeader() {
           </span>
         </div>
 
-        {/* Right buttons: Inventario y Ayuda */}
+        {/* Right buttons: Inventario, Ayuda y Créditos */}
         <div className="flex gap-5 shrink-0 mr-10">
+          <div
+            onClick={() => isCreditsModalOpen.value = true}
+            className="w-16 h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90 bg-[#f5e6c8] border-4 border-[#4e341b] rounded-2xl shadow-[0_4px_0_#4e341b] text-[#4e341b] font-black text-2xl"
+            title="Créditos"
+          >
+            🌟
+          </div>
           <div
             onClick={() => isInventoryOpen.value = true}
             className="w-16 h-16 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90"
