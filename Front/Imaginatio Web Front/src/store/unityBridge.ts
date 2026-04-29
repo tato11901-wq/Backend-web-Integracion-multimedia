@@ -21,8 +21,8 @@
  * ──────────────────────────────────────────────────────────────
  */
 
-import { userId, username } from "./resourceStore";
-import { SPECIES_CATALOG, pickSubId } from "./localDb";
+import { userId, username, waterInventory, sunInventory, compostInventory } from "./resourceStore";
+import { SPECIES_CATALOG, pickSubId, getUserPlants } from "./localDb";
 
 // ═══════════════════════════════════════════════════════
 // TIPOS — Modelo canónico .tree v2
@@ -434,11 +434,30 @@ export function applyTreeDataFrom3D(incoming: ImaginatioTreeData): {
 // ═══════════════════════════════════════════════════════
 
 /**
+ * Actualiza el .tree con los datos más recientes del usuario y lo retorna.
+ * Asegura que al consultarlo o descargarlo tenga el estado completo más reciente.
+ */
+export function getFreshTreeData(): ImaginatioTreeData {
+  if (typeof window !== "undefined" && username.value) {
+    // Obtiene las plantas actualizadas directo de la BD local
+    const freshPlants = getUserPlants(username.value);
+    
+    // Fuerza una sincronización usando el inventario actual
+    syncInventoryToTree(freshPlants, {
+      waterInventory: waterInventory.value,
+      sunInventory: sunInventory.value,
+      compostInventory: compostInventory.value
+    });
+  }
+  return loadTreeData();
+}
+
+/**
  * Descarga el .tree actual como archivo con extensión .tree.
  * El contenido es JSON válido — Unity lo lee parseándolo como JSON.
  */
 export function downloadTreeFile(filename?: string): void {
-  const data = loadTreeData();
+  const data = getFreshTreeData();
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: "application/json" });
   const url  = URL.createObjectURL(blob);

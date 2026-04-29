@@ -27,7 +27,7 @@ import {
 
 import { fastForwardBackendTime, createPlant, fetchMyActivePlant, addDebugResourcesBackend } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY } from "../../config/plantSpriteRegistry";
-import { loadTreeData, downloadTreeFile } from "../../store/unityBridge";
+import { getFreshTreeData, downloadTreeFile } from "../../store/unityBridge";
 
 // Especies con sprites disponibles en el registro
 const AVAILABLE_SPECIES = Object.keys(PLANT_SPRITE_REGISTRY);
@@ -237,7 +237,7 @@ export default function DebugPanel() {
               <div className="flex gap-3">
                 <button
                   onClick={() => {
-                    const tree = loadTreeData();
+                    const tree = getFreshTreeData();
                     setUnityPreview(JSON.stringify(tree, null, 2));
                   }}
                   className="flex-1 bg-violet-700 hover:bg-violet-600 text-sm font-bold py-2 rounded transition-transform active:scale-95"
@@ -252,7 +252,7 @@ export default function DebugPanel() {
                 </button>
               </div>
               <p className="text-[10px] text-slate-500 text-center mt-2">
-                {loadTreeData().plantas.length} planta(s) en .tree — {loadTreeData().semillas.length} semilla(s) de 3D
+                {getFreshTreeData().plantas.length} planta(s) en .tree — {getFreshTreeData().semillas.length} semilla(s) de 3D
               </p>
             </div>
 
