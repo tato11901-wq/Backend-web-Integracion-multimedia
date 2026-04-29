@@ -8,7 +8,10 @@ import {
   isFertilizing,
   isSunning,
   isEvolving,
-  plantHealth
+  plantHealth,
+  plantWaterProgress,
+  plantSunProgress,
+  EVOLUTION_REQUIREMENTS
 } from "../../store/plantStore";
 import { SpriteAnimator } from './SpriteAnimator';
 import { getSpriteConfig } from '../../config/plantSpriteRegistry';
@@ -21,6 +24,8 @@ import evolucionSpriteSheet from '../../assets/Recursos estadosPlanta/Evolucion.
 import watherSpriteSheet from '../../assets/Recursos estadosPlanta/Wather.png';
 import abonoSpriteSheet from '../../assets/Recursos estadosPlanta/Abono.png';
 import solSpriteSheet from '../../assets/Recursos estadosPlanta/Sol.png';
+import criticalParticlesSprite from '../../assets/Recursos estadosPlanta/Critical Particles.png';
+import dangerParticlesSprite from '../../assets/Recursos estadosPlanta/Danger Particles.png';
 
 export const Plant = () => {
   const [displayPhase, setDisplayPhase] = useState<PlantPhase>(plantPhase.value);
@@ -69,6 +74,34 @@ export const Plant = () => {
   const config = getSpriteConfig(displaySpecies, displayPhase);
   const isAnimated = config.frameCount > 1;
   const isDead = plantHealth.value <= 0;
+
+  const water = plantWaterProgress.value;
+  const sun = plantSunProgress.value;
+
+  let isDanger = false;
+  let isAlert = false;
+
+  if (!isDead) {
+    if (water <= 1 || sun <= 1) {
+      isDanger = true;
+    } else {
+      const reqs = EVOLUTION_REQUIREMENTS[displayPhase] || { water: 10, sun: 10 };
+      const waterPct = (water / reqs.water) * 100;
+      const sunPct = (sun / reqs.sun) * 100;
+      if (waterPct <= 50 || sunPct <= 50) {
+        isAlert = true;
+      }
+    }
+  }
+
+  // Clases dinámicas de tamaño y posición según la fase de la planta
+  const particleStyles: Record<PlantPhase, string> = {
+    seed: "scale-[1.0] translate-y-15",
+    small_bush: "scale-[1.3] translate-y-10",
+    large_bush: "scale-[1.5] translate-y-3",
+    ent: "scale-[2.5] translate-y-48"
+  };
+  const particleClass = particleStyles[displayPhase] || "scale-[1.5] -translate-y-20";
 
   return (
     <div className="relative mb-24 flex flex-col items-center pointer-events-none group">
@@ -126,6 +159,18 @@ export const Plant = () => {
         {isSunning.value && (
           <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none scale-[2.5] -translate-y-50">
             <SpriteAnimator src={solSpriteSheet.src} frameWidth={500} frameHeight={500} frameCount={35} fps={20} className="w-full h-full object-contain mix-blend-screen opacity-50" />
+          </div>
+        )}
+
+        {/* Partículas de Alerta y Peligro */}
+        {isDanger && (
+          <div className={`absolute inset-0 z-40 flex items-center justify-center pointer-events-none ${particleClass}`}>
+            <SpriteAnimator src={dangerParticlesSprite.src} frameWidth={500} frameHeight={500} frameCount={13} fps={7} className="w-full h-full object-contain mix-blend-screen opacity-90" />
+          </div>
+        )}
+        {isAlert && !isDanger && (
+          <div className={`absolute inset-0 z-40 flex items-center justify-center pointer-events-none ${particleClass}`}>
+            <SpriteAnimator src={criticalParticlesSprite.src} frameWidth={500} frameHeight={500} frameCount={13} fps={7} className="w-full h-full object-contain mix-blend-screen opacity-90" />
           </div>
         )}
       </div>

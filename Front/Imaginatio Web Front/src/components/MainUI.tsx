@@ -11,6 +11,7 @@ import BottomActions from "./dashboard/BottomActions";
 import Inventory from "./dashboard/Inventory";
 import HelpModal from "./dashboard/HelpModal";
 import EntWelcomeModal from "./dashboard/EntWelcomeModal";
+import CreditsModal from "./dashboard/CreditsModal";
 import { useScale } from "../hooks/useScale";
 import Water from "./MiniGames/water";
 import Compost from "./MiniGames/compost";
@@ -144,6 +145,7 @@ export default function MainUI() {
 
           <Inventory />
           <HelpModal />
+          <CreditsModal />
         </div>
       </div>
 
