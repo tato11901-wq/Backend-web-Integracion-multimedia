@@ -1,6 +1,6 @@
 # Integración App Web - Proyecto Multimedia
 
-Este repositorio contiene tanto el Backend (FastAPI) como el Frontend (Astro + Preact + Tailwind) para el sistema de mascotas virtuales e integración de minijuegos.
+Este repositorio contiene la aplicación de mascotas virtuales e integración de minijuegos (Imaginatio / Plantagochi). Originalmente utilizaba un backend en FastAPI, pero actualmente funciona de manera **100% serverless** utilizando una base de datos simulada en el navegador (`localStorage`), con el Frontend construido en **Astro + Preact + Tailwind**.
 
 ---
 
@@ -90,17 +90,32 @@ Accesible para pruebas de desarrollo, permite manipular la salud, fase de evoluc
 
 El frontend ahora soporta el ciclo de vida autónomo de la planta (Semilla, Brote, Planta y Ent). Se emplean spritesheets (`semilla_idle_spritesheet.png`, `fase2_idle_spritesheet.png`, etc.) y al interactuar con ella se activan animaciones (riego, evolución). Se muestran efectos de partículas si la planta entra en estado de peligro (Danger Particles) o crítico (Critical Particles) para advertir al jugador de que la salud está decayendo.
 
+#### 🎒 Inventario y Filtros (`Inventory.tsx`)
+
+El inventario cuenta con un sistema de filtros avanzado que permite visualizar y clasificar las plantas guardadas por:
+- **Estado**: Semilla, Brote, Arbusto, Ent.
+- **Urgencia**: Estable, Alerta, Crítico.
+- **Categoría**: Solar, Xerofito, Templado, Montaña, Hidro.
+Además, las plantas muertas muestran un estado visual de lápida para facilitar su identificación y limpieza.
+
+#### 🌟 Créditos (`CreditsModal.tsx`)
+
+Una pantalla interactiva que muestra a los creadores del proyecto, con tarjetas responsivas que se expanden al pasar el cursor para revelar las fotos de los desarrolladores y diseñadores en alta calidad.
+
 #### 📁 Estructura de archivos principal
 
 ```
 src/
 ├── store/
+│   ├── localDb.ts               # Base de datos simulada en localStorage
 │   ├── resourceStore.ts         # Signals globales (agua, composta, sol)
 │   ├── plantStore.ts            # Signals de la planta (fases, salud, evolución)
-│   └── apiClient.ts             # Cliente fetch al backend
+│   └── apiClient.ts             # Cliente API que redirige a localDb
 ├── components/
 │   ├── dashboard/
 │   │   ├── Plant.tsx            # Componente de la planta y animaciones
+│   │   ├── Inventory.tsx        # Inventario avanzado con filtros
+│   │   ├── CreditsModal.tsx     # Modal de créditos del equipo
 │   │   ├── DebugPanel.tsx       # Panel de debug / admin
 │   │   ├── ProgressBar.tsx      # Barras de progreso de salud y cuidados
 │   │   └── ...                  # Botones e UI del dashboard
@@ -111,46 +126,23 @@ src/
 
 ---
 
-## ⚙️ Backend (FastAPI) v2.0 (Secure Edition)
+## ⚙️ Backend Simulado (Local Storage)
 
-API en FastAPI para el control y progresión de plantas virtuales, con **integración segura autoritativa** para minijuegos y autenticación **JWT**.
+El proyecto originalmente contaba con una API en FastAPI para el control y progresión de las plantas virtuales. Sin embargo, para facilitar su uso y despliegue sin depender de servidores externos, se ha migrado a un **Backend Simulado Local** (`localDb.ts`) que opera de forma autónoma en el navegador.
 
-### 🚀 Cómo ejecutar el Backend
+### 🔐 Autenticación y Sesiones
 
-1. **Instalar dependencias:**
+- **Sistema Local:** El inicio de sesión crea o recupera un perfil de usuario utilizando `localStorage`.
+- **Persistencia:** Los progresos, las plantas y el inventario persisten entre recargas de la página y sesiones, siempre y cuando se inicie sesión con el mismo nombre de usuario.
 
-```bash
-pip install -r requirements.txt
-```
+### 🎮 Minijuegos y Cooldowns
 
-2. **Ejecutar el servidor uvicorn:**
+- El cliente de la API (`apiClient.ts`) emula los tiempos de respuesta de un servidor real.
+- Los resultados de los minijuegos son validados y procesados directamente en la capa de datos local, sumando las recompensas al inventario.
+- Se ha integrado un sistema de **Cooldowns** (tiempos de espera) para evitar que los jugadores abusen de los minijuegos, guardando los registros de tiempo de forma persistente.
 
-```bash
-cd back
-uvicorn main:app --reload
-```
+### 🌱 Gestión del Tiempo y Decaimiento (Decay Overtime)
 
-### 🛠️ Módulos y Endpoints del Backend
-
-### 🔐 1. Autenticación (JWT)
-
-- **`POST /auth/login`**: Punto de entrada. Envía `{"username": "TuNombre"}`.
-  - **Respuesta**: Devuelve un `token` JWT y los datos del usuario.
-  - **Uso**: El cliente debe incluir este token en la cabecera `Authorization: Bearer <token>` para todas las peticiones protegidas.
-
-### 🎮 2. Minijuegos (Backend-Authoritative)
-
-El sistema valida y autoriza la puntuación en el backend:
-
-1. **`POST /minigame/start`**: Inicia una sesión de juego. Valida el **Cooldown**. Genera un `session_token` único y establece el estado inicial del minijuego.
-2. **`POST /minigame/end`** / **`POST /minigame/sun/click`**: Finaliza el juego o envía acciones para calcular las recompensas y verificar el comportamiento del usuario en el backend.
-
-### 🌱 3. Gestión de Plantas
-
-- **`GET /users/me/active-plant`**: Recupera tu planta activa, su salud, los progresos de cuidado y la fase de evolución actual en base a la última vez que el servidor actualizó la planta (decay overtime).
-- **`GET /users/me/inventory`**: Lista de todas tus plantas.
-- **`POST /debug/fast-forward`**: Avanza el reloj del backend para simular el paso del tiempo y decaimiento de salud.
-
-### 💖 4. Cuidados de la Mascota
-
-- **`POST /plant/{plant_id}/{action}`**: Aplica cuidados (`/water`, `/sun`, `/prune`). Consume recursos de tu inventario sincronizado y restaura la salud y barra de progreso.
+- El paso del tiempo se simula incluso cuando el usuario no está jugando.
+- Al cargar la sesión, el sistema calcula la diferencia entre el último acceso y el tiempo actual, reduciendo automáticamente el agua y el sol de la planta, y disminuyendo su salud si llega a estado crítico.
+- **Acciones:** Regar, Iluminar o Abonar la planta restará los recursos correspondientes del inventario global y actualizará los estados guardados en tiempo real.
