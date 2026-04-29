@@ -77,8 +77,9 @@ export interface TreeRecursosAplicados {
 
 /** Representación completa de una planta en el archivo .tree */
 export interface TreePlant {
-  id:            string;  // Especie base (ej: "cajeto") — define qué tipo de planta es
-  subid:         string;  // Variante de modelo (ej: "cajeto") — misma clave en PLANT_SPRITE_REGISTRY y en Unity
+  id:            string;  // [WEB] ID de especie (ej: "aliso") — coincide con species.json y el prefab en Unity
+  instance_id:   string;  // [WEB] ID único de instancia — permite distinguir dos plantas de la misma especie
+  subid:         string;  // [WEB] Variante de modelo (ej: "aliso") — clave en PLANT_SPRITE_REGISTRY y prefab en Unity
   desbloqueada:  boolean;
   estado:        TreeEstadoPlanta;
   progreso:      TreeProgreso;
@@ -263,12 +264,14 @@ function mapBackendPlantsToTree(
   existingPlants: TreePlant[]
 ): TreePlant[] {
   return plants.map((plant) => {
-    // Buscar planta existente para preservar campos escritos por 3D
-    const existing = existingPlants.find((p) => p.id === plant.id);
+    // Buscar planta existente por instance_id (inequívoco) o por id como fallback
+    const existing = existingPlants.find((p) => p.instance_id === plant.id)
+                  ?? existingPlants.find((p) => p.id === plant.species_id);
 
     return {
-      id:           plant.id,
-      subid:        buildSubId(plant.unity_subid ?? existing?.subid, plant.species_id),
+      id:          plant.species_id,          // [WEB] especie → clave en species.json y prefab Unity
+      instance_id: plant.id,                  // [WEB] ID único de instancia en localStorage
+      subid:       buildSubId(plant.unity_subid ?? existing?.subid, plant.species_id),
       desbloqueada: !plant.is_dead,
 
       estado: {
@@ -390,9 +393,18 @@ export function applyTreeDataFrom3D(incoming: ImaginatioTreeData): {
   if (typeof incoming.usuario?.xp    === "number") current.usuario.xp    = incoming.usuario.xp;
 
   // Actualizar campos 3D de cada planta existente
+  // Matching prioritario por instance_id (único), fallback por id (especie) si hay una sola de esa especie
   let plantasActualizadas = 0;
   for (const incomingPlant of incoming.plantas ?? []) {
-    const idx = current.plantas.findIndex((p) => p.id === incomingPlant.id);
+    let idx = -1;
+    if (incomingPlant.instance_id) {
+      idx = current.plantas.findIndex((p) => p.instance_id === incomingPlant.instance_id);
+    }
+    if (idx < 0) {
+      // Fallback: buscar por id de especie (solo si hay exactamente una de esa especie)
+      const matches = current.plantas.reduce<number[]>((acc, p, i) => p.id === incomingPlant.id ? [...acc, i] : acc, []);
+      if (matches.length === 1) idx = matches[0];
+    }
     if (idx >= 0) {
       const target = current.plantas[idx];
       // Solo aplicar campos que 3D administra:
@@ -494,7 +506,7 @@ export function loadUnityData(): ImaginatioUnityData {
     ents: tree.plantas
       .filter((p) => p.estado.fase === "ent")
       .map((p) => ({
-        ent_id:          p.id,
+        ent_id:          p.instance_id ?? p.id,
         user_id:         tree.usuario.id,
         name:            p.subid,
         category:        "unknown",
