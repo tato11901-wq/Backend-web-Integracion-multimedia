@@ -1,3 +1,4 @@
+import { useState, useRef } from "preact/hooks";
 import {
    isWaterGameOpen,
    isCompostGameOpen,
@@ -11,6 +12,7 @@ import {
    sunRemainingTime
 } from "../../store/resourceStore";
 import { isDebugOpen, isEntActive } from "../../store/plantStore";
+import { loadTreeFile, applyTreeDataFrom3D } from "../../store/unityBridge";
 import btnMinijuegoComposta from '../../assets/Recursos web media/btn_MinijuegoComposta.png';
 import btnMinijuegoAgua from '../../assets/Recursos web media/btn_MinijuegoAgua.png';
 import panelDescripcionPlanta from '../../assets/Recursos web media/Panel_DescripciónPlanta.png';
@@ -20,6 +22,11 @@ import DebugPanel from './DebugPanel';
 
 export default function GameArea() {
    const entLocked = isEntActive.value;
+
+   // ── Estado del botón de sincronización 3D ──
+   type SyncStatus = "idle" | "loading" | "ok" | "error";
+   const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
+   const fileInputRef = useRef<HTMLInputElement>(null);
 
    const handleOpenWater = () => {
       if (entLocked || isWaterOnCooldown.value) return; 
@@ -40,6 +47,40 @@ export default function GameArea() {
    const handleOpenSun = () => {
       if (entLocked || isSunOnCooldown.value) return; 
       isSunGameOpen.value = true;
+   };
+
+   /** Abre el selector de archivo .tree */
+   const handleSyncClick = () => {
+      fileInputRef.current?.click();
+   };
+
+   /** Procesa el archivo .tree seleccionado */
+   const handleTreeFileChange = async (e: Event) => {
+      const input = e.target as HTMLInputElement;
+      const file = input.files?.[0];
+      if (!file) return;
+
+      setSyncStatus("loading");
+      try {
+         const treeData = await loadTreeFile(file);
+         const { nuevasSemillas, plantasActualizadas } = applyTreeDataFrom3D(treeData);
+         setSyncStatus("ok");
+
+         // Feedback por consola para debug
+         console.info(
+            `[Sync 3D] ✓ Plantas actualizadas: ${plantasActualizadas} | Semillas nuevas: ${nuevasSemillas.length}`
+         );
+
+         // Volver a idle tras 2.5 segundos
+         setTimeout(() => setSyncStatus("idle"), 2500);
+      } catch (err: any) {
+         console.error("[Sync 3D] Error al importar .tree:", err);
+         setSyncStatus("error");
+         setTimeout(() => setSyncStatus("idle"), 3000);
+      } finally {
+         // Limpiar el input para permitir re-seleccionar el mismo archivo
+         input.value = "";
+      }
    };
 
    return (
@@ -160,6 +201,60 @@ export default function GameArea() {
          )}
 
          <DebugPanel />
+
+         {/* ── Input oculto para selección de archivo .tree ── */}
+         <input
+            ref={fileInputRef}
+            type="file"
+            accept=".tree"
+            onChange={handleTreeFileChange}
+            className="hidden"
+            id="tree-file-input"
+         />
+
+         {/* ── Botón pastilla: Sincronizar desde 3D ── */}
+         <button
+            id="btn-sync-3d"
+            onClick={handleSyncClick}
+            disabled={syncStatus === "loading"}
+            title="Importar archivo .tree desde 3D para actualizar plantas y semillas"
+            className={`
+               fixed bottom-6 right-6 z-30
+               flex items-center gap-2
+               px-4 py-2 rounded-full
+               font-bold text-sm
+               shadow-lg shadow-black/40
+               border border-white/10
+               pointer-events-auto
+               transition-all duration-200
+               active:scale-95 select-none
+               ${syncStatus === "loading" ? "bg-emerald-800/80 cursor-wait" :
+                 syncStatus === "ok"      ? "bg-emerald-500 text-white cursor-default" :
+                 syncStatus === "error"   ? "bg-red-700/90 text-white" :
+                                            "bg-emerald-700/90 hover:bg-emerald-600 text-white hover:scale-105"}
+            `}
+         >
+            {syncStatus === "loading" && (
+               <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+               </svg>
+            )}
+            {syncStatus === "ok" && <span>✓</span>}
+            {syncStatus === "error" && <span>✗</span>}
+            {syncStatus === "idle" && (
+               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                     d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12V4m0 8l-3-3m3 3l3-3" />
+               </svg>
+            )}
+            <span>
+               {syncStatus === "loading" ? "Cargando..." :
+                syncStatus === "ok"      ? "Sincronizado" :
+                syncStatus === "error"   ? "Error en .tree" :
+                                           "Sync desde 3D"}
+            </span>
+         </button>
       </>
    );
 }
