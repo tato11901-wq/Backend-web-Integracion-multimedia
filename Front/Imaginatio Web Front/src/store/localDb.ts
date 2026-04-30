@@ -246,8 +246,8 @@ export function getOrCreateUser(username: string): LocalUser {
   db.users[username] = newUser;
   saveDb(db);
   
-  // Crear una planta inicial para el nuevo usuario
-  createPlantForUser(username, "pasto");
+  // Crear una planta inicial para el nuevo usuario (con -1 de recursos para tutorial)
+  createPlantForUser(username, "pasto", undefined, true);
   
   // Recargar el usuario actualizado con su active_plant_id
   return loadDb().users[username];
@@ -263,16 +263,15 @@ export function saveUser(user: LocalUser) {
   saveDb(db);
 }
 
-export function createPlantForUser(username: string, speciesId: string): LocalPlant {
+export function createPlantForUser(username: string, speciesId: string, customSubid?: string, isTutorial: boolean = false): LocalPlant {
   const db = loadDb();
   const user = db.users[username];
   if (!user) throw new Error("User not found");
 
   const reqs = getRequirements(speciesId, "seed");
 
-  // Elegir un subid aleatorio de los disponibles para la especie.
-  // El subid identifica la variante de modelo (spritesheets en Web, prefab en Unity).
-  const subid = pickSubId(speciesId);
+  // Si se pasa un subid personalizado se usa, sino se elige uno aleatorio.
+  const subid = customSubid || pickSubId(speciesId);
 
   const plant: LocalPlant = {
     id: generateId(),
@@ -280,8 +279,8 @@ export function createPlantForUser(username: string, speciesId: string): LocalPl
     name: "Nueva Planta",
     species_id: speciesId,
     stage: "seed",
-    water: reqs.water,
-    sun: reqs.sun,
+    water: isTutorial ? Math.max(0, reqs.water - 1) : reqs.water,
+    sun: isTutorial ? Math.max(0, reqs.sun - 1) : reqs.sun,
     fertilizer: 0,
     health: 100,
     is_dead: false,
@@ -399,14 +398,51 @@ export function deletePlantLocal(plantId: string, username: string) {
   const plant = db.plants[plantId];
   const user = db.users[username];
   
-  if (plant && plant.owner_id === username && plant.is_dead) {
+  if (plant && plant.owner_id === username) {
+    const userPlants = Object.values(db.plants).filter(p => p.owner_id === username);
+    const isLastPlant = userPlants.length <= 1;
+
+    if (isLastPlant && !plant.is_dead) {
+      throw new Error("No puedes eliminar tu única planta si aún está viva.");
+    }
+
     if (user && user.active_plant_id === plantId) {
       user.active_plant_id = null;
     }
+
+    if (user) {
+      if (plant.is_dead) {
+        // Las plantas muertas dan 1 de composta
+        user.compost_inventory = (user.compost_inventory || 0) + 1;
+        
+        // Conversión automática: 4 de composta = 1 de abono
+        while (user.compost_inventory >= 4) {
+          user.compost_inventory -= 4;
+          user.fertilizer_inventory = (user.fertilizer_inventory || 0) + 1;
+        }
+      } else {
+        // Las plantas vivas dan abono según su fase
+        let fertilizerReward = 1;
+        if (plant.stage === "seed") fertilizerReward = 1;
+        else if (plant.stage === "small_bush") fertilizerReward = 2;
+        else if (plant.stage === "large_bush") fertilizerReward = 3;
+        else if (plant.stage === "ent") fertilizerReward = 4;
+        user.fertilizer_inventory += fertilizerReward;
+      }
+    }
+
     delete db.plants[plantId];
     saveDb(db);
+
+    // Si era la última planta (estaba muerta por la validación anterior),
+    // le otorgamos una nueva semilla aleatoria para que pueda seguir jugando.
+    if (isLastPlant) {
+      const speciesKeys = Object.keys(SPECIES_CATALOG);
+      const randomSpecies = speciesKeys[Math.floor(Math.random() * speciesKeys.length)] || "pasto";
+      createPlantForUser(username, randomSpecies);
+    }
   } else {
-    throw new Error("Plant is not dead or not found");
+    throw new Error("Plant not found");
   }
 }
 

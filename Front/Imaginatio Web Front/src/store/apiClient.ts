@@ -146,7 +146,7 @@ export async function endMinigame(sessionToken: string, payload: Record<string, 
       user.fertilizer_inventory = (user.fertilizer_inventory || 0) + 1;
     }
 
-    user.cooldowns.compost = Date.now() + 10 * 60 * 1000; // 10 min
+    user.cooldowns.compost = Date.now() + 3 * 60 * 1000; // 3 min
   }
 
   saveUser(user);
@@ -274,9 +274,9 @@ export async function renamePlant(plantId: string, name: string) {
   return renamePlantLocal(plantId, username, name);
 }
 
-export async function createPlant(speciesId: string) {
+export async function createPlant(speciesId: string, subid?: string) {
   const username = requireUser();
-  return createPlantForUser(username, speciesId);
+  return createPlantForUser(username, speciesId, subid);
 }
 
 export async function setActivePlant(plantId: string) {

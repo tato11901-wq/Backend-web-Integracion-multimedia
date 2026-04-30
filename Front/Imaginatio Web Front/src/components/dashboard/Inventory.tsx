@@ -2,7 +2,7 @@ import { useState, useEffect } from "preact/hooks";
 import { batch } from "@preact/signals";
 import { isInventoryOpen, activePlantId, inventoryVersion, plantName, refreshInventory, syncUserState, isNamingModalOpen } from "../../store/resourceStore";
 import { syncPlantState, setEvolutionRequirementsFromSpecies, plantSpeciesId } from "../../store/plantStore";
-import { fetchMyInventory, setActivePlant, deletePlant, createPlant } from "../../store/apiClient";
+import { fetchMyInventory, setActivePlant, deletePlant, createPlant, fetchMyState } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY, FALLBACK_SPECIES, type SpriteConfig } from "../../config/plantSpriteRegistry";
 import type { PlantPhase } from "../../store/plantStore";
 import { syncInventoryToTree } from "../../store/unityBridge";
@@ -17,6 +17,7 @@ import btnEstado01 from "../../assets/Recursos inventario/btn_Estado_01.png";
 import btnEstado02 from "../../assets/Recursos inventario/btn_Estado_02.png";
 import btnEstado03 from "../../assets/Recursos inventario/btn_Estado_03.png";
 import btnEstado04 from "../../assets/Recursos inventario/btn_Estado_04.png";
+import btnAyuda from "../../assets/Recursos web media/btn_ayuda.png";
 
 // Botones de filtro – Urgencia (campanas)
 import btnUrgencia01 from "../../assets/Recursos inventario/btn_Urgencia_01.png";
@@ -66,8 +67,16 @@ const SPECIES_LABELS: Record<string, string> = {
   cedro: "Cedro",
 };
 
-function getConfig(speciesId: string, stage: string): SpriteConfig {
-  const key = PLANT_SPRITE_REGISTRY[speciesId] ? speciesId : FALLBACK_SPECIES;
+const getFertilizerReward = (stage: string) => {
+  if (stage === "seed") return 1;
+  if (stage === "small_bush") return 2;
+  if (stage === "large_bush") return 3;
+  if (stage === "ent") return 4;
+  return 1;
+};
+
+function getConfig(speciesId: string, subid: string | undefined, stage: string): SpriteConfig {
+  const key = (subid && PLANT_SPRITE_REGISTRY[subid]) ? subid : (PLANT_SPRITE_REGISTRY[speciesId] ? speciesId : FALLBACK_SPECIES);
   const phase: PlantPhase = (stage as PlantPhase) in PLANT_SPRITE_REGISTRY[key]
     ? (stage as PlantPhase)
     : "seed";
@@ -143,6 +152,19 @@ export default function Inventory() {
   const [filterState, setFilterState] = useState<string | null>(null);
   const [filterUrgency, setFilterUrgency] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [confirmingDeleteLive, setConfirmingDeleteLive] = useState<BackendPlant | null>(null);
+  const [confirmingDeleteDead, setConfirmingDeleteDead] = useState<BackendPlant | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    if (isInventoryOpen.value) {
+      const shown = localStorage.getItem("inventory_tutorial_shown");
+      if (!shown) {
+        setShowTutorial(true);
+        localStorage.setItem("inventory_tutorial_shown", "true");
+      }
+    }
+  }, [isInventoryOpen.value]);
 
   if (!isInventoryOpen.value) return null;
 
@@ -218,53 +240,39 @@ export default function Inventory() {
     }
   };
 
-  const handleDeletePlant = async (plantId: string) => {
-    if (!confirm("¿Estás seguro de que deseas eliminar esta planta muerta?")) return;
+  const handleDeletePlant = async (plantId: string, isConfirmed: boolean = false) => {
+    const plant = plants.find(p => p.id === plantId);
+    if (!plant) return;
+
+    if (!isConfirmed) {
+      if (plant.is_dead) setConfirmingDeleteDead(plant);
+      else setConfirmingDeleteLive(plant);
+      return;
+    }
+
     try {
+      const wasActive = activePlantId.value === plantId;
       await deletePlant(plantId);
+      
+      const newState = await fetchMyState();
+      syncUserState(newState);
 
-      // Si eliminamos la planta activa, intentamos cambiar a otra automáticamente
-      if (activePlantId.value === plantId) {
-        const otherPlants = plants.filter(p => p.id !== plantId);
-        const alivePlant = otherPlants.find(p => !p.is_dead);
-        const nextPlant = alivePlant || otherPlants[0]; // Prefiere una viva, o cualquiera si todas están muertas
-
-        if (nextPlant) {
-          const updatedUser = await setActivePlant(nextPlant.id);
-          batch(() => {
-            syncUserState(updatedUser);
-            activePlantId.value = nextPlant.id;
-            plantName.value = nextPlant.name;
-            if (nextPlant.name === "Nueva Planta") {
-              isNamingModalOpen.value = true;
-            }
-            syncPlantState(nextPlant);
-            if (nextPlant.species_data) setEvolutionRequirementsFromSpecies(nextPlant.species_data);
-            plantSpeciesId.value = nextPlant.species_id;
-          });
-        } else {
-          // No quedan más plantas, le generamos un pasto por defecto
-          await createPlant("pasto");
-          // Obtenemos el inventario actualizado (que tendrá el nuevo pasto)
-          const newInv = await fetchMyInventory();
-          const newPasto = newInv.find((p: BackendPlant) => !p.is_dead);
-          if (newPasto) {
-            activePlantId.value = newPasto.id;
-            plantName.value = newPasto.name;
-            if (newPasto.name === "Nueva Planta") {
-              isNamingModalOpen.value = true;
-            }
-            syncPlantState(newPasto);
-            if (newPasto.species_data) setEvolutionRequirementsFromSpecies(newPasto.species_data);
-            plantSpeciesId.value = newPasto.species_id;
-          } else {
-            activePlantId.value = null; // Fallback por si acaso
+      // Si borramos la planta que estaba seleccionada, sincronizamos visualmente la nueva que el backend asignó
+      if (wasActive && newState.active_plant) {
+        batch(() => {
+          const next = newState.active_plant;
+          plantName.value = next.name;
+          if (next.name === "Nueva Planta") {
+            isNamingModalOpen.value = true;
           }
-        }
+          syncPlantState(next);
+          if (next.species_data) setEvolutionRequirementsFromSpecies(next.species_data);
+          plantSpeciesId.value = next.species_id;
+        });
       }
 
       setSelectedPlant(null);
-      refreshInventory(); // Recarga las plantas
+      refreshInventory();
     } catch (e: any) {
       alert(e.message ?? "Error al eliminar la planta.");
     }
@@ -298,6 +306,13 @@ export default function Inventory() {
             <span className="text-white font-black text-lg drop-shadow-md">🌿 Mis Plantas</span>
             <div className="flex items-center gap-3">
               <span className="text-white/70 text-sm font-medium">{plants.length} planta{plants.length !== 1 ? "s" : ""}</span>
+              <button
+                onClick={() => setShowTutorial(true)}
+                className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center cursor-pointer transition-all duration-150 ease-in-out hover:opacity-60 active:scale-90"
+                title="Ayuda del inventario"
+              >
+                <img src={btnAyuda.src} alt="Ayuda" className="w-full h-full object-contain" />
+              </button>
               <button
                 onClick={loadInventory}
                 className="text-white/60 hover:text-white text-lg transition-colors"
@@ -424,7 +439,7 @@ export default function Inventory() {
               {filteredPlants.map((plant) => {
                 const isActive = plant.id === activePlantId.value;
                 const isSwitchingThis = switching === plant.id;
-                const spriteConfig = getConfig(plant.species_id, plant.stage);
+                const spriteConfig = getConfig(plant.species_id, plant.unity_subid, plant.stage);
 
                 return (
                   <div
@@ -516,7 +531,7 @@ export default function Inventory() {
       </div>
 
       {/* Modal de detalle / selección */}
-      {selectedPlant && (
+      {selectedPlant && !confirmingDeleteLive && (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50"
           onClick={() => setSelectedPlant(null)}
@@ -527,7 +542,7 @@ export default function Inventory() {
           >
             {/* Sprite grande en el modal */}
             <div className={`relative w-28 h-28 flex items-center justify-center overflow-hidden ${selectedPlant.is_dead ? "grayscale opacity-40 brightness-50" : ""}`}>
-              <PlantFirstFrame config={getConfig(selectedPlant.species_id, selectedPlant.stage)} size={96} />
+              <PlantFirstFrame config={getConfig(selectedPlant.species_id, selectedPlant.unity_subid, selectedPlant.stage)} size={96} />
               {selectedPlant.is_dead && (
                 <div className="absolute inset-0 flex items-center justify-center text-6xl drop-shadow-xl">
                   ☠️
@@ -626,8 +641,8 @@ export default function Inventory() {
                 Cancelar
               </button>
 
-              {/* Botón de eliminar si está muerta */}
-              {selectedPlant.is_dead && (
+              {/* Botón de eliminar, visible si hay más de una planta O si la única que queda está muerta */}
+              {(plants.length > 1 || selectedPlant.is_dead) && (
                 <button
                   onClick={() => handleDeletePlant(selectedPlant.id)}
                   className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-xl transition-colors shadow-lg"
@@ -651,6 +666,160 @@ export default function Inventory() {
                   Planta activa ✓
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación para eliminar planta viva */}
+      {confirmingDeleteLive && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-md"
+          onClick={() => setConfirmingDeleteLive(null)}
+        >
+          <div
+            className="bg-[#2d1f0e] border-4 border-red-900 rounded-2xl p-6 w-80 flex flex-col items-center gap-4 shadow-[0_0_40px_rgba(220,38,38,0.4)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-5xl mb-2 animate-bounce">⚠️</div>
+            <h2 className="text-white font-black text-xl text-center uppercase tracking-wide">
+              ¡Cuidado!
+            </h2>
+            <p className="text-white/80 text-sm text-center leading-relaxed">
+              Estás a punto de eliminar tu <span className="font-bold text-green-400">planta viva</span>.
+              <br /><br />
+              Recibirás <span className="font-black text-amber-400 text-lg">{getFertilizerReward(confirmingDeleteLive.stage)} unidades</span> de abono.
+              <br /><br />
+              Esta acción es <span className="text-red-400 font-bold underline">irreversible</span>.
+            </p>
+
+            <div className="flex gap-3 w-full mt-4">
+              <button
+                onClick={() => setConfirmingDeleteLive(null)}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-2 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  handleDeletePlant(confirmingDeleteLive.id, true);
+                  setConfirmingDeleteLive(null);
+                }}
+                className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-xl transition-colors shadow-lg"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación para eliminar planta muerta */}
+      {confirmingDeleteDead && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-md"
+          onClick={() => setConfirmingDeleteDead(null)}
+        >
+          <div
+            className="bg-[#2d1f0e] border-4 border-amber-900 rounded-2xl p-6 w-80 flex flex-col items-center gap-4 shadow-[0_0_40px_rgba(146,64,14,0.4)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="text-5xl mb-2">♻️</div>
+            <h2 className="text-white font-black text-xl text-center uppercase tracking-wide">
+              Reciclar Planta
+            </h2>
+            <p className="text-white/80 text-sm text-center leading-relaxed">
+              ¿Quieres reciclar los restos de esta planta?
+              <br /><br />
+              A cambio, recibirás <span className="font-black text-amber-400 text-lg">1 unidad</span> de composta para tu inventario.
+            </p>
+
+            <div className="flex gap-3 w-full mt-4">
+              <button
+                onClick={() => setConfirmingDeleteDead(null)}
+                className="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-2 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  handleDeletePlant(confirmingDeleteDead.id, true);
+                  setConfirmingDeleteDead(null);
+                }}
+                className="flex-1 bg-amber-700 hover:bg-amber-600 text-white font-bold py-2 rounded-xl transition-colors shadow-lg"
+              >
+                Reciclar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal de Tutorial / Ayuda */}
+      {showTutorial && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md"
+          onClick={() => setShowTutorial(false)}
+        >
+          <div
+            className="bg-[#1a2e12] border-4 border-[#3d5a2d] rounded-2xl p-8 w-[450px] max-w-[90%] shadow-[0_0_50px_rgba(0,0,0,0.8)] relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowTutorial(false)}
+              className="absolute top-4 right-4 text-white/40 hover:text-white text-2xl transition-colors"
+            >
+              ✕
+            </button>
+
+            <div className="flex flex-col items-center gap-6">
+              <div className="w-20 h-20 bg-[#3d5a2d] rounded-full flex items-center justify-center text-4xl shadow-inner border-2 border-white/10">
+                🌿
+              </div>
+              
+              <h2 className="text-2xl font-black text-white text-center uppercase tracking-wider">
+                Gestión de Plantas
+              </h2>
+
+              <div className="space-y-4 w-full">
+                <div className="flex gap-4 items-start">
+                  <div className="bg-[#4d6a3d] p-2 rounded-lg text-xl">🔍</div>
+                  <div>
+                    <h4 className="text-yellow-400 font-bold text-sm">Filtros Avanzados</h4>
+                    <p className="text-white/70 text-xs leading-relaxed">Usa los iconos superiores para filtrar por fase de crecimiento, categoría o estado de salud.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="bg-[#4d6a3d] p-2 rounded-lg text-xl">📦</div>
+                  <div>
+                    <h4 className="text-yellow-400 font-bold text-sm">Detalles y Acciones</h4>
+                    <p className="text-white/70 text-xs leading-relaxed">Haz clic en cualquier planta para ver su progreso y cambiar la planta activa en el escenario.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="bg-[#4d6a3d] p-2 rounded-lg text-xl">♻️</div>
+                  <div>
+                    <h4 className="text-yellow-400 font-bold text-sm">Reciclaje por Abono</h4>
+                    <p className="text-white/70 text-xs leading-relaxed">¿Tienes plantas muertas o repetidas? Elimínalas para recuperar <span className="text-amber-400 font-bold">abono</span> para tus otras plantas.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="bg-[#4d6a3d] p-2 rounded-lg text-xl">🎮</div>
+                  <div>
+                    <h4 className="text-yellow-400 font-bold text-sm">Sincronización</h4>
+                    <p className="text-white/70 text-xs leading-relaxed">Los niveles y XP se sincronizan automáticamente con el servidor del juego.</p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowTutorial(false)}
+                className="mt-4 w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-3 rounded-xl shadow-lg transition-transform active:scale-95"
+              >
+                ¡ENTENDIDO!
+              </button>
             </div>
           </div>
         </div>

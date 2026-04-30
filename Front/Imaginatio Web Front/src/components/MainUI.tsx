@@ -11,6 +11,7 @@ import BottomActions from "./dashboard/BottomActions";
 import Inventory from "./dashboard/Inventory";
 import HelpModal from "./dashboard/HelpModal";
 import EntWelcomeModal from "./dashboard/EntWelcomeModal";
+import DeathTutorialModal from "./dashboard/DeathTutorialModal";
 import CreditsModal from "./dashboard/CreditsModal";
 import PlantNamingModal from "./dashboard/PlantNamingModal";
 import { isNamingModalOpen, isHelpModalOpen } from "../store/resourceStore";
@@ -174,6 +175,7 @@ export default function MainUI() {
 
       {/* 🌳 Modal informativo del Ent (solo primera vez) */}
       <EntWelcomeModal />
+      <DeathTutorialModal />
 
     </div>
   );

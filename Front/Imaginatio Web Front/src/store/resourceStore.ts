@@ -109,6 +109,7 @@ export const isInventoryOpen = signal(false);
 export const isHelpModalOpen = signal(false);
 export const isCreditsModalOpen = signal(false);
 export const isNamingModalOpen = signal(false);
+export const isDeathTutorialOpen = signal(false);
 
 /** Incrementar este signal fuerza al inventario a refrescarse */
 export const inventoryVersion = signal(0);
@@ -138,22 +139,13 @@ export function syncUserState(backendUser: any) {
   // para evitar que un minijuego pise el cooldown activo de otro.
   if (backendUser.cooldowns) {
     const newWater = backendUser.cooldowns.water > 0 ? backendUser.cooldowns.water : 0;
-    const curWater = waterCooldownEnds.value ? new Date(waterCooldownEnds.value).getTime() : 0;
-    waterCooldownEnds.value = newWater >= curWater
-      ? (newWater > 0 ? new Date(newWater).toISOString() : null)
-      : waterCooldownEnds.value;
+    waterCooldownEnds.value = newWater > 0 ? new Date(newWater).toISOString() : null;
 
     const newCompost = backendUser.cooldowns.compost > 0 ? backendUser.cooldowns.compost : 0;
-    const curCompost = compostCooldownEnds.value ? new Date(compostCooldownEnds.value).getTime() : 0;
-    compostCooldownEnds.value = newCompost >= curCompost
-      ? (newCompost > 0 ? new Date(newCompost).toISOString() : null)
-      : compostCooldownEnds.value;
+    compostCooldownEnds.value = newCompost > 0 ? new Date(newCompost).toISOString() : null;
 
     const newSun = backendUser.cooldowns.sun > 0 ? backendUser.cooldowns.sun : 0;
-    const curSun = sunCooldownEnds.value ? new Date(sunCooldownEnds.value).getTime() : 0;
-    sunCooldownEnds.value = newSun >= curSun
-      ? (newSun > 0 ? new Date(newSun).toISOString() : null)
-      : sunCooldownEnds.value;
+    sunCooldownEnds.value = newSun > 0 ? new Date(newSun).toISOString() : null;
   } else {
     // Fallback para compatibilidad con backend real si volviera a usarse
     if (backendUser.last_water_minigame) {

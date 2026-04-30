@@ -341,92 +341,92 @@ export const PLANT_SPRITE_REGISTRY: Record<string, Record<PlantPhase, SpriteConf
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
 
-  'Carlos Correa_Drago': createPlantConfig(
+  'Carlos Correa': createPlantConfig(
     { seed: carlos_correa_drago_seed.src, small_bush: carlos_correa_drago_small_bush.src, large_bush: carlos_correa_drago_large_bush.src, ent: carlos_correa_drago_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Jesica Piñeros_Drago': createPlantConfig(
+  'Jesica Piñeros': createPlantConfig(
     { seed: jesica_pineros_drago_seed.src, small_bush: jesica_pineros_drago_small_bush.src, large_bush: jesica_pineros_drago_large_bush.src, ent: jesica_pineros_drago_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
 
-  'Adriana Espitia_Drago': createPlantConfig(
+  'Adriana Espitia': createPlantConfig(
     { seed: adriana_espitia_drago_seed.src, small_bush: adriana_espitia_drago_small_bush.src, large_bush: adriana_espitia_drago_large_bush.src, ent: adriana_espitia_drago_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Alejandro Ramirez_Drago': createPlantConfig(
+  'Alejandro Ramirez': createPlantConfig(
     { seed: alejandro_ramirez_drago_seed.src, small_bush: alejandro_ramirez_drago_small_bush.src, large_bush: alejandro_ramirez_drago_large_bush.src, ent: alejandro_ramirez_drago_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Andres Duque_Alcaparro enano': createPlantConfig(
+  'Andres Duque': createPlantConfig(
     { seed: andres_duque_alcaparro_enano_seed.src, small_bush: andres_duque_alcaparro_enano_small_bush.src, large_bush: andres_duque_alcaparro_enano_large_bush.src, ent: andres_duque_alcaparro_enano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Andres Morales_Duraznillo': createPlantConfig(
+  'Andres Morales': createPlantConfig(
     { seed: andres_morales_duraznillo_seed.src, small_bush: andres_morales_duraznillo_small_bush.src, large_bush: andres_morales_duraznillo_large_bush.src, ent: andres_morales_duraznillo_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Anne Galvis_Duraznillo': createPlantConfig(
+  'Anne Galvis': createPlantConfig(
     { seed: anne_galvis_duraznillo_seed.src, small_bush: anne_galvis_duraznillo_small_bush.src, large_bush: anne_galvis_duraznillo_large_bush.src, ent: anne_galvis_duraznillo_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Daniel Orjuela_Pino romerón': createPlantConfig(
+  'Daniel Orjuela': createPlantConfig(
     { seed: daniel_orjuela_pino_romer_n_seed.src, small_bush: daniel_orjuela_pino_romer_n_small_bush.src, large_bush: daniel_orjuela_pino_romer_n_large_bush.src, ent: daniel_orjuela_pino_romer_n_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Danna Plazas_Sietecueros': createPlantConfig(
+  'Danna Plazas': createPlantConfig(
     { seed: danna_plazas_sietecueros_seed.src, small_bush: danna_plazas_sietecueros_small_bush.src, large_bush: danna_plazas_sietecueros_large_bush.src, ent: danna_plazas_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'David Hernadez_Drago': createPlantConfig(
+  'David Hernadez': createPlantConfig(
     { seed: david_hernadez_drago_seed.src, small_bush: david_hernadez_drago_small_bush.src, large_bush: david_hernadez_drago_large_bush.src, ent: david_hernadez_drago_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Diego Martinez_Nogal': createPlantConfig(
+  'Diego Martinez': createPlantConfig(
     { seed: diego_martinez_nogal_seed.src, small_bush: diego_martinez_nogal_small_bush.src, large_bush: diego_martinez_nogal_large_bush.src, ent: diego_martinez_nogal_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Erick Rodriguez_Sietecueros': createPlantConfig(
+  'Erick Rodriguez': createPlantConfig(
     { seed: erick_rodriguez_sietecueros_seed.src, small_bush: erick_rodriguez_sietecueros_small_bush.src, large_bush: erick_rodriguez_sietecueros_large_bush.src, ent: erick_rodriguez_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Fabian Cetina_Sietecueros': createPlantConfig(
+  'Fabian Cetina': createPlantConfig(
     { seed: fabian_cetina_sietecueros_seed.src, small_bush: fabian_cetina_sietecueros_small_bush.src, large_bush: fabian_cetina_sietecueros_large_bush.src, ent: fabian_cetina_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Geraldine Torres_Cedrillo': createPlantConfig(
+  'Geraldine Torres': createPlantConfig(
     { seed: geraldine_torres_cedrillo_seed.src, small_bush: geraldine_torres_cedrillo_small_bush.src, large_bush: geraldine_torres_cedrillo_large_bush.src, ent: geraldine_torres_cedrillo_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Gireth Alvarado_Duraznillo': createPlantConfig(
+  'Gireth Alvarado': createPlantConfig(
     { seed: gireth_alvarado_duraznillo_seed.src, small_bush: gireth_alvarado_duraznillo_small_bush.src, large_bush: gireth_alvarado_duraznillo_large_bush.src, ent: gireth_alvarado_duraznillo_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Isabella Vega_Drago': createPlantConfig(
+  'Isabella Vega': createPlantConfig(
     { seed: isabella_vega_drago_seed.src, small_bush: isabella_vega_drago_small_bush.src, large_bush: isabella_vega_drago_large_bush.src, ent: isabella_vega_drago_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Javier Bustos_Roble': createPlantConfig(
+  'Javier Bustos': createPlantConfig(
     { seed: javier_bustos_roble_seed.src, small_bush: javier_bustos_roble_small_bush.src, large_bush: javier_bustos_roble_large_bush.src, ent: javier_bustos_roble_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Jeronimo Vargas_Cedrillo': createPlantConfig(
+  'Jeronimo Vargas': createPlantConfig(
     { seed: jeronimo_vargas_cedrillo_seed.src, small_bush: jeronimo_vargas_cedrillo_small_bush.src, large_bush: jeronimo_vargas_cedrillo_large_bush.src, ent: jeronimo_vargas_cedrillo_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Jimmy Torres_Alcaparro enano': createPlantConfig(
+  'Jimmy Torres': createPlantConfig(
     { seed: jimmy_torres_alcaparro_enano_seed.src, small_bush: jimmy_torres_alcaparro_enano_small_bush.src, large_bush: jimmy_torres_alcaparro_enano_large_bush.src, ent: jimmy_torres_alcaparro_enano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Juan Acosta_Pino romerón': createPlantConfig(
+  'Juan Acosta': createPlantConfig(
     { seed: juan_acosta_pino_romer_n_seed.src, small_bush: juan_acosta_pino_romer_n_small_bush.src, large_bush: juan_acosta_pino_romer_n_large_bush.src, ent: juan_acosta_pino_romer_n_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Juan Cuellar_Espino': createPlantConfig(
+  'Juan Cuellar': createPlantConfig(
     { seed: juan_cuellar_espino_seed.src, small_bush: juan_cuellar_espino_small_bush.src, large_bush: juan_cuellar_espino_large_bush.src, ent: juan_cuellar_espino_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Juan Lombana_Cedro': createPlantConfig(
+  'Juan Lombana': createPlantConfig(
     { seed: juan_lombana_cedro_seed.src, small_bush: juan_lombana_cedro_small_bush.src, large_bush: juan_lombana_cedro_large_bush.src, ent: juan_lombana_cedro_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
@@ -434,111 +434,111 @@ export const PLANT_SPRITE_REGISTRY: Record<string, Record<PlantPhase, SpriteConf
     { seed: juan_quintana_rodriguez_seed.src, small_bush: juan_quintana_rodriguez_small_bush.src, large_bush: juan_quintana_rodriguez_large_bush.src, ent: juan_quintana_rodriguez_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Juan Riaño_Mangle': createPlantConfig(
+  'Juan Riaño': createPlantConfig(
     { seed: juan_ria_o_mangle_seed.src, small_bush: juan_ria_o_mangle_small_bush.src, large_bush: juan_ria_o_mangle_large_bush.src, ent: juan_ria_o_mangle_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Juan Rocha_Sietecueros': createPlantConfig(
+  'Juan Rocha': createPlantConfig(
     { seed: juan_rocha_sietecueros_seed.src, small_bush: juan_rocha_sietecueros_small_bush.src, large_bush: juan_rocha_sietecueros_large_bush.src, ent: juan_rocha_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Juan Yalta_Aliso': createPlantConfig(
+  'Juan Yalta': createPlantConfig(
     { seed: juan_yalta_aliso_seed.src, small_bush: juan_yalta_aliso_small_bush.src, large_bush: juan_yalta_aliso_large_bush.src, ent: juan_yalta_aliso_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Julian Almonacid_Manzano': createPlantConfig(
+  'Julian Almonacid': createPlantConfig(
     { seed: julian_almonacid_manzano_seed.src, small_bush: julian_almonacid_manzano_small_bush.src, large_bush: julian_almonacid_manzano_large_bush.src, ent: julian_almonacid_manzano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Karen Bustos_Sietecueros': createPlantConfig(
+  'Karen Bustos': createPlantConfig(
     { seed: karen_bustos_sietecueros_seed.src, small_bush: karen_bustos_sietecueros_small_bush.src, large_bush: karen_bustos_sietecueros_large_bush.src, ent: karen_bustos_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Karen Sandoval_Pino romerón': createPlantConfig(
+  'Karen Sandoval': createPlantConfig(
     { seed: karen_sandoval_pino_romer_n_seed.src, small_bush: karen_sandoval_pino_romer_n_small_bush.src, large_bush: karen_sandoval_pino_romer_n_large_bush.src, ent: karen_sandoval_pino_romer_n_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Karol Duran_Sietecueros': createPlantConfig(
+  'Karol Duran': createPlantConfig(
     { seed: karol_duran_sietecueros_seed.src, small_bush: karol_duran_sietecueros_small_bush.src, large_bush: karol_duran_sietecueros_large_bush.src, ent: karol_duran_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Laura Ibañez_Sietecueros': createPlantConfig(
+  'Laura Ibañez': createPlantConfig(
     { seed: laura_iba_ez_sietecueros_seed.src, small_bush: laura_iba_ez_sietecueros_small_bush.src, large_bush: laura_iba_ez_sietecueros_large_bush.src, ent: laura_iba_ez_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Laura Parra_Alcaparro enano': createPlantConfig(
+  'Laura Parra': createPlantConfig(
     { seed: laura_parra_alcaparro_enano_seed.src, small_bush: laura_parra_alcaparro_enano_small_bush.src, large_bush: laura_parra_alcaparro_enano_large_bush.src, ent: laura_parra_alcaparro_enano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Lina Rico_Mangle': createPlantConfig(
+  'Lina Rico': createPlantConfig(
     { seed: lina_rico_mangle_seed.src, small_bush: lina_rico_mangle_small_bush.src, large_bush: lina_rico_mangle_large_bush.src, ent: lina_rico_mangle_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Liseth Castro_Sietecueros': createPlantConfig(
+  'Liseth Castro': createPlantConfig(
     { seed: liseth_castro_sietecueros_seed.src, small_bush: liseth_castro_sietecueros_small_bush.src, large_bush: liseth_castro_sietecueros_large_bush.src, ent: liseth_castro_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Lyander Hernandez_Sietecueros': createPlantConfig(
+  'Lyander Hernandez': createPlantConfig(
     { seed: lyander_hernandez_sietecueros_seed.src, small_bush: lyander_hernandez_sietecueros_small_bush.src, large_bush: lyander_hernandez_sietecueros_large_bush.src, ent: lyander_hernandez_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Maicol Torres_Roble': createPlantConfig(
+  'Maicol Torres': createPlantConfig(
     { seed: maicol_torres_roble_seed.src, small_bush: maicol_torres_roble_small_bush.src, large_bush: maicol_torres_roble_large_bush.src, ent: maicol_torres_roble_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Maria Castaño_Sietecueros': createPlantConfig(
+  'Maria Castaño': createPlantConfig(
     { seed: maria_casta_o_sietecueros_seed.src, small_bush: maria_casta_o_sietecueros_small_bush.src, large_bush: maria_casta_o_sietecueros_large_bush.src, ent: maria_casta_o_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Maria Hernandez_Alcaparro enano': createPlantConfig(
+  'Maria Hernandez': createPlantConfig(
     { seed: maria_hernandez_alcaparro_enano_seed.src, small_bush: maria_hernandez_alcaparro_enano_small_bush.src, large_bush: maria_hernandez_alcaparro_enano_large_bush.src, ent: maria_hernandez_alcaparro_enano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Mateo Guzmán_Manzano': createPlantConfig(
+  'Mateo Guzmán': createPlantConfig(
     { seed: mateo_guzm_n_manzano_seed.src, small_bush: mateo_guzm_n_manzano_small_bush.src, large_bush: mateo_guzm_n_manzano_large_bush.src, ent: mateo_guzm_n_manzano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Mateo Sanchez_Sietecueros': createPlantConfig(
+  'Mateo Sanchez': createPlantConfig(
     { seed: mateo_sanchez_sietecueros_seed.src, small_bush: mateo_sanchez_sietecueros_small_bush.src, large_bush: mateo_sanchez_sietecueros_large_bush.src, ent: mateo_sanchez_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Matilde Bermudez_Sietecueros': createPlantConfig(
+  'Matilde Bermudez': createPlantConfig(
     { seed: matilde_bermudez_sietecueros_seed.src, small_bush: matilde_bermudez_sietecueros_small_bush.src, large_bush: matilde_bermudez_sietecueros_large_bush.src, ent: matilde_bermudez_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Miguel Cartagena_Manzano': createPlantConfig(
+  'Miguel Cartagena': createPlantConfig(
     { seed: miguel_cartagena_manzano_seed.src, small_bush: miguel_cartagena_manzano_small_bush.src, large_bush: miguel_cartagena_manzano_large_bush.src, ent: miguel_cartagena_manzano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Paula Rincón_Manzano': createPlantConfig(
+  'Paula Rincón': createPlantConfig(
     { seed: paula_rinc_n_manzano_seed.src, small_bush: paula_rinc_n_manzano_small_bush.src, large_bush: paula_rinc_n_manzano_large_bush.src, ent: paula_rinc_n_manzano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Santiago Correa_Pino romerón': createPlantConfig(
+  'Santiago Correa': createPlantConfig(
     { seed: santiago_correa_pino_romer_n_seed.src, small_bush: santiago_correa_pino_romer_n_small_bush.src, large_bush: santiago_correa_pino_romer_n_large_bush.src, ent: santiago_correa_pino_romer_n_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Sara Rojas_Alcaparro enano': createPlantConfig(
+  'Sara Rojas': createPlantConfig(
     { seed: sara_rojas_alcaparro_enano_seed.src, small_bush: sara_rojas_alcaparro_enano_small_bush.src, large_bush: sara_rojas_alcaparro_enano_large_bush.src, ent: sara_rojas_alcaparro_enano_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Sergio Palacios_Sietecueros': createPlantConfig(
+  'Sergio Palacios': createPlantConfig(
     { seed: sergio_palacios_sietecueros_seed.src, small_bush: sergio_palacios_sietecueros_small_bush.src, large_bush: sergio_palacios_sietecueros_large_bush.src, ent: sergio_palacios_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Susan Doblado_Sietecueros': createPlantConfig(
+  'Susan Doblado': createPlantConfig(
     { seed: susan_doblado_sietecueros_seed.src, small_bush: susan_doblado_sietecueros_small_bush.src, large_bush: susan_doblado_sietecueros_large_bush.src, ent: susan_doblado_sietecueros_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Tomas Buitrago_Drago': createPlantConfig(
+  'Tomas Buitrago': createPlantConfig(
     { seed: tomas_buitrago_drago_seed.src, small_bush: tomas_buitrago_drago_small_bush.src, large_bush: tomas_buitrago_drago_large_bush.src, ent: tomas_buitrago_drago_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Tomas Marin_Cedrillo': createPlantConfig(
+  'Tomas Marin': createPlantConfig(
     { seed: tomas_marin_cedrillo_seed.src, small_bush: tomas_marin_cedrillo_small_bush.src, large_bush: tomas_marin_cedrillo_large_bush.src, ent: tomas_marin_cedrillo_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
-  'Yuri Castañeda_Drago': createPlantConfig(
+  'Yuri Castañeda': createPlantConfig(
     { seed: yuri_casta_eda_drago_seed.src, small_bush: yuri_casta_eda_drago_small_bush.src, large_bush: yuri_casta_eda_drago_large_bush.src, ent: yuri_casta_eda_drago_ent.src },
     { seed: 0.3, small_bush: 0.5, large_bush: 1, ent: 1.3 }
   ),
@@ -554,8 +554,9 @@ export const PLANT_SPRITE_REGISTRY: Record<string, Record<PlantPhase, SpriteConf
 /** Especie de fallback si la activa no tiene sprites registrados */
 export const FALLBACK_SPECIES = "pasto";
 
-/** Devuelve la config de un sprite dado speciesId y fase, con fallback garantizado */
-export function getSpriteConfig(speciesId: string, phase: PlantPhase): SpriteConfig {
-  const species = PLANT_SPRITE_REGISTRY[speciesId] ?? PLANT_SPRITE_REGISTRY[FALLBACK_SPECIES];
-  return species[phase];
+/** Devuelve la config de un sprite dado speciesId y subid, con fallback garantizado */
+export function getSpriteConfig(speciesId: string, subid: string | undefined, phase: PlantPhase): SpriteConfig {
+  const key = (subid && PLANT_SPRITE_REGISTRY[subid]) ? subid : (PLANT_SPRITE_REGISTRY[speciesId] ? speciesId : FALLBACK_SPECIES);
+  const species = PLANT_SPRITE_REGISTRY[key];
+  return species[phase] ?? species["seed"];
 }

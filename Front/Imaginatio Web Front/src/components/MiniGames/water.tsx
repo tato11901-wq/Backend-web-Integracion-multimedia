@@ -163,18 +163,12 @@ export default function Water() {
               <p class="text-black text-center font-medium bg-white/40 p-4 rounded-xl border border-white/60">
                 {message}
               </p>
-              <div class="flex gap-4">
-                <button
-                  onClick={startGame}
-                  class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-xl shadow-md transition transform active:scale-95"
-                >
-                  Reintentar
-                </button>
+              <div class="flex gap-3 mt-2">
                 <button
                   onClick={handleClose}
-                  class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-6 rounded-xl shadow-md transition transform active:scale-95"
+                  class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-10 rounded-xl shadow-md transition transform active:scale-95"
                 >
-                  Volver
+                  Listo
                 </button>
               </div>
             </div>

@@ -240,7 +240,10 @@ function migrateV1toV2(old: any): ImaginatioTreeData {
  * entre los subids disponibles para la especie.
  */
 function buildSubId(existingSubId: string | undefined, speciesId: string): string {
-  if (existingSubId) return existingSubId;
+  const validSubids = SPECIES_CATALOG[speciesId]?.subids || [];
+  if (existingSubId && validSubids.includes(existingSubId)) {
+    return existingSubId;
+  }
   return pickSubId(speciesId);
 }
 

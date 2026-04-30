@@ -222,16 +222,10 @@ export default function Compost() {
               </p>
               <div class="flex gap-4">
                 <button
-                  onClick={startGame}
-                  class="bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-8 rounded-xl shadow-md transition transform active:scale-95"
-                >
-                  Jugar de nuevo
-                </button>
-                <button
                   onClick={handleClose}
-                  class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-8 rounded-xl shadow-md transition transform active:scale-95"
+                  class="bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-10 rounded-xl shadow-md transition transform active:scale-95"
                 >
-                  Volver
+                  Listo
                 </button>
               </div>
             </div>

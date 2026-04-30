@@ -322,16 +322,10 @@ export default function Sun() {
             </div>
             <div class="flex gap-3 mt-2">
               <button
-                onClick={startGame}
-                class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-5 rounded-xl shadow-md transition transform active:scale-95"
-              >
-                Jugar de nuevo
-              </button>
-              <button
                 onClick={handleClose}
-                class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-5 rounded-xl shadow-md transition transform active:scale-95"
+                class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-10 rounded-xl shadow-md transition transform active:scale-95"
               >
-                Volver
+                Listo
               </button>
             </div>
           </div>
@@ -344,16 +338,10 @@ export default function Sun() {
             <p class="text-white text-center text-sm bg-white/10 p-3 rounded-xl">{message}</p>
             <div class="flex gap-3">
               <button
-                onClick={startGame}
-                class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-2 px-5 rounded-xl shadow-md transition active:scale-95"
-              >
-                Reintentar
-              </button>
-              <button
                 onClick={handleClose}
-                class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-5 rounded-xl shadow-md transition active:scale-95"
+                class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-10 rounded-xl shadow-md transition active:scale-95"
               >
-                Volver
+                Listo
               </button>
             </div>
           </div>

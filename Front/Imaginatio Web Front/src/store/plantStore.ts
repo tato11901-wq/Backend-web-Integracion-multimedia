@@ -71,6 +71,7 @@ export const plantWaterProgress = signal<number>(4); // Default pasto seed
 export const plantSunProgress = signal<number>(4);   // Default pasto seed
 export const plantFertilizerProgress = signal<number>(0);
 export const plantSpeciesId = signal<string>("pasto"); // Especie activa
+export const plantUnitySubid = signal<string | undefined>(undefined); // Subid (artista)
 
 export const isDebugOpen = signal<boolean>(false);
 
@@ -98,6 +99,7 @@ export function savePlantToJSON() {
     fertilizerProgress: plantFertilizerProgress.value,
     lastUpdate: plantLastUpdate.value,
     speciesId: plantSpeciesId.value,
+    unitySubid: plantUnitySubid.value,
   };
   localStorage.setItem("imaginatio_plant_state", JSON.stringify(state));
 }
@@ -114,6 +116,7 @@ export function loadPlantFromJSON() {
       if (typeof state.fertilizerProgress === "number") plantFertilizerProgress.value = state.fertilizerProgress;
       if (typeof state.lastUpdate === "number") plantLastUpdate.value = state.lastUpdate;
       if (state.speciesId) plantSpeciesId.value = state.speciesId;
+      if (state.unitySubid) plantUnitySubid.value = state.unitySubid;
     } catch (e) {
       console.error("Error parsing plant JSON state", e);
     }
@@ -133,6 +136,11 @@ export function syncPlantState(backendPlant: any) {
       }
       if (backendPlant.species_id) {
         plantSpeciesId.value = backendPlant.species_id;
+      }
+      if (backendPlant.unity_subid) {
+        plantUnitySubid.value = backendPlant.unity_subid;
+      } else {
+        plantUnitySubid.value = undefined;
       }
       // Si la respuesta incluye los datos de la especie (evolution_requirements), los cargamos
       if (backendPlant.species_data) {

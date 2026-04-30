@@ -3,6 +3,7 @@ import { isPlantInfoOpen, activePlantId } from "../../store/resourceStore";
 import {
   plantPhase,
   plantSpeciesId,
+  plantUnitySubid,
   type PlantPhase,
   isWatering,
   isFertilizing,
@@ -71,7 +72,7 @@ export const Plant = () => {
     }
   }, [plantSpeciesId.value]);
 
-  const config = getSpriteConfig(displaySpecies, displayPhase);
+  const config = getSpriteConfig(displaySpecies, plantUnitySubid.value, displayPhase);
   const isAnimated = config.frameCount > 1;
   const isDead = plantHealth.value <= 0;
 

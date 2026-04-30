@@ -1,7 +1,7 @@
 {
   "aliso": {
     "id": "aliso",
-    "subids": ["aliso"],
+    "subids": ["Juan Yalta"],
     "common_name": "Aliso",
     "scientific_name": "Alnus acuminata",
     "classification": "Hidro",
@@ -25,7 +25,7 @@
   },
   "espino": {
     "id": "espino",
-    "subids": ["espino"],
+    "subids": ["Juan Cuellar"],
     "common_name": "Espino",
     "scientific_name": "Duranta mutisii",
     "classification": "Solar",
@@ -35,21 +35,10 @@
       "LARGE_BUSH": { "water": 6, "sun": 10, "fertilizer": 8 }
     }
   },
-  "alcaparro_grande": {
-    "id": "alcaparro_grande",
-    "subids": ["alcaparro_grande"],
-    "common_name": "Alcaparro grande",
-    "scientific_name": "Senna viarum",
-    "classification": "Solar",
-    "evolution_requirements": {
-      "SEED":       { "water": 2, "sun": 6,  "fertilizer": 4 },
-      "SMALL_BUSH": { "water": 4, "sun": 8,  "fertilizer": 6 },
-      "LARGE_BUSH": { "water": 6, "sun": 10, "fertilizer": 8 }
-    }
-  },
+
   "roble": {
     "id": "roble",
-    "subids": ["roble"],
+    "subids": ["Javier Bustos", "Maicol Torres"],
     "common_name": "Roble",
     "scientific_name": "Quercus humboldtii",
     "classification": "Montaña",
@@ -61,7 +50,7 @@
   },
   "manzano": {
     "id": "manzano",
-    "subids": ["manzano"],
+    "subids": ["Julian Almonacid", "Mateo Guzmán", "Miguel Cartagena", "Paula Rincón", "Juan Quintana Rodriguez"],
     "common_name": "Manzano",
     "scientific_name": "Billia rosea",
     "classification": "Templado",
@@ -73,7 +62,7 @@
   },
   "alcaparro_enano": {
     "id": "alcaparro_enano",
-    "subids": ["alcaparro_enano"],
+    "subids": ["Andres Duque", "Jimmy Torres", "Laura Parra", "Maria Hernandez", "Sara Rojas"],
     "common_name": "Alcaparro enano",
     "scientific_name": "Senna multiglandulosa",
     "classification": "Xerofito",
@@ -83,21 +72,10 @@
       "LARGE_BUSH": { "water": 6, "sun": 8, "fertilizer": 8 }
     }
   },
-  "dividivi": {
-    "id": "dividivi",
-    "subids": ["dividivi"],
-    "common_name": "Dividivi",
-    "scientific_name": "Caesalpinia spinosa",
-    "classification": "Xerofito",
-    "evolution_requirements": {
-      "SEED":       { "water": 2, "sun": 4, "fertilizer": 4 },
-      "SMALL_BUSH": { "water": 4, "sun": 6, "fertilizer": 6 },
-      "LARGE_BUSH": { "water": 6, "sun": 8, "fertilizer": 8 }
-    }
-  },
+
   "cedrillo": {
     "id": "cedrillo",
-    "subids": ["cedrillo"],
+    "subids": ["Geraldine Torres", "Jeronimo Vargas", "Tomas Marin"],
     "common_name": "Cedrillo",
     "scientific_name": "Smallanthus pyramidalis",
     "classification": "Hidro",
@@ -109,7 +87,7 @@
   },
   "mangle": {
     "id": "mangle",
-    "subids": ["mangle"],
+    "subids": ["Juan Riaño", "Lina Rico"],
     "common_name": "Mangle",
     "scientific_name": "Escallonia pendula",
     "classification": "Templado",
@@ -121,7 +99,7 @@
   },
   "drago": {
     "id": "drago",
-    "subids": ["drago"],
+    "subids": ["Carlos Correa", "Jesica Piñeros", "Adriana Espitia", "Alejandro Ramirez", "David Hernadez", "Isabella Vega", "Tomas Buitrago", "Yuri Castañeda"],
     "common_name": "Drago",
     "scientific_name": "Croton coriaceus",
     "classification": "Solar",
@@ -133,7 +111,7 @@
   },
   "pino_romerón": {
     "id": "pino_romerón",
-    "subids": ["pino_romeron"],
+    "subids": ["Daniel Orjuela", "Juan Acosta", "Karen Sandoval", "Santiago Correa"],
     "common_name": "Pino romerón",
     "scientific_name": "Retrophyllum rospigliosii",
     "classification": "Montaña",
@@ -143,21 +121,10 @@
       "LARGE_BUSH": { "water": 8, "sun": 6, "fertilizer": 8 }
     }
   },
-  "cucharo_negro": {
-    "id": "cucharo_negro",
-    "subids": ["cucharo_negro"],
-    "common_name": "Cucharo negro",
-    "scientific_name": "Myrsine coriacea",
-    "classification": "Hidro",
-    "evolution_requirements": {
-      "SEED":       { "water": 6,  "sun": 2, "fertilizer": 4 },
-      "SMALL_BUSH": { "water": 8,  "sun": 4, "fertilizer": 6 },
-      "LARGE_BUSH": { "water": 10, "sun": 6, "fertilizer": 8 }
-    }
-  },
+
   "sietecueros": {
     "id": "sietecueros",
-    "subids": ["sietecueros"],
+    "subids": ["Danna Plazas", "Erick Rodriguez", "Fabian Cetina", "Juan Rocha", "Karen Bustos", "Karol Duran", "Laura Ibañez", "Liseth Castro", "Lyander Hernandez", "Maria Castaño", "Mateo Sanchez", "Matilde Bermudez", "Sergio Palacios", "Susan Doblado"],
     "common_name": "Sietecueros",
     "scientific_name": "Tibouchina lepidota",
     "classification": "Templado",
@@ -169,7 +136,7 @@
   },
   "nogal": {
     "id": "nogal",
-    "subids": ["nogal"],
+    "subids": ["nogal", "Diego Martinez"],
     "common_name": "Nogal",
     "scientific_name": "Juglans neotropica",
     "classification": "Montaña",
@@ -181,7 +148,7 @@
   },
   "cedro": {
     "id": "cedro",
-    "subids": ["cedro"],
+    "subids": ["cedro", "Juan Lombana"],
     "common_name": "Cedro",
     "scientific_name": "Cedrela montana",
     "classification": "Templado",
@@ -193,7 +160,7 @@
   },
   "duraznillo": {
     "id": "duraznillo",
-    "subids": ["duraznillo"],
+    "subids": ["Andres Morales", "Anne Galvis", "Gireth Alvarado"],
     "common_name": "Duraznillo",
     "scientific_name": "Abatia parviflora",
     "classification": "Montaña",

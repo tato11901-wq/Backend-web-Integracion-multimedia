@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import {
   plantPhase,
   plantHealth,
@@ -6,6 +6,7 @@ import {
   plantSunProgress,
   plantFertilizerProgress,
   plantSpeciesId,
+  plantUnitySubid,
   isDebugOpen,
   evolvePlant,
   resetPlant,
@@ -28,9 +29,10 @@ import {
 import { fastForwardBackendTime, createPlant, fetchMyActivePlant, addDebugResourcesBackend } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY } from "../../config/plantSpriteRegistry";
 import { getFreshTreeData, downloadTreeFile } from "../../store/unityBridge";
+import SPECIES_JSON from "../../config/species.json";
 
-// Especies con sprites disponibles en el registro
-const AVAILABLE_SPECIES = Object.keys(PLANT_SPRITE_REGISTRY);
+// Especies disponibles en el catálogo maestro
+const AVAILABLE_SPECIES = Object.keys(SPECIES_JSON);
 const SPECIES_LABELS: Record<string, string> = {
   pasto: "🌿 Pasto",
   nogal: "🌰 Nogal",
@@ -40,9 +42,28 @@ const SPECIES_LABELS: Record<string, string> = {
 export default function DebugPanel() {
   const [creatingPlant, setCreatingPlant] = useState(false);
   const [selectedSpecies, setSelectedSpecies] = useState<string>("pasto");
+  const [selectedSubid, setSelectedSubid] = useState<string | null>(null);
   const [createMsg, setCreateMsg] = useState<string | null>(null);
   const [unityPreview, setUnityPreview] = useState<string | null>(null);
   const [plantSearch, setPlantSearch] = useState<string>("");
+
+  useEffect(() => {
+    setSelectedSubid(null);
+  }, [selectedSpecies]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (unityPreview) {
+          setUnityPreview(null);
+        } else if (isDebugOpen.value) {
+          isDebugOpen.value = false;
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [unityPreview]);
 
   if (!isDebugOpen.value) return null;
 
@@ -61,8 +82,8 @@ export default function DebugPanel() {
     setCreatingPlant(true);
     setCreateMsg(null);
     try {
-      await createPlant(selectedSpecies);
-      setCreateMsg(`✅ ${SPECIES_LABELS[selectedSpecies] ?? selectedSpecies} creado.`);
+      await createPlant(selectedSpecies, selectedSubid || undefined);
+      setCreateMsg(`✅ ${((SPECIES_JSON as any)[selectedSpecies]?.common_name) ?? selectedSpecies} creado.`);
       refreshInventory();
     } catch (e: any) {
       setCreateMsg(`❌ ${e.message ?? "Error al crear la planta."}`);
@@ -87,7 +108,7 @@ export default function DebugPanel() {
     <>
       {/* ── Panel principal ── */}
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto">
-        <div className="bg-slate-900 border-4 border-red-600 text-white p-6 rounded-2xl w-[520px] max-w-[90%] max-h-[90%] transform scale-[0.85] overflow-y-auto shadow-2xl relative scrollbar-thin scrollbar-thumb-red-900 scrollbar-track-slate-800">
+        <div className="bg-slate-900 border-4 border-red-600 text-white p-6 rounded-2xl w-[900px] max-w-[95%] max-h-[90%] overflow-y-auto shadow-2xl relative scrollbar-thin scrollbar-thumb-red-900 scrollbar-track-slate-800">
           <button
             onClick={() => isDebugOpen.value = false}
             className="absolute top-2 right-4 text-red-500 font-bold text-2xl hover:text-red-400"
@@ -99,14 +120,15 @@ export default function DebugPanel() {
             🛠 Admin Debug Panel
           </h2>
 
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
 
             {/* ── Estado de Planta ── */}
             <div className="bg-slate-800 p-4 rounded-lg border border-slate-700">
               <h3 className="text-base text-slate-400 uppercase font-bold mb-3">Estado de Planta</h3>
               <div className="grid grid-cols-2 gap-3 text-base">
                 <span>Fase:</span> <span className="font-bold text-amber-400">{plantPhase.value}</span>
-                <span>Especie:</span> <span className="font-bold text-purple-400">{plantSpeciesId.value}</span>
+                <span>Especie:</span> <span className="font-bold text-purple-400">{(SPECIES_JSON as any)[plantSpeciesId.value]?.common_name || plantSpeciesId.value}</span>
+                <span>Autor / Modelo:</span> <span className="font-bold text-pink-400">{plantUnitySubid.value || "Base / Generico"}</span>
                 <span>Salud:</span>
                 <span className={`font-bold ${plantHealth.value <= CRITICAL_HEALTH_THRESHOLD ? 'text-red-500' : 'text-green-400'}`}>
                   {Math.round(plantHealth.value)} / 100
@@ -169,7 +191,7 @@ export default function DebugPanel() {
                         : "bg-slate-700 hover:bg-slate-600 text-slate-300"
                       }`}
                   >
-                    {SPECIES_LABELS[sp] ?? sp}
+                    {((SPECIES_JSON as any)[sp]?.common_name) ?? sp}
                   </button>
                 ))}
               </div>
@@ -178,10 +200,34 @@ export default function DebugPanel() {
                 disabled={creatingPlant}
                 className="w-full bg-purple-700 hover:bg-purple-600 disabled:opacity-50 font-black py-2 rounded shadow-lg transition-transform active:scale-95"
               >
-                {creatingPlant ? "Creando..." : `Crear ${SPECIES_LABELS[selectedSpecies] ?? selectedSpecies}`}
+                {creatingPlant ? "Creando..." : `Crear ${((SPECIES_JSON as any)[selectedSpecies]?.common_name) ?? selectedSpecies}`}
               </button>
               {createMsg && (
                 <p className="text-xs text-center mt-2 font-medium text-slate-300">{createMsg}</p>
+              )}
+
+              {/* Sub-selector de Autores/SubID */}
+              {selectedSpecies && (SPECIES_JSON as any)[selectedSpecies]?.subids?.length > 1 && (
+                <div className="mt-4 pt-4 border-t border-slate-700">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold mb-2 block">Seleccionar Autor (Opcional)</span>
+                  <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-purple-900 scrollbar-track-slate-800">
+                    <button
+                      onClick={() => setSelectedSubid(null)}
+                      className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${!selectedSubid ? "bg-purple-600 text-white" : "bg-slate-700 text-slate-400"}`}
+                    >
+                      Aleatorio
+                    </button>
+                    {(SPECIES_JSON as any)[selectedSpecies].subids.map((sub: string) => (
+                      <button
+                        key={sub}
+                        onClick={() => setSelectedSubid(sub)}
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold transition-all ${selectedSubid === sub ? "bg-purple-600 text-white" : "bg-slate-700 text-slate-400"}`}
+                      >
+                        {sub}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
 
@@ -276,7 +322,7 @@ export default function DebugPanel() {
           onClick={() => setUnityPreview(null)}
         >
           <div
-            className="bg-slate-900 border-2 border-violet-500 rounded-2xl p-6 w-[600px] max-w-[95%] max-h-[80%] transform scale-[0.85] overflow-auto shadow-2xl"
+            className="bg-slate-900 border-2 border-violet-500 rounded-2xl p-6 w-[700px] max-w-[95%] max-h-[80%] overflow-auto shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
