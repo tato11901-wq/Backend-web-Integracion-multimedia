@@ -108,6 +108,7 @@ export const isPlantInfoOpen = signal(false);
 export const isInventoryOpen = signal(false);
 export const isHelpModalOpen = signal(false);
 export const isCreditsModalOpen = signal(false);
+export const isNamingModalOpen = signal(false);
 
 /** Incrementar este signal fuerza al inventario a refrescarse */
 export const inventoryVersion = signal(0);

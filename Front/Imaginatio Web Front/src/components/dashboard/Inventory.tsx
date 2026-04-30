@@ -1,6 +1,6 @@
 import { useState, useEffect } from "preact/hooks";
 import { batch } from "@preact/signals";
-import { isInventoryOpen, activePlantId, inventoryVersion, plantName, refreshInventory, syncUserState } from "../../store/resourceStore";
+import { isInventoryOpen, activePlantId, inventoryVersion, plantName, refreshInventory, syncUserState, isNamingModalOpen } from "../../store/resourceStore";
 import { syncPlantState, setEvolutionRequirementsFromSpecies, plantSpeciesId } from "../../store/plantStore";
 import { fetchMyInventory, setActivePlant, deletePlant, createPlant } from "../../store/apiClient";
 import { PLANT_SPRITE_REGISTRY, FALLBACK_SPECIES, type SpriteConfig } from "../../config/plantSpriteRegistry";
@@ -202,6 +202,9 @@ export default function Inventory() {
 
         activePlantId.value = plant.id;
         plantName.value = plant.name;          // ← actualizar nombre en HUD
+        if (plant.name === "Nueva Planta") {
+          isNamingModalOpen.value = true;
+        }
         syncPlantState(plant);
         if (plant.species_data) setEvolutionRequirementsFromSpecies(plant.species_data);
         plantSpeciesId.value = plant.species_id;
@@ -232,6 +235,9 @@ export default function Inventory() {
             syncUserState(updatedUser);
             activePlantId.value = nextPlant.id;
             plantName.value = nextPlant.name;
+            if (nextPlant.name === "Nueva Planta") {
+              isNamingModalOpen.value = true;
+            }
             syncPlantState(nextPlant);
             if (nextPlant.species_data) setEvolutionRequirementsFromSpecies(nextPlant.species_data);
             plantSpeciesId.value = nextPlant.species_id;
@@ -245,6 +251,9 @@ export default function Inventory() {
           if (newPasto) {
             activePlantId.value = newPasto.id;
             plantName.value = newPasto.name;
+            if (newPasto.name === "Nueva Planta") {
+              isNamingModalOpen.value = true;
+            }
             syncPlantState(newPasto);
             if (newPasto.species_data) setEvolutionRequirementsFromSpecies(newPasto.species_data);
             plantSpeciesId.value = newPasto.species_id;

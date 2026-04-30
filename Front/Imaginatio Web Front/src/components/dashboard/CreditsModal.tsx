@@ -2,7 +2,11 @@ import { isCreditsModalOpen } from "../../store/resourceStore";
 import sandovalImg from "../../assets/Group Members/Sandoval_member.jpeg";
 import andresImg from "../../assets/Group Members/andrs_member.jpeg";
 import willyImg from "../../assets/Group Members/willy_member.jpeg";
-import dannyImg from "../../assets/Group Members/Danny_member.png";
+import dannyImg from "../../assets/Group Members/Danny_member.jpeg";
+import alcazarImg from "../../assets/Group Members/Alcazar_member.jpeg";
+import nicolasImg from "../../assets/Group Members/Nicolas_member.jpeg";
+import miguelImg from "../../assets/Group Members/Olivares_member.jpeg";
+import placeholderImg from "../../assets/Group Members/PlaceHolder_member.jpeg";
 
 interface Member {
   name: string;
@@ -67,14 +71,14 @@ export default function CreditsModal() {
           <div className="space-y-4 text-lg font-medium text-[#5c3e21]">
             <CreditCard role="Desarrollo Back-end" members={[{ name: "Alejandro Sandoval", image: sandovalImg.src }]} />
             <CreditCard role="Desarrollo Front-end" members={[{ name: "Andres Moya", image: andresImg.src }]} />
-            <CreditCard role="Arte y Diseño" members={[{ name: "Andres Alcazar" }]} />
+            <CreditCard role="Arte y Diseño" members={[{ name: "Andres Alcazar", image: alcazarImg.src }]} />
             <CreditCard role="Diseño de efectos visuales" members={[{ name: "William Cubillos", image: willyImg.src }]} />
-            <CreditCard role="Automatizacion de animaciones" members={[{ name: "Nicolas" }]} />
-            <CreditCard role="Concepto original" members={[{ name: "Miguel Olivares" }, { name: "Danny Bercelio", image: dannyImg.src }]} />
+            <CreditCard role="Automatizacion de animaciones" members={[{ name: "Nicolas Alarcón", image: nicolasImg.src }]} />
+            <CreditCard role="Concepto original" members={[{ name: "Miguel Olivares", image: miguelImg.src }, { name: "Danny Bercelio", image: dannyImg.src }]} />
           </div>
 
           <p className="text-sm font-bold text-[#8B4513] mt-8 opacity-80">
-            Agradecimientos especiales a todos los estudiantes participantes de la convocatoria
+            Agradecimientos especiales a todos los estudiantes participantes de la convocatoria y al grupo de desarrollo del curso de integracion multimedia MUL B de noveno semestre 2026-1.
           </p>
 
           <p className="text-sm font-bold text-[#8B4513] mt-8 opacity-80">

@@ -116,7 +116,7 @@ export const Plant = () => {
             frameHeight={32}
             frameCount={40}
             scale={1}
-            fps={12}
+            fps={7}
             className="w-full h-full object-contain drop-shadow-2xl [image-rendering:pixelated]"
           />
         ) : isAnimated ? (

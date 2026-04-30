@@ -12,6 +12,9 @@ import Inventory from "./dashboard/Inventory";
 import HelpModal from "./dashboard/HelpModal";
 import EntWelcomeModal from "./dashboard/EntWelcomeModal";
 import CreditsModal from "./dashboard/CreditsModal";
+import PlantNamingModal from "./dashboard/PlantNamingModal";
+import { isNamingModalOpen, isHelpModalOpen } from "../store/resourceStore";
+
 import { useScale } from "../hooks/useScale";
 import Water from "./MiniGames/water";
 import Compost from "./MiniGames/compost";
@@ -32,6 +35,13 @@ export default function MainUI() {
           syncUserState(res);
           initUnityBridge(); // Inicializar JSON canónico con datos del usuario
           setAuthState("logged");
+          if (res.active_plant && res.active_plant.name === "Nueva Planta") {
+            isNamingModalOpen.value = true;
+          }
+          if (!localStorage.getItem(`imaginatio_tutorial_seen_${res.id}`)) {
+            isHelpModalOpen.value = true;
+            localStorage.setItem(`imaginatio_tutorial_seen_${res.id}`, "1");
+          }
         })
         .catch(() => {
           // Token inválido o expirado → ir a login
@@ -51,6 +61,13 @@ export default function MainUI() {
       syncUserState(res.user);
       initUnityBridge(); // Inicializar JSON canónico con datos del usuario
       setAuthState("logged");
+      if (res.user.active_plant && res.user.active_plant.name === "Nueva Planta") {
+        isNamingModalOpen.value = true;
+      }
+      if (!localStorage.getItem(`imaginatio_tutorial_seen_${res.user.id}`)) {
+        isHelpModalOpen.value = true;
+        localStorage.setItem(`imaginatio_tutorial_seen_${res.user.id}`, "1");
+      }
     } catch (err) {
       alert("Error al iniciar sesión");
     } finally {
@@ -146,6 +163,7 @@ export default function MainUI() {
           <Inventory />
           <HelpModal />
           <CreditsModal />
+          <PlantNamingModal />
         </div>
       </div>
 

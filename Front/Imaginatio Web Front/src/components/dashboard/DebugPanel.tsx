@@ -42,6 +42,7 @@ export default function DebugPanel() {
   const [selectedSpecies, setSelectedSpecies] = useState<string>("pasto");
   const [createMsg, setCreateMsg] = useState<string | null>(null);
   const [unityPreview, setUnityPreview] = useState<string | null>(null);
+  const [plantSearch, setPlantSearch] = useState<string>("");
 
   if (!isDebugOpen.value) return null;
 
@@ -86,7 +87,7 @@ export default function DebugPanel() {
     <>
       {/* ── Panel principal ── */}
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto">
-        <div className="bg-slate-900 border-4 border-red-600 text-white p-8 rounded-2xl w-[520px] max-h-[90vh] overflow-y-auto shadow-2xl relative scrollbar-thin scrollbar-thumb-red-900 scrollbar-track-slate-800">
+        <div className="bg-slate-900 border-4 border-red-600 text-white p-6 rounded-2xl w-[520px] max-w-[90%] max-h-[90%] transform scale-[0.85] overflow-y-auto shadow-2xl relative scrollbar-thin scrollbar-thumb-red-900 scrollbar-track-slate-800">
           <button
             onClick={() => isDebugOpen.value = false}
             className="absolute top-2 right-4 text-red-500 font-bold text-2xl hover:text-red-400"
@@ -149,12 +150,20 @@ export default function DebugPanel() {
             {/* ── Crear Nueva Planta ── */}
             <div className="bg-slate-800 p-4 rounded-lg border border-purple-800">
               <h3 className="text-base text-purple-400 uppercase font-bold mb-3">🌱 Crear Nueva Planta</h3>
-              <div className="flex gap-2 mb-3">
-                {AVAILABLE_SPECIES.map(sp => (
+              <input
+                type="text"
+                placeholder="Filtrar por ID de planta..."
+                className="w-full px-3 py-2 mb-3 bg-slate-700 text-white border border-slate-600 rounded text-sm outline-none focus:ring-2 focus:ring-purple-500"
+                value={plantSearch}
+                onInput={(e) => setPlantSearch((e.target as HTMLInputElement).value)}
+              />
+              <div className="grid grid-cols-2 gap-2 mb-4 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-800 scrollbar-track-slate-800 pr-2">
+                {AVAILABLE_SPECIES.filter(sp => sp.toLowerCase().includes(plantSearch.toLowerCase())).map(sp => (
                   <button
                     key={sp}
                     onClick={() => setSelectedSpecies(sp)}
-                    className={`flex-1 py-2 rounded font-bold text-sm transition-all active:scale-95
+                    title={sp}
+                    className={`py-2 px-1 rounded font-bold text-[10px] truncate transition-all active:scale-95
                       ${selectedSpecies === sp
                         ? "bg-purple-600 text-white ring-2 ring-purple-400"
                         : "bg-slate-700 hover:bg-slate-600 text-slate-300"
@@ -267,7 +276,7 @@ export default function DebugPanel() {
           onClick={() => setUnityPreview(null)}
         >
           <div
-            className="bg-slate-900 border-2 border-violet-500 rounded-2xl p-6 w-[600px] max-h-[80vh] overflow-auto shadow-2xl"
+            className="bg-slate-900 border-2 border-violet-500 rounded-2xl p-6 w-[600px] max-w-[95%] max-h-[80%] transform scale-[0.85] overflow-auto shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
